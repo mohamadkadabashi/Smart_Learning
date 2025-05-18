@@ -61,7 +61,7 @@
           </div>
         </div>
 
-        <!-- Review Modus bleibt unverändert -->
+        <!-- Review Modus -->
         <div v-if="isReviewMode">
           <h2 class="text-center mb-4">Auswertung</h2>
           <div
@@ -74,6 +74,7 @@
             </h2>
             <div class="player-wrapper mb-3">
               <Qti3Player
+                :key="`qti-player-container-${testItem.guid}`"
                 @notifyQti3PlayerReady="player => onReviewPlayerReady(player, testItem)"
               />
             </div>
@@ -123,8 +124,10 @@ export default {
       currentIndex: 0,
       test: null,
       itemStates: new Map(),
-      currentPanel: "item",
-      isReviewMode: false
+      isReviewMode: false,
+
+      itemsLoaded: false,
+      playerReady: false
     }
   },
   methods: {
@@ -137,7 +140,26 @@ export default {
 
       await this.TC.loadItems(this.test.items)
       this.testItems = this.TC.getItems()
-      this.loadCurrentItem()
+      //this.loadCurrentItem()
+
+      this.itemsLoaded = true
+      this.tryLoadItem()
+
+    },
+    //event handler, called upon loading qti3player
+    onPlayerReady(player) {
+      this.qti3player = player
+      //this.loadCurrentItem()
+
+      this.playerReady = true
+      this.$nextTick(() => this.tryLoadItem());   
+    },
+
+    //makes sure that items and itemPlayer is ready before items are loaded into player
+    tryLoadItem() {
+      if (this.playerReady && this.itemsLoaded) {
+        this.loadCurrentItem();
+      }
     },
 
     //loads the item at the current index
@@ -176,29 +198,27 @@ export default {
       this.qti3player.loadItemFromXml(item.xml, config)
     },
 
-    //event handler, called upon loading qti3player
-    onPlayerReady(player) {
-      this.qti3player = player
-      this.loadCurrentItem()
-    },
 
     //called upon press of NEXT button
     next() {
       if (this.currentIndex < this.testItems.length - 1) {
-        this.qti3player.endAttempt('next')
+        this.qti3player.suspendAttempt('next')
       }
     },
 
     //called upon press of prev button
     prev() {
       if (this.currentIndex > 0) {
-        this.qti3player.endAttempt('prev')
+        this.qti3player.suspendAttempt('prev')
       }
     },
 
     //called upon press of SUBMIT button
     submitTest() {
-      this.qti3player.endAttempt('end')
+      console.log("[SAVED ITEM STATES:]")
+      const obj = Object.fromEntries(this.itemStates);
+      console.log(JSON.stringify(obj, null, 2));
+      this.qti3player.suspendAttempt('end')
     },
 
     //event handler of qti3itemplayer suspendAttempt and end attempt
@@ -233,10 +253,16 @@ export default {
     },
 
     onReviewPlayerReady(player, testItem) {
+      var playerState = this.itemStates.get(testItem.guid)
+      console.log("[ON REVIEW PLAYER READY ITEM:]")
+      console.log(JSON.stringify(testItem, null, 2));
+      console.log("REVIEW PLAYER READY STATE")
+      console.log(JSON.stringify(playerState, null, 2));
+
       const config = {
         guid: testItem.guid,
         status: 'review',
-        state: this.itemStates.get(testItem.guid)
+        state: playerState
       }
 
       player.loadItemFromXml(testItem.xml, config)
@@ -295,7 +321,6 @@ export default {
   },
   created() {
     this.TC = new TestControllerUtilities()
-    this.currentPanel = "item"
   },
   mounted() {
     this.loadTest(this.$route.params.id)
