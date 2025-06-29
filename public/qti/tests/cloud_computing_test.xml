@@ -1,0 +1,41 @@
+<qti-assessment-test xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 
+https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_testv3p0p1_v1p0.xsd" 
+ title="Simple Cloud Computing Test">
+
+  <qti-outcome-declaration identifier="SCORE" cardinality="single" base-type="float">
+    <defaultValue>
+      <value>0.0</value>
+    </defaultValue>
+  </qti-outcome-declaration>
+  <qti-outcome-declaration identifier="MAXSCORE" cardinality="single" base-type="float">
+    <qti-default-value>
+      <qti-value>3.0</qti-value>
+    </qti-default-value>
+  </qti-outcome-declaration>
+
+<qti-test-part identifier="part1" navigation-mode="nonlinear" submission-mode="individual">
+
+  <qti-assessment-section identifier="section1" title="cloud computing test" visible="true">
+
+      <qti-rubric-block use="instructions" view="candidate">
+        <qti-stylesheet href="styles/section-instructions.css" type="text/css" />
+        <qti-content-body>
+        <p>Instructions for this section in here. These instructions would NOT be 
+displayed in different sections if this test had multiple sections.</p>
+        </qti-content-body>
+         </qti-rubric-block>
+   <qti-assessment-item-ref identifier="cloud_computing_q1" href="../questions/cloud_computing_q1.xml"/>
+   <qti-assessment-item-ref identifier="cloud_computing_q2" href="../questions/cloud_computing_q2.xml"/>
+   <qti-assessment-item-ref identifier="cloud_computing_q3" href="../questions/cloud_computing_q3.xml"/>
+    </qti-assessment-section>
+  </qti-test-part>
+  <qti-outcome-processing>
+    <qti-set-outcome-value identifier="SCORE">
+      <qti-sum>
+        <qti-test-variables variable-identifier="SCORE"/>
+      </qti-sum>
+    </qti-set-outcome-value>
+  </qti-outcome-processing>
+</qti-assessment-test>

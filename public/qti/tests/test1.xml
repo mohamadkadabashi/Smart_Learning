@@ -5,14 +5,16 @@
     xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0
                         https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd"
     identifier="netzwerke-test"
-    title="Netzwerke Test"
+    title="Network Test"
     toolName="QtiLearningApp"
     toolVersion="1.0">
 
     <qti-test-part identifier="part1" navigation-mode="linear" submission-mode="individual">
         <qti-assessment-section identifier="section1" title="Grundlagen der Datenbanken" visible="true">
-            <qti-assessment-item-ref identifier="primarschluessel" href="../questions/primarschluessel.xml"/>
-            <qti-assessment-item-ref identifier="sql_erstellen" href="../questions/sql_erstellen.xml"/>
+            <qti-assessment-item-ref identifier="ip_adress" href="../questions/ip_adress.xml"/>
+            <qti-assessment-item-ref identifier="protocolls" href="../questions/protocolls.xml"/>
+            <qti-assessment-item-ref identifier="router" href="../questions/router.xml"/>
+            <qti-assessment-item-ref identifier="web_protocoll" href="../questions/web_protocoll.xml"/>
         </qti-assessment-section>
     </qti-test-part>
 

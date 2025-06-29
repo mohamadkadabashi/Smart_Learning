@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qti-assessment-item 
+ xmlns="http://www.imsglobal.org/xsd/qti/imsqtiasi_v3p0" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 
+ https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_itemv3p0p1_v1p0.xsd"
+ identifier="cloud_computing_q3"
+ title="Load Balancing in Cloud Computing"
+ time-dependent="false" 
+ xml:lang="en-US">
+ <qti-response-declaration identifier="RESPONSE" base-type="string" cardinality="single">
+  <qti-correct-response>
+   <qti-value>dynamic</qti-value>
+  </qti-correct-response>
+  <qti-mapping default-value="0">
+   <qti-map-entry map-key="dynamic" mapped-value="1" case-sensitive="true" />
+  </qti-mapping>
+ </qti-response-declaration>
+ <qti-outcome-declaration base-type="float" cardinality="single" identifier="SCORE" />
+ <qti-item-body>
+  <p>Complete the gaps in the text</p>
+  <div>
+    <p>Load balancing algorithms can be static or <qti-text-entry-interaction response-identifier="RESPONSE" /> , with dynamic algorithms being more suitable for cloud computing environments where load changes over time.</p>
+  </div>
+ </qti-item-body>
+ <qti-response-processing template="https://purl.imsglobal.org/spec/qti/v3p0/rptemplates/map_response" />
+</qti-assessment-item>

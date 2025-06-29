@@ -17,6 +17,7 @@ async function bootstrap() {
   const filenames = [
     'test1.xml',
     'test2.xml',
+    'cloud_computing_test.xml'
     // … alle anderen QTI-XMLs
   ]
 
