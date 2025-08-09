@@ -19,9 +19,9 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #3c4e62; /* heller als vorher */
+  background-color: #3c4e62;
   color: #ffffff;
-  padding: 0.75rem 1rem; /* vertikal schön, horizontal links fast am Rand */
+  padding: 0.75rem 1rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
@@ -30,7 +30,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-left: 0.25rem; /* nur minimaler linker Rand */
+  margin-left: 0.25rem; 
 }
 
 .icon {

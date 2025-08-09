@@ -97,7 +97,6 @@ export class TestService {
   }
 
   /**
-   * NEUE METHODE: loadQuestionItems(itemsArray)
    *
    * - Argument: itemsArray = [ { identifier: "...", href: "..." }, … ]
    *   (das sind genau die assessmentItemRef-Objekte aus test.items)
@@ -140,8 +139,7 @@ export class TestService {
         const ident = root.getAttribute('identifier') || '';
 
         // Wir setzen identifier und guid jeweils auf dasselbe, 
-        // wie vom Root-Element vorgegeben. Wenn du eine andere Property brauchst,
-        // kannst du das hier anpassen (z. B. fallback auf item.identifier).
+        // wie vom Root-Element vorgegeben.
         result.push({
           identifier: ident,
           guid:       ident,
