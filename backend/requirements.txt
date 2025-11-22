@@ -1,4 +1,5 @@
 fastapi 
 uvicorn
 sqlmodel 
-psycopg2-binary # PostgreSQL diver
+# PostgreSQL diver
+psycopg2-binary
