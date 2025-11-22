@@ -1,5 +1,12 @@
 # QTI Learning App
 
+## Backend Setup
+go to ```/backend``` and then run:
+``` python -m venv .venv ```
+
+in ```/backend``` install the requirements.txt
+```pip install -r requirements.txt```
+
 ## Setup
 
 ### 1. Install Node.js >= 16
