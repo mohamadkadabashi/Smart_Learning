@@ -54,6 +54,8 @@ Fill in the following:
 * Username: ```myapp_user```
 * password: ```'the password'```
 
+##
+
 ## Questions
 You can see the sample questions under public/qti/. 
 You can add your own questions and tests (QTI 3.0!) to this directory.
