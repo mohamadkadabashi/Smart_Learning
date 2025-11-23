@@ -1,32 +1,58 @@
 # QTI Learning App
 
-## Backend Setup
-go to ```/backend``` and then run:
-``` python -m venv .venv ```
-
-in ```/backend``` install the requirements.txt
-```sh
-pip install -r requirements.txt
-```
-
 ## Setup
 
-### 1. Install Node.js >= 16
-QTI 3 Item Player Controller was originally built and tested with Node v16.14.  As of November 2023, QTI 3 Item Player Controller has been built and tested with Node v20.9.0.
+## 📦 Prerequisites
 
-### 2. Project Setup
-run
-```sh
-npm install
+Before starting, please install:
+
+- **Docker Desktop**  
+  https://www.docker.com/products/docker-desktop/
+
+- **DBeaver** (for database access)  
+  https://dbeaver.io/download/
+
+You do **not** need to install PostgreSQL locally.  
+All services run inside Docker containers.
+
+
+## 1. Clone the repository
+
+```bash
+git clone <repo-url>
+cd <repo-folder>
 ```
 
-### 3. Compiles and hot-reloads for development
-```sh
-npm run serve
+## 2. Start Docker Container
+Inside the project root folder (where docker-compose.yml is located):
+```bash
+docker compose up --build
 ```
 
-### 4. Open Browser
-Open http://localhost:8080/ in the browser.
+Docker will start:
+
+* the PostgreSQL database container
+
+* the FastAPI backend container
+
+* the Vue.js frontend container
+
+### Access points:
+
+* Backend API: http://localhost:8000/docs
+
+* Frontend app: http://localhost:8080
+
+## PostgreSQL connection settings (DBeaver)
+
+Open DBeaver → New Connection → PostgreSQL
+
+Fill in the following:
+* host: ```localhost```
+* Port: ```5432```
+* Database: ```myapp```
+* Username: ```myapp_user```
+* password: ```'the password'```
 
 ## Questions
 You can see the sample questions under public/qti/. 
