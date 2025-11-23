@@ -1,5 +1,5 @@
-fastapi 
+fastapi
 uvicorn
-sqlmodel 
-# PostgreSQL diver
+sqlmodel
 psycopg2-binary
+python-dotenv
