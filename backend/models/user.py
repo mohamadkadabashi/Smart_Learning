@@ -1,0 +1,37 @@
+from datetime import datetime
+from typing import Optional
+from pydantic import EmailStr
+from sqlmodel import SQLModel, Field
+
+# Base model for user with common fields
+class UserBase(SQLModel):
+    username: str = Field(nullable=False, unique=True)
+    first_name: Optional[str] = Field(nullable=False)
+    last_name: Optional[str] = Field(nullable=False)
+    email: EmailStr = Field(nullable=False, unique=True) # Email wird in DB als String gespeichert, aber mit EmailStr validiert
+
+# User model extending the base with additional fields
+class User(UserBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    password: str = Field(nullable=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    updated_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+
+# Model for creating a new user
+class UserCreate(UserBase):
+    password: str = Field(nullable=False)
+
+# Model for reading user information
+class UserRead(UserBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+# Model for updating user information
+class UserUpdate(SQLModel):
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+
