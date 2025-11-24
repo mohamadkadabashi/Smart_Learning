@@ -17,7 +17,7 @@ services:
     build: ./backend
     container_name: myapp-backend
     environment:
-      DATABASE_URL: postgresql+psycopg2://myapp_user:strongpassword@db:5432/myapp
+      DATABASE_URL: postgresql+psycopg2://myapp_user:mypassword@db:5432/myapp
     ports:
       - "8000:8000"
     depends_on:
