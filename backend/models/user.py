@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> a5b074b (modify UserBase to have only username and email. LoginInput-Model to input username or email)
 from datetime import datetime
 from typing import Optional
 from pydantic import EmailStr
@@ -33,21 +28,11 @@ class UserRead(UserBase):
 # Model for updating user information
 class UserUpdate(SQLModel):
     username: Optional[str] = None
-<<<<<<< HEAD
-=======
     first_name: Optional[str] = None
     last_name: Optional[str] = None
->>>>>>> a5b074b (modify UserBase to have only username and email. LoginInput-Model to input username or email)
     email: Optional[EmailStr] = None
     password: Optional[str] = None
 
 class LoginInput(SQLModel):
     identifier: str
     password: str
-
-<<<<<<< HEAD
-=======
->>>>>>> 9baf133 (create the API-Endpoints and DB-Models)
-=======
->>>>>>> 81dc65d (modify UserBase to have only username and email. LoginInput-Model to input username or email)
->>>>>>> a5b074b (modify UserBase to have only username and email. LoginInput-Model to input username or email)
