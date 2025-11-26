@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 <<<<<<< HEAD
+<<<<<<< HEAD
 from sqlmodel import SQLModel, Session, select
 from database import get_session
 from models.user import User, UserCreate, UserRead, UserUpdate, LoginInput
@@ -9,6 +10,11 @@ from sqlmodel import Session, select
 from database import get_session
 from models.user import User, UserCreate, UserRead, UserUpdate
 >>>>>>> 49a442e (create the API-Endpoints and DB-Models)
+=======
+from sqlmodel import SQLModel, Session, select
+from database import get_session
+from models.user import User, UserCreate, UserRead, UserUpdate, LoginInput
+>>>>>>> 81dc65d (modify UserBase to have only username and email. LoginInput-Model to input username or email)
 import bcrypt
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -31,6 +37,7 @@ def create_user(
     if username_exists:
         raise HTTPException(status_code=400, detail="Username already taken")
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
     first_name_exists = session.exec(select(User).where(User.first_name == user_create.first_name)).first()
@@ -41,16 +48,21 @@ def create_user(
     if last_name_exists:
         raise HTTPException(status_code=400, detail="Last name already in use")
 >>>>>>> 49a442e (create the API-Endpoints and DB-Models)
+=======
+>>>>>>> 81dc65d (modify UserBase to have only username and email. LoginInput-Model to input username or email)
     
     hashed_password = hash_password(user_create.password)
     
     db_user = User(
         username=user_create.username,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         first_name=user_create.first_name,
         last_name=user_create.last_name,
 >>>>>>> 49a442e (create the API-Endpoints and DB-Models)
+=======
+>>>>>>> 81dc65d (modify UserBase to have only username and email. LoginInput-Model to input username or email)
         email=user_create.email,
         password=hashed_password
     )
@@ -99,6 +111,7 @@ def update_user(
             raise HTTPException(status_code=400, detail="Email already registered")
         user.email = user_update.email
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     
     if user_update.first_name is not None:
@@ -107,6 +120,8 @@ def update_user(
     if user_update.last_name is not None:
         user.last_name = user_update.last_name
 >>>>>>> 49a442e (create the API-Endpoints and DB-Models)
+=======
+>>>>>>> 81dc65d (modify UserBase to have only username and email. LoginInput-Model to input username or email)
 
     if user_update.password is not None:
         user.password = hash_password(user_update.password)
@@ -131,6 +146,7 @@ def delete_user(
 
 @router.post("/login")
 <<<<<<< HEAD
+<<<<<<< HEAD
 def login_user( 
     login_data: LoginInput,
     session: Session = Depends(get_session)
@@ -147,11 +163,24 @@ def login_user(
 def login_user(
     email: str,
     password: str,
+=======
+def login_user( 
+    login_data: LoginInput,
+>>>>>>> 81dc65d (modify UserBase to have only username and email. LoginInput-Model to input username or email)
     session: Session = Depends(get_session)
 ):
-    user = session.exec(select(User).where(User.email == email)).first()
+    identifier = login_data.identifier
+    password = login_data.password
+    user = session.exec(select(User).where(
+        (User.email == identifier) | (User.username == identifier))
+    ).first()
+
     if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+<<<<<<< HEAD
         raise HTTPException(status_code=401, detail="Invalid email or password")
 >>>>>>> 49a442e (create the API-Endpoints and DB-Models)
+=======
+        raise HTTPException(status_code=401, detail="Invalid email/username or password")
+>>>>>>> 81dc65d (modify UserBase to have only username and email. LoginInput-Model to input username or email)
     
     return {"message": "Login successful", "user_id": user.id}
