@@ -28,8 +28,6 @@ class UserRead(UserBase):
 # Model for updating user information
 class UserUpdate(SQLModel):
     username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
 
