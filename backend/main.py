@@ -1,10 +1,15 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-
 from database import create_db_and_tables
 from routers.users import router as users_router
 from routers.subjects import router as subject_router
 
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:8000",
+]
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
@@ -17,6 +22,14 @@ async def lifespan(app: FastAPI):
     print("Application shutting down")
 
 app = FastAPI(lifespan=lifespan, title="SmartLearning Backend")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Routers
 app.include_router(users_router)

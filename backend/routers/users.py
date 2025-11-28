@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import SQLModel, Session, select
-from database import get_session
+from database import SessionDep
 from models.user import User, UserCreate, UserRead, UserUpdate, LoginInput
 import bcrypt
 
@@ -15,7 +15,7 @@ def hash_password(plain_password: str) -> str:
 @router.post("/", response_model=UserRead, status_code=201)
 def create_user(
     user_create: UserCreate,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     email_exists = session.exec(select(User).where(User.email == user_create.email)).first()
     if email_exists:
@@ -40,7 +40,7 @@ def create_user(
 
 @router.get("/", response_model=List[UserRead])
 def read_users(
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     users = session.exec(select(User)).all()
     return users
@@ -48,7 +48,7 @@ def read_users(
 @router.get("/{user_id}", response_model=UserRead)
 def get_user(
     user_id: int,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     user = session.get(User, user_id)
     if not user:
@@ -59,7 +59,7 @@ def get_user(
 def update_user(
     user_id: int,
     user_update: UserUpdate,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     user = session.get(User, user_id)
     if not user:
@@ -88,7 +88,7 @@ def update_user(
 @router.delete("/{user_id}", status_code=204)
 def delete_user(
     user_id: int,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     user = session.get(User, user_id)
     if not user:
@@ -101,7 +101,7 @@ def delete_user(
 @router.post("/login")
 def login_user( 
     login_data: LoginInput,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     identifier = login_data.identifier
     password = login_data.password

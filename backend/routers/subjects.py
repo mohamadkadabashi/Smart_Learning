@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import SQLModel, Session, select
-from database import get_session
+from database import SessionDep
 from models.subject import Subject, SubjectCreate, SubjectRead, SubjectUpdate
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/subjects", tags=["subjects"])
 @router.post("/", response_model=SubjectRead, status_code=201)
 def create_subject(
     subject_create: SubjectCreate,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     name_exists = session.exec(select(Subject).where(Subject.name == subject_create.name)).first()
     user_id_exists = session.exec(select(Subject).where(Subject.user_id == subject_create.user_id)).first()
@@ -28,7 +28,7 @@ def create_subject(
 
 @router.get("/", response_model=List[SubjectRead])
 def read_subjects(
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     subjects = session.exec(select(Subject)).all()
     return subjects
@@ -36,7 +36,7 @@ def read_subjects(
 @router.get("/byUser/{user_id}", response_model=List[SubjectRead])
 def read_subjects_of_user(
     user_id: int,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     subjects = session.exec(select(Subject).where(Subject.user_id == user_id)).all()
     if not subjects:
@@ -46,7 +46,7 @@ def read_subjects_of_user(
 @router.get("/{subject_id}", response_model=SubjectRead)
 def get_subject(
     subject_id: int,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
@@ -57,7 +57,7 @@ def get_subject(
 def update_subject(
     subject_id: int,
     subject_update: SubjectUpdate,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
@@ -73,7 +73,7 @@ def update_subject(
 @router.delete("/{subject_id}", status_code=204)
 def delete_subject(
     subject_id: int,
-    session: Session = Depends(get_session)
+    session: SessionDep
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
