@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: myapp-db
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: myapp_user
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myapp_user -d myapp"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: myapp-backend
+    environment:
+      DATABASE_URL: postgresql+psycopg2://myapp_user:mypassword@db:5432/myapp
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+  frontend:
+    build: ./frontend
+    container_name: myapp-frontend
+    volumes:
+      - ./frontend:/app       
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
