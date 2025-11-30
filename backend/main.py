@@ -4,7 +4,6 @@ from contextlib import asynccontextmanager
 from database import create_db_and_tables
 from routers.users import router as users_router
 from routers.subjects import router as subject_router
-from routers.subjectTests import router as subject_tests_router
 
 origins = [
     "http://localhost",
@@ -35,7 +34,6 @@ app.add_middleware(
 # Routers
 app.include_router(users_router)
 app.include_router(subject_router)
-app.include_router(subject_tests_router)
 
 @app.get("/")
 def read_root():
