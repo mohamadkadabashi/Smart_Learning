@@ -5,7 +5,7 @@ from sqlmodel import SQLModel, Field
 
 class SubjectTestBase(SQLModel):
     subject_id: int = Field(foreign_key="subject.id")
-    test: Optional[str] = None  # stored as text
+    test: Optional[str] = None  # Inhalt ist XML, wird intern als TEXT gespeichert
     question_type: Optional[str] = None
 
 
