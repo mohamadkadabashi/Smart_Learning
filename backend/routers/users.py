@@ -4,7 +4,7 @@ from sqlmodel import select
 from database import SessionDep
 from models.user import User, UserCreate, UserRead, UserUpdate, LoginInput
 import bcrypt
-
+from config.logger_config import logger
 router = APIRouter(prefix="/users", tags=["users"])
 
 def hash_password(plain_password: str) -> str:
@@ -36,6 +36,7 @@ def create_user(
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
+    logger.info(f"User created successfully: {db_user.username} (ID: {db_user.id})")
     return db_user
 
 @router.get("/", response_model=List[UserRead])
@@ -52,6 +53,7 @@ def get_user(
 ):
     user = session.get(User, user_id)
     if not user:
+        logger.warning(f"User with ID {user_id} not found")
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
@@ -63,11 +65,13 @@ def update_user(
 ):
     user = session.get(User, user_id)
     if not user:
+        logger.warning(f"User with ID {user_id} not found for update")
         raise HTTPException(status_code=404, detail="User not found")
     
     if user_update.username is not None:
         username_exists = session.exec(select(User).where(User.username == user_update.username, User.id != user_id)).first()
         if username_exists:
+            logger.warning(f"Username {user_update.username} already taken")
             raise HTTPException(status_code=400, detail="Username already taken")
         user.username = user_update.username
     
@@ -83,6 +87,7 @@ def update_user(
     session.add(user)
     session.commit()
     session.refresh(user)
+    logger.info(f"User with ID {user_id} updated successfully")
     return user
 
 @router.delete("/{user_id}", status_code=204)
@@ -96,6 +101,7 @@ def delete_user(
     
     session.delete(user)
     session.commit()
+    logger.info(f"User with ID {user_id} deleted successfully")
     return None
 
 @router.post("/login")

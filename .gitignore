@@ -8,6 +8,9 @@ package-lock.json
 .env.local
 .env.*.local
 
+# Environment variables file
+.env
+
 # local venv folder
 backend/.venv/
 
@@ -16,6 +19,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+backend/logs/
 
 # Editor directories and files
 .idea
