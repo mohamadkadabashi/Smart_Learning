@@ -1,16 +1,22 @@
-from typing import List
-from fastapi import APIRouter, HTTPException, Depends
+from datetime import timedelta
+from typing import List, Annotated
+
+from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
+
 from database import SessionDep
-from models.user import User, UserCreate, UserRead, UserUpdate, LoginInput
-import bcrypt
+from models.user import User, UserCreate, UserRead, UserUpdate
+from config.auth import (
+    hash_password,
+    verify_password,
+    create_access_token,
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+)
+from dependencies.dependency import CurrentUser
 from config.logger_config import logger
 router = APIRouter(prefix="/users", tags=["users"])
 
-def hash_password(plain_password: str) -> str:
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(plain_password.encode('utf-8'), salt)
-    return hashed.decode('utf-8')
 
 @router.post("/", response_model=UserRead, status_code=201)
 def create_user(
@@ -41,7 +47,8 @@ def create_user(
 
 @router.get("/", response_model=List[UserRead])
 def read_users(
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     users = session.exec(select(User)).all()
     return users
@@ -49,7 +56,8 @@ def read_users(
 @router.get("/{user_id}", response_model=UserRead)
 def get_user(
     user_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     user = session.get(User, user_id)
     if not user:
@@ -61,7 +69,8 @@ def get_user(
 def update_user(
     user_id: int,
     user_update: UserUpdate,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     user = session.get(User, user_id)
     if not user:
@@ -93,7 +102,8 @@ def update_user(
 @router.delete("/{user_id}", status_code=204)
 def delete_user(
     user_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     user = session.get(User, user_id)
     if not user:
@@ -105,17 +115,35 @@ def delete_user(
     return None
 
 @router.post("/login")
-def login_user( 
-    login_data: LoginInput,
-    session: SessionDep
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: SessionDep,
 ):
-    identifier = login_data.identifier
-    password = login_data.password
-    user = session.exec(select(User).where(
-        (User.email == identifier) | (User.username == identifier))
+    identifier = form_data.username
+    password = form_data.password
+
+    user = session.exec(
+        select(User).where(
+            (User.email == identifier) | (User.username == identifier)
+        )
     ).first()
 
-    if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-        raise HTTPException(status_code=401, detail="Invalid email/username or password")
-    
-    return {"message": "Login successful", "user_id": user.id}
+    if not user or not verify_password(password, user.password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email/username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": str(user.id)},
+        expires_delta=access_token_expires,
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "expires_in_minutes": ACCESS_TOKEN_EXPIRE_MINUTES,
+    }
+
