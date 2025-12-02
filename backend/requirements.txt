@@ -2,10 +2,12 @@ fastapi
 uvicorn
 sqlmodel
 psycopg2-binary
-python-dotenv
-bcrypt
 pydantic[email]
 loguru
 pytest
 pytest-asyncio 
 httpx
+pwdlib[argon2]
+pyjwt
+python-multipart
+pydantic-settings
