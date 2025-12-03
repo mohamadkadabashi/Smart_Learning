@@ -1,4 +1,3 @@
-# tests/conftest.py
 import pytest
 from sqlmodel import SQLModel, create_engine, Session
 from fastapi.testclient import TestClient

@@ -1,4 +1,3 @@
-# tests/test_users.py
 def test_create_user(client):
     response = client.post("/users/", json={
         "username": "testuser",
