@@ -35,5 +35,6 @@ jobs:
       - name: Run tests with pytest
         env:
           TESTING: "1"
+          PYTHONPATH: "${GITHUB_WORKSPACE}/backend"
         run: |
           pytest
