@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import select
-from backend.database import SessionDep
-from backend.models.subject import Subject, SubjectCreate, SubjectRead, SubjectUpdate
+from database import SessionDep
+from models.subject import Subject, SubjectCreate, SubjectRead, SubjectUpdate
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
 

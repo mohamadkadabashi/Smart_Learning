@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.models.subject_tests import SubjectTest
+from models.subject_tests import SubjectTest
 
 router = APIRouter(prefix="/subjecttests", tags=["subjecttests"])
 
