@@ -6,7 +6,7 @@ from main import app
 from database import get_session
 
 # Configure a separate database for testing
-TEST_DATABASE_URL = "sqlite:///backend/tests/db/test.db"
+TEST_DATABASE_URL = "sqlite:///tests/db/test.db"
 
 test_engine = create_engine(
     TEST_DATABASE_URL,
