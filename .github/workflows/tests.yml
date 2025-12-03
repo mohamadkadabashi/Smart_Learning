@@ -33,4 +33,3 @@ jobs:
           cd backend
           export PYTHONPATH=.
           pytest
-
