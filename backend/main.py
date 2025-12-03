@@ -1,21 +1,24 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from database import create_db_and_tables
-from routers.users import router as users_router
-from routers.subjects import router as subject_router
-from routers.subject_tests import router as subject_tests_router
+from backend.database import create_db_and_tables
+from backend.routers.users import router as users_router
+from backend.routers.subjects import router as subject_router
+from backend.routers.subject_tests import router as subject_tests_router
 
 origins = [
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:8000",
 ]
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    create_db_and_tables()
-    print("Application has started")
+    if os.getenv("TESTING") != "1":
+        create_db_and_tables() 
+        print("Application has started")
 
     yield  # Application runs here
 

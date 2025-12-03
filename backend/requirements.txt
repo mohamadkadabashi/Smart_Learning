@@ -6,3 +6,6 @@ python-dotenv
 bcrypt
 pydantic[email]
 loguru
+pytest
+pytest-asyncio 
+httpx
