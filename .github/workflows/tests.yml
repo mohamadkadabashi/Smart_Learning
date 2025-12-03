@@ -22,6 +22,11 @@ jobs:
         run: |
           cd backend
           pip install -r requirements.txt
+      
+      - name: Ensure test DB folder exists
+        run: |
+          cd backend
+          mkdir -p tests/db
 
       - name: Run tests
         run: |
