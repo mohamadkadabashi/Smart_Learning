@@ -1,10 +1,10 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import select
-from backend.database import SessionDep
-from backend.models.user import User, UserCreate, UserRead, UserUpdate, LoginInput
+from database import SessionDep
+from models.user import User, UserCreate, UserRead, UserUpdate, LoginInput
 import bcrypt
-from backend.config.logger_config import logger
+from config.logger_config import logger
 router = APIRouter(prefix="/users", tags=["users"])
 
 def hash_password(plain_password: str) -> str:
