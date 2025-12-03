@@ -12,14 +12,14 @@ package-lock.json
 .env
 
 # local venv folder
-backend/.venv/
+.venv/
 
 # Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-backend/logs/
+**/logs/*
 
 # Editor directories and files
 .idea
@@ -29,5 +29,9 @@ backend/logs/
 *.njsproj
 *.sln
 *.sw?
+# Python cache files
+**/__pycache__/
+# test database files
+**/tests/db/
 
 git-workflow.md
