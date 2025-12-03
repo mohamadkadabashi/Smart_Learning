@@ -10,10 +10,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./backend
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,16 +21,12 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd backend
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            pip install fastapi uvicorn sqlmodel psycopg2-binary bcrypt python-multipart pytest pytest-asyncio httpx
-          fi
+          pip install -r requirements.txt
 
-      - name: Run tests with pytest
-        env:
-          TESTING: "1"
-          PYTHONPATH: "${GITHUB_WORKSPACE}/backend"
+      - name: Run tests
         run: |
+          cd backend
           pytest
+
