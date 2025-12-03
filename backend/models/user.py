@@ -6,7 +6,7 @@ from sqlmodel import SQLModel, Field
 # Base model for user with common fields
 class UserBase(SQLModel):
     username: str = Field(nullable=False, unique=True)
-    email: EmailStr = Field(nullable=False, unique=True) # Email wird in DB als String gespeichert, aber mit EmailStr validiert
+    email: EmailStr = Field(nullable=False, unique=True)
 
 # User model extending the base with additional fields
 class User(UserBase, table=True):
