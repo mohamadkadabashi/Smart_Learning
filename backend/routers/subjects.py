@@ -23,7 +23,7 @@ def create_subject(
                                               .where(Subject.id == subject_create.user_id)).first()
     if subject_user_id_comb_exist:
         logger.warning(f"User {subject_create.user_id} already has subject with name {subject_create.name}")
-        raise HTTPException(status_code=400, detail="User already has subject with this name")
+        raise HTTPException(status_code=409, detail="User already has subject with this name")
     
     db_subject = Subject(
         name=subject_create.name,
