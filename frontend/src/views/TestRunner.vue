@@ -96,6 +96,7 @@
 <script>
 import Qti3Player from 'qti3-item-player'
 import 'qti3-item-player/dist/qti3Player.css'
+import '@/../public/assets/css/styles.css'
 import TopBar from '@/components/TopBar.vue';
 
 export default {
@@ -282,9 +283,5 @@ export default {
   background-color: #f8f9fa;
   border-color: #dee2e6;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-::v-deep(.player-wrapper *) {
-  background-color: #f8f9fa;
-
 }
 </style>
