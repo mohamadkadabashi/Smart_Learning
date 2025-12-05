@@ -17,13 +17,13 @@ def test_create_user(client):
 
 def test_create_user_no_username(client):
     user = {
-        "username": "user",
+        "username": "",
         "email": "test@example.com",
-        "password": ""
+        "password": "secret123"
     }
     response = client.post("/users/", json=user)
 
-    assert response.status_code == 400 # Bad Request due to empty password
+    assert response.status_code == 422
 
 def test_create_user_without_password(client):
     # create two users first
@@ -171,5 +171,5 @@ def test_update_user_with_empty_username(client):
         "password": "password123"
     }
     response = client.patch(f"/users/{user_id}", json=update_data)
-    assert response.status_code == 400
+    assert response.status_code == 422
 
