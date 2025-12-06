@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 #from pydantic import EmailStr
 from sqlmodel import SQLModel, Field
@@ -10,8 +10,8 @@ class SubjectBase(SQLModel):
 class Subject(SubjectBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
-    updated_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 
 class SubjectCreate(SubjectBase):
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
