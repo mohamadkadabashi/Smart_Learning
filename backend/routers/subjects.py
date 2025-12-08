@@ -20,7 +20,7 @@ def create_subject(
     
     subject_user_id_comb_exist = session.exec(select(Subject)
                                               .where(Subject.name == subject_create.name)
-                                              .where(Subject.id == subject_create.user_id)).first()
+                                              .where(Subject.user_id == subject_create.user_id)).first()
     if subject_user_id_comb_exist:
         logger.warning(f"User {subject_create.user_id} already has subject with name {subject_create.name}")
         raise HTTPException(status_code=409, detail="User already has subject with this name")
