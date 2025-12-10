@@ -1,5 +1,6 @@
-.qti3-player-container, .qti3-player-container-fluid {
-    --primary-color: #EC660C;
+:root, .qti3-player-container, .qti3-player-container-fluid {
+    --primary-color: #F08844;
+    --secondary-color: #AFAFAF;
     --text-entry-focus-bg: #EC660C37;
     --choice-control-radio-bg: #D6D6D6;
     --choice-control-checked-bg: #F9B78B;
@@ -11,17 +12,19 @@
     --choice-control-border-width: 2px;
     --choice-control-border-radius: 30px;
     --choice-control-checkbox-border-width: 1px;
+    --button-focus-border-width: 2px;
+    --button-focus-border-color: #000000;
 }
 
 /* Text Entry */
-input[type=text] {
+input {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
 }
 
-input[type=text]:focus,
-input[type=text]:focus-visible {
+input:focus,
+input:focus-visible {
     outline: none;
     background-color: var(--text-entry-focus-bg);
     border: var(--text-entry-border-width) solid var(--primary-color);
@@ -83,3 +86,50 @@ input[type=text]:focus-visible {
     background-image: url('../images/checkbox-checked.svg') !important;
     border: none;
 }
+
+/* Buttons */
+button {
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button.secondary {
+    background: var(--secondary-color);
+    padding: .5rem 1rem;
+    border-radius: 30px;
+    border: none;
+    font-weight: 500;
+}
+
+    button.secondary:not([disabled]):hover {
+        background-color: #000000;
+        color: #FFFFFF;
+    }
+
+    button.secondary:focus-visible {
+        border: var(--button-focus-border-width) solid var(--button-focus-border-color);
+    }
+
+    button.secondary[disabled] {
+        background-color: #DEDEDE;
+    }
+
+button.primary {
+    background: var(--primary-color);
+    padding: .5rem 1rem;
+    border-radius: 30px;
+    border: none;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+    button.primary:not([disabled]):hover {
+        background-color: #F9B78B;
+    }
+
+    button.primary:focus-visible {
+        border: var(--button-focus-border-width) solid var(--button-focus-border-color);
+    }
+
+    button.primary[disabled] {
+        background-color: #FFD1B2;
+    }
