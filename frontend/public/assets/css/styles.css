@@ -1,4 +1,4 @@
-.qti3-player-container, .qti3-player-container-fluid {
+:root, .qti3-player-container, .qti3-player-container-fluid {
     --primary-color: #EC660C;
     --text-entry-focus-bg: #EC660C37;
     --choice-control-radio-bg: #D6D6D6;
@@ -14,14 +14,14 @@
 }
 
 /* Text Entry */
-input[type=text] {
+input {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
 }
 
-input[type=text]:focus,
-input[type=text]:focus-visible {
+input:focus,
+input:focus-visible {
     outline: none;
     background-color: var(--text-entry-focus-bg);
     border: var(--text-entry-border-width) solid var(--primary-color);
