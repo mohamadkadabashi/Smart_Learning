@@ -37,3 +37,4 @@ pnpm-debug.log*
 **/tests/db/
 
 git-workflow.md
+.vs
