@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from models.subject_tests import SubjectTest, SubjectTestCreate, SubjectTestRead
 from database import SessionDep
 import requests
+from pathlib import Path
 from config.logger_config import logger
 
 router = APIRouter(prefix="/subjecttests", tags=["subjecttests"])
@@ -13,28 +14,40 @@ def create_subjectTest(
 ):
     # Test von n8n anfordern
     webhook_url = "https://n8n.Forschungsding.com/start"
-    header = {"Content-Type": "application/json; charset=utf-8"}
+    header = {"Content-Type": "application/json"}
     data = {
-        "question_type": subjectTest_create.question_type
+        "question_type": subjectTest_create.question_type,
+        "question_count": subjectTest_create.question_count
     }
-    response = requests.post(webhook_url, headers=header, json=data)
-
-    if not response.status_code == 200:
-        logger.warning(f"n8n request failed")
-        raise HTTPException(status_code=response.status_code, detail="Failed to generate test") 
+    # TODO: File durch Nutzer auswählbar programmieren
+    #file = open("BDP_01_NoSQL_Einfuehrung.pdf", "rb")
+    scriptPath = Path(__file__).parent
+    filePath = scriptPath / "BDP_01_NoSQL_Einfuehrung.pdf"
+    file = open(filePath, "rb")
+    # TODO: Auth einfügen, sobald auf Branch bereitgestellt
+    try:
+        response = requests.post(url=webhook_url,
+                                headers=header,
+                                json=data,
+                                files={"file": file}) # auth= später
+    except requests.exceptions.RequestException as err:
+        logger.warning(err)
+        raise HTTPException(status_code=408, detail="Failed to generate test")
 
     # Test einspeisen
-    test = response.json()
-    return test
+    # test = response.json()
+    # response beinhaltet nur xml, also diese nicht erst als json ausgeben
+    db_subjectTest = SubjectTest(
+        name = subjectTest_create.name,
+        # Ausgabe des Inhalts in response, sollte nur xml sein
+        test = response.content,
+        question_type = subjectTest_create.question_type,
+        question_count = subjectTest_create.question_type,
+        subject_id = subjectTest_create.subject_id
+    )
 
-    
-    # db_subject = SubjectTest(
-    #     name=subject_create.name,
-    #     user_id=subject_create.user_id
-    # )
-
-    # session.add(db_subject)
-    # session.commit()
-    # session.refresh(db_subject)
-    # logger.info(f"Subject {db_subject.name} (ID: {db_subject.id}) for user-id {db_subject.user_id} has been created")
-    # return db_subject
+    session.add(db_subjectTest)
+    session.commit()
+    session.refresh(db_subjectTest)
+    logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.id} has been created")
+    return db_subjectTest
