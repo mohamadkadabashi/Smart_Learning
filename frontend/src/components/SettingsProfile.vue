@@ -17,16 +17,20 @@
         <h3>Tagesziel anpassen</h3>
 
         <div class="goal-row">
-          <span>Tests bestehen pro Tag</span>
+          <!-- Left block -->
+          <div class="goal-left">
+            <span class="goal-label">Tests bestehen pro Tag</span>
 
-          <div class="counter">
-            <button @click="decrease">−</button>
-            <input type="number" v-model.number="goal" />
-            <button @click="increase">+</button>
+            <div class="counter">
+              <button @click="decrease">−</button>
+              <input type="number" v-model.number="goal" />
+              <button @click="increase">+</button>
+            </div>
           </div>
 
-          <div class="streak">
-            <span>Streak 🔥</span>
+          <!-- Right block -->
+          <div class="goal-right">
+            <span class="goal-label">Streak 🔥</span>
             <label class="switch">
               <input type="checkbox" v-model="streak" />
               <span class="slider"></span>
@@ -36,6 +40,7 @@
       </div>
     </div>
 
+    <!-- Save button -->
     <div class="save-row">
       <button class="primary-btn" @click="save">
         Speichern
@@ -70,6 +75,7 @@ export default {
 </script>
 
 <style scoped>
+/* layout */
 .settings-profile {
   margin-bottom: 40px;
 }
@@ -80,6 +86,7 @@ export default {
   flex-wrap: wrap;
 }
 
+/* cards */
 .settings-card {
   background: #f3f3f3;
   border-radius: 30px;
@@ -88,11 +95,13 @@ export default {
   min-width: 320px;
 }
 
+/* titles */
 h3 {
   font-weight: 400;
   margin-bottom: 20px;
 }
 
+/* inputs */
 label {
   font-style: italic;
   margin-top: 15px;
@@ -108,12 +117,32 @@ input {
   margin-bottom: 10px;
 }
 
+/* --- Daily goal layout --- */
 .goal-row {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  margin-top: 20px;
+  gap: 100px; /* 🔥 controls horizontal distance (Figma-like) */
 }
 
+.goal-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.goal-right {
+  display: flex;
+  flex-direction: column;   /* label above toggle */
+  align-items: center;
+  gap: 8px;
+}
+
+.goal-label {
+  font-style: italic;
+}
+
+/* counter */
 .counter {
   display: flex;
   gap: 10px;
@@ -133,14 +162,10 @@ input {
   width: 80px;
   height: 40px;
   text-align: center;
+  margin: 0;
 }
 
-.streak {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
+/* toggle */
 .switch {
   position: relative;
   width: 60px;
@@ -153,9 +178,9 @@ input {
 
 .slider {
   position: absolute;
+  inset: 0;
   background: #f08844;
   border-radius: 30px;
-  inset: 0;
 }
 
 .slider::before {
@@ -174,6 +199,7 @@ input {
   transform: translateX(30px);
 }
 
+/* save button */
 .save-row {
   display: flex;
   justify-content: flex-end;
