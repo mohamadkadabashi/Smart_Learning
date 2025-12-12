@@ -25,7 +25,6 @@ services:
       - .env
     environment:
       DATABASE_URL: postgresql+psycopg2://myapp_user:mypassword@db:5432/myapp
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "8000:8000"
     depends_on:
