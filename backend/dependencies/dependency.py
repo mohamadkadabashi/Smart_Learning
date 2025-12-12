@@ -1,4 +1,3 @@
-# dependencies/dependency.py
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -14,6 +13,14 @@ async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: SessionDep,
 ) -> User:
+    """
+    Retrieves the current user based on the provided JWT token.
+    
+    :token: The JWT token from the request.
+    :session: The database session dependency.
+    :return: The current authenticated User.
+    """
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials.",
