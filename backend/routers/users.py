@@ -2,6 +2,7 @@ from datetime import timedelta
 from typing import List, Annotated
 
 from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 
@@ -23,6 +24,13 @@ def create_user(
     user_create: UserCreate,
     session: SessionDep
 ):
+    """
+    Create a new user.
+
+    :param user_create: UserCreate
+    :param session: Database session
+    :return: Created User
+    """
     email_exists = session.exec(select(User).where(User.email == user_create.email)).first()
     if email_exists:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -50,6 +58,13 @@ def read_users(
     session: SessionDep,
     current_user: CurrentUser
 ):
+    """
+    Retrieve all users.
+
+    :param session: Database session
+    :param current_user: Currently authenticated user
+    :return: List of Users
+    """
     users = session.exec(select(User)).all()
     return users
 
@@ -59,6 +74,14 @@ def get_user(
     session: SessionDep,
     current_user: CurrentUser
 ):
+    """
+    Retrieve a user by ID.
+
+    :param user_id: User ID
+    :param session: Database session
+    :param current_user: Currently authenticated user
+    :return: User
+    """
     user = session.get(User, user_id)
     if not user:
         logger.warning(f"User with ID {user_id} not found")
@@ -72,6 +95,15 @@ def update_user(
     session: SessionDep,
     current_user: CurrentUser
 ):
+    """
+    Update a user's information.
+
+    :param user_id: User ID
+    :param user_update: UserUpdate
+    :param session: Database session
+    :param current_user: Currently authenticated user
+    :return: Updated User
+    """
     user = session.get(User, user_id)
     if not user:
         logger.warning(f"User with ID {user_id} not found for update")
@@ -105,6 +137,14 @@ def delete_user(
     session: SessionDep,
     current_user: CurrentUser
 ):
+    """
+    Delete a user by ID.
+
+    :param user_id: User ID
+    :param session: Database session
+    :param current_user: Currently authenticated user
+    :return: None
+    """
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -119,6 +159,13 @@ async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep,
 ):
+    """
+    Authenticate user and return access token.
+
+    :param form_data: OAuth2PasswordRequestForm
+    :param session: Database session
+    :return: Access token
+    """
     identifier = form_data.username
     password = form_data.password
 
@@ -147,3 +194,18 @@ async def login_for_access_token(
         "expires_in_minutes": ACCESS_TOKEN_EXPIRE_MINUTES,
     }
 
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(current_user: CurrentUser):
+    """
+    Logout the current user.
+    
+    :param current_user: Currently authenticated user
+    :return: RedirectResponse to home
+    """
+    response = RedirectResponse(url="/", status_code=302)
+    # In a real application, you might want to implement token blacklisting here.
+    # but for stateless JWT, logout is typically handled on the client side by deleting the token.
+    # so in client applications, simply remove the token from storage.
+    # so for this project, we keep it simple.
+    return response

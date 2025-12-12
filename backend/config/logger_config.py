@@ -10,7 +10,7 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 # Remove default configuration
 logger.remove()
 
-# Console output (INFO and above)
+# Console output configuration
 logger.add(
     sys.stdout,
     level="INFO",
