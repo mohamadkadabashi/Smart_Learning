@@ -1,13 +1,15 @@
+token_header = {"Content-Type": "application/x-www-form-urlencoded"}
+
 def test_create_user(client):
     user = {
          "username": "testuser",
         "email": "test@example.com",
         "password": "secret123"
     }
-    response = client.post("/users/", json=user)
+    response_create = client.post("/users/", json=user)
 
-    assert response.status_code == 201
-    data = response.json()
+    assert response_create.status_code == 201, response_create.text
+    data = response_create.json()
 
     assert data["username"] == "testuser"
     assert data["email"] == "test@example.com"
@@ -21,9 +23,9 @@ def test_create_user_no_username(client):
         "email": "test@example.com",
         "password": "secret123"
     }
-    response = client.post("/users/", json=user)
+    response_create = client.post("/users/", json=user)
 
-    assert response.status_code == 422
+    assert response_create.status_code == 422, response_create.text
 
 def test_create_user_without_password(client):
     # create two users first
@@ -31,9 +33,9 @@ def test_create_user_without_password(client):
         "username": "alice",
         "email": "alice@example.de"
     }
-    response = client.post("/users/", json=user)
+    response_create = client.post("/users/", json=user)
 
-    assert response.status_code == 422  # Unprocessable Entity due to missing password
+    assert response_create.status_code == 422, response_create.text
 
 def test_create_two_user_with_same_username(client):
     # create two users first
@@ -49,12 +51,12 @@ def test_create_two_user_with_same_username(client):
     }
 
     # create users
-    response1 = client.post("/users/", json=user1)
-    response2 = client.post("/users/", json=user2)
+    response_create1 = client.post("/users/", json=user1)
+    response_create2 = client.post("/users/", json=user2)
 
-    assert response1.status_code == 201
-    assert response2.status_code == 400  # Bad Request due to duplicate username
-    assert response2.json()["detail"] == "Username already taken"
+    assert response_create1.status_code == 201, response_create1.text
+    assert response_create2.status_code == 400, response_create2.text  # Bad Request due to duplicate username
+    assert response_create2.json()["detail"] == "Username already taken"
 
 def test_get_users(client):
     # create two users first
@@ -70,17 +72,27 @@ def test_get_users(client):
     }
 
     # create users
-    r1 = client.post("/users/", json=user1)
-    r2 = client.post("/users/", json=user2)
+    response_create1 = client.post("/users/", json=user1)
+    response_create2 = client.post("/users/", json=user2)
 
-    assert r1.status_code == 201
-    assert r2.status_code == 201
+    assert response_create1.status_code == 201, response_create1.text
+    assert response_create2.status_code == 201, response_create2.text
+
+    # login as one of the users to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
 
     # read users
-    response = client.get("/users/")
-    assert response.status_code == 200
+    response_get = client.get("/users/", headers=headers)
+    assert response_get.status_code == 200, response_get.text
 
-    data = response.json()
+    data = response_get.json()
 
     assert isinstance(data, list)
     assert len(data) == 2
@@ -105,15 +117,28 @@ def test_get_user(client):
         "email": "test@test.de",
         "password": "password123"
     }
-    response = client.post("/users/", json=user)
-    assert response.status_code == 201
+    response_create = client.post("/users/", json=user)
+    assert response_create.status_code == 201, response_create.text
 
-    created = response.json()
+    created = response_create.json()
     user_id = created["id"]
-    response = client.get(f"/users/{user_id}")
-    assert response.status_code == 200
+    username = created["username"]
+    password = user["password"]
 
-    user = response.json()
+    response_login = client.post("/users/login", 
+    data={"username": username, "password": password},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response_get = client.get(f"/users/{user_id}", headers=headers)
+    assert response_get.status_code == 200, response_get.text
+
+
+    user = response_get.json()
     assert user["id"] == user_id
     assert user["username"] == "charlie"
     assert user["email"] == "test@test.de"
@@ -122,9 +147,26 @@ def test_get_user(client):
 
 def test_get_nonexistent_user(client):
     # get user with an ID that does not exist
-    response = client.get("/users/9999")
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
+    user = {
+        "username": "charlie",
+        "email": "test@test.de",
+        "password": "password123"
+    }
+    response_create = client.post("/users/", json=user)
+    assert response_create.status_code == 201, response_create.text
+
+    response_login = client.post("/users/login", 
+    data={"username": "charlie", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    response_get = client.get("/users/9999", headers=headers)
+    assert response_get.status_code == 404, response_get.text
+    assert response_get.json()["detail"] == "User not found"
 
 def test_update_user(client):
     # create a user first
@@ -133,12 +175,20 @@ def test_update_user(client):
         "email": "test@test.de",
         "password": "password123"
     }
-    response = client.post("/users/", json=user)
-    assert response.status_code == 201
+    response_create = client.post("/users/", json=user)
+    assert response_create.status_code == 201, response_create.text
 
     # get the created user's ID
-    created = response.json()
+    created = response_create.json()
     user_id = created["id"]
+
+    response_login = client.post("/users/login", 
+    data={"username": "dave", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
 
     # update the user
     update_data = {
@@ -146,8 +196,8 @@ def test_update_user(client):
         "email": "test@test.de",
         "password": "password123"
     }
-    response = client.patch(f"/users/{user_id}", json=update_data)
-    assert response.status_code == 200
+    response_patch = client.patch(f"/users/{user_id}", json=update_data, headers=headers)
+    assert response_patch.status_code == 200, response_patch.text
 
 
 def test_update_user_with_empty_username(client):
@@ -157,12 +207,20 @@ def test_update_user_with_empty_username(client):
         "email": "test@test.de",
         "password": "password123"
     }
-    response = client.post("/users/", json=user)
-    assert response.status_code == 201
+    response_create = client.post("/users/", json=user)
+    assert response_create.status_code == 201, response_create.text
 
     # get the created user's ID
-    created = response.json()
+    created = response_create.json()
     user_id = created["id"]
+
+    response_login = client.post("/users/login", 
+    data={"username": "dave", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
 
     # update the user
     update_data = {
@@ -170,6 +228,6 @@ def test_update_user_with_empty_username(client):
         "email": "test@test.de",
         "password": "password123"
     }
-    response = client.patch(f"/users/{user_id}", json=update_data)
-    assert response.status_code == 422
+    response_patch = client.patch(f"/users/{user_id}", json=update_data, headers=headers)
+    assert response_patch.status_code == 422, response_patch.text 
 
