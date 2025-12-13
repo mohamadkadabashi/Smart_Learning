@@ -28,3 +28,6 @@ class SubjectTestRead(SubjectTestBase):
     subject_id: int
     created_at: datetime
     updated_at: datetime
+
+class SubjectTestUpdate(SQLModel):
+    name: Annotated[Optional[str], StringConstraints(strip_whitespace=True, min_length=1)] = None
