@@ -1,9 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from models.subject_tests import SubjectTest, SubjectTestCreate, SubjectTestRead
+from models.subject_tests import SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate
+from models.subject import Subject
 from database import SessionDep
+from typing import List
+from sqlmodel import select
+from config.logger_config import logger
 import requests
 from pathlib import Path
-from config.logger_config import logger
 
 router = APIRouter(prefix="/subjecttests", tags=["subjecttests"])
 
@@ -42,7 +45,7 @@ def create_subjectTest(
         # Ausgabe des Inhalts in response, sollte nur xml sein
         test = response.content,
         question_type = subjectTest_create.question_type,
-        question_count = subjectTest_create.question_type,
+        question_count = subjectTest_create.question_count,
         subject_id = subjectTest_create.subject_id
     )
 
@@ -51,3 +54,94 @@ def create_subjectTest(
     session.refresh(db_subjectTest)
     logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.id} has been created")
     return db_subjectTest
+
+# Testfunktion, um Daten für andere API Anfragen einzufügen
+# @router.post("/TEST", response_model = SubjectTestRead, status_code=201)
+# def TESTcreate_subjectTest(
+#     subjectTest_create: SubjectTestCreate,
+#     session: SessionDep
+# ):
+#     db_subjectTest = SubjectTest(
+#         name = subjectTest_create.name,
+#         test = "test.xml",
+#         question_type = subjectTest_create.question_type,
+#         question_count = subjectTest_create.question_count,
+#         subject_id = subjectTest_create.subject_id
+#     )
+
+#     session.add(db_subjectTest)
+#     session.commit()
+#     session.refresh(db_subjectTest)
+#     logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.id} has been created")
+#     return db_subjectTest
+
+@router.get("/", response_model=List[SubjectTestRead])
+def read_subjectTests(
+    session: SessionDep
+):
+    subjectTests = session.exec(select(SubjectTest)).all()
+    return subjectTests
+
+@router.get("/bySubject/{subject_id}")
+def read_subjectTests_of_subject(
+    subject_id: int,
+    session: SessionDep
+):
+    subjectTests = session.exec(select(SubjectTest).where(SubjectTest.subject_id == subject_id)).all()
+    if not subjectTests:
+        logger.warning(f"Subject {subject_id} does not exist, so no subjectTests found")
+        raise HTTPException(status_code=404, detail="Subject not found")
+    return subjectTests
+
+@router.get("/{subjectTest_id}", response_model=SubjectTestRead)
+def get_subjectTest(
+    subjectTest_id: int,
+    session: SessionDep
+):
+    subjectTest = session.get(SubjectTest, subjectTest_id)
+    if not subjectTest:
+        logger.warning(f"SubjectTest with ID {subjectTest_id} does not exist")
+        raise HTTPException(status_code=404, detail="SubjectTest not found")
+    return subjectTest
+
+@router.patch("/{subjectTest_id}", response_model=SubjectTestUpdate)
+def update_subjectTest(
+    subjectTest_id: int,
+    subjectTest_update: SubjectTestUpdate,
+    session: SessionDep
+):
+    subjectTest = session.get(SubjectTest, subjectTest_id)
+    if not subjectTest:
+        logger.warning(f"SubjectTest {subjectTest_id} does not exist, so no update")
+        raise HTTPException(status_code=404, detail="SubjectTest not found")
+    
+    subjectTest_name_subject_id_combo_exists = session.exec(select(SubjectTest)
+                                                            .where(SubjectTest.name == subjectTest_update.name)
+                                                            .where(SubjectTest.subject_id == subjectTest.subject_id)).first()
+
+    if subjectTest_name_subject_id_combo_exists:
+        logger.warning(f"Subject {subjectTest.subject_id} already has subjectTest with name {subjectTest_update.name}")
+        raise HTTPException(status_code=409, detail="Subject already has subjectTest with this name")
+    
+    subjectTest.name = subjectTest_update.name
+    
+    session.add(subjectTest)
+    session.commit()
+    session.refresh(subjectTest)
+    logger.info(f"SubjectTest {subjectTest_id} has been updated")
+    return subjectTest
+
+@router.delete("/{subjectTest_id}", status_code=204)
+def delete_subjectTest(
+    subjectTest_id: int,
+    session: SessionDep
+):
+    subjectTest = session.get(SubjectTest, subjectTest_id)
+    if not subjectTest:
+        logger.warning(f"SubjectTest {subjectTest_id} does not exist, so no delete")
+        raise HTTPException(status_code=404, detail="SubjectTest not found")
+    
+    session.delete(subjectTest)
+    session.commit()
+    logger.info(f"SubjectTest {subjectTest_id} has been deleted")
+    return None
