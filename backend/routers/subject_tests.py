@@ -56,24 +56,24 @@ def create_subjectTest(
     return db_subjectTest
 
 # Testfunktion, um Daten für andere API Anfragen einzufügen
-# @router.post("/TEST", response_model = SubjectTestRead, status_code=201)
-# def TESTcreate_subjectTest(
-#     subjectTest_create: SubjectTestCreate,
-#     session: SessionDep
-# ):
-#     db_subjectTest = SubjectTest(
-#         name = subjectTest_create.name,
-#         test = "test.xml",
-#         question_type = subjectTest_create.question_type,
-#         question_count = subjectTest_create.question_count,
-#         subject_id = subjectTest_create.subject_id
-#     )
+@router.post("/TEST", response_model = SubjectTestRead, status_code=201)
+def PLACEHOLDERTESTcreate_subjectTest(
+    subjectTest_create: SubjectTestCreate,
+    session: SessionDep
+):
+    db_subjectTest = SubjectTest(
+        name = subjectTest_create.name,
+        test = "test.xml",
+        question_type = subjectTest_create.question_type,
+        question_count = subjectTest_create.question_count,
+        subject_id = subjectTest_create.subject_id
+    )
 
-#     session.add(db_subjectTest)
-#     session.commit()
-#     session.refresh(db_subjectTest)
-#     logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.id} has been created")
-#     return db_subjectTest
+    session.add(db_subjectTest)
+    session.commit()
+    session.refresh(db_subjectTest)
+    logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.id} has been created")
+    return db_subjectTest
 
 @router.get("/", response_model=List[SubjectTestRead])
 def read_subjectTests(
