@@ -1,9 +1,11 @@
 <script setup>
-// keine Funktionen – nur Layout
+import { ref } from 'vue'
+
+// eslint-disable-next-line no-unused-vars
+const value = ref(1)
 // eslint-disable-next-line no-unused-vars
 function hello(){
 console.log("Hallo");
-
 }
 </script>
 
@@ -44,7 +46,12 @@ console.log("Hallo");
       <!-- Anzahl -->
       <div class="form-group">
         <label>Anzahl</label>
-        <input type="number" placeholder="z. B. 10" class="number-input"/>
+        <input type="number" placeholder="z. B. 10" v-model.number="value"/>
+      </div>
+
+      <div>
+        <button type="button" class="number-minus" @click="value--"></button>
+        <button  type="button" class="number-plus" @click="value++"></button>
       </div>
 
       <!-- Skript hochladen -->
