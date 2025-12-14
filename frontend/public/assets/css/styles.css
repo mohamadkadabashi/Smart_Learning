@@ -48,6 +48,13 @@ label.upload-btn {
     background-repeat: no-repeat;
 }
 
+/* Number input */
+input[type="number"]::-webkit-inner-spin-button, /* blend out original spinner buttons */
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 /* Single/Multiple Choice */
 [role=checkbox] {
     padding: .25rem .25rem .25rem 4rem;
@@ -151,12 +158,42 @@ button.primary {
         background-color: #FFD1B2;
     }
 
+button.number-plus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/plus-icon.svg');
+    background-size: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+button.number-minus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/minus-icon.svg');
+    background-size: 70%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 /* Dropdowns */
 select {
     appearance: none; /* remove standard arrow icon */
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
+    background-image: url('../images/arrow-down-icon.svg');
+    background-size: 5%;
+    background-position: right;
+    background-repeat: no-repeat;
 }
 select:focus,
 select:focus-visible {
