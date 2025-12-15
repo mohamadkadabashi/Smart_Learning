@@ -35,6 +35,8 @@ pnpm-debug.log*
 **/*.pytest_cache/
 # test database files
 **/tests/db/
+# testfile for file upload
+backend/routers/BDP_01_NoSQL_Einfuehrung.pdf
 
 # Environment variables file
 .env
