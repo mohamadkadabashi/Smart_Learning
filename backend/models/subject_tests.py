@@ -9,21 +9,26 @@ class SubjectTestBase(SQLModel):
 
 class SubjectTest(SubjectTestBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    test: Optional[str] = None  # XML-Inhalt als TEXT
-    question_type: Optional[str] = None
-    question_count: Optional[int] = Field(default=None)
+     # XML as TEXT
+    test: Optional[str] = None
+    question_type: str = None
+    question_count: int = Field(default=None)
     subject_id: int = Field(foreign_key="subject.id", nullable=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 
+    __table_args__ = (
+        CheckConstraint("question_count>0", name="question_count_non_negative"),
+    )
+
 class SubjectTestCreate(SubjectTestBase):
-    subject_id: Optional[int] = Field(default=None, foreign_key="subject.id")
-    question_type: Optional[str] = Field(default=None)
-    question_count: Optional[int] = Field(default=None)
+    subject_id: int = Field(default=None, foreign_key="subject.id")
+    question_type: str = Field(default=None)
+    question_count: int = Field(default=None)
 
 class SubjectTestRead(SubjectTestBase):
     id: int
-    test: str
+    test: Optional[str]
     question_type: str
     question_count: int
     subject_id: int
