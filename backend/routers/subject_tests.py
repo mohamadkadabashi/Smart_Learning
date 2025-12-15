@@ -5,6 +5,7 @@ from database import SessionDep
 from typing import List
 from sqlmodel import select
 from config.logger_config import logger
+from datetime import datetime, timezone
 import requests
 from pathlib import Path
 
@@ -15,6 +16,15 @@ def create_subjectTest(
     subjectTest_create: SubjectTestCreate,
     session: SessionDep
 ):
+    if not subjectTest_create.question_count > 0:
+        logger.warning(f"Number of questions needs to be larger then 0 ({subjectTest_create.question_count})")
+        raise HTTPException(status_code=400, detail="Number of questions needs to be larger then 0")
+    
+    subjects = session.exec(select(Subject).where(Subject.id == subjectTest_create.subject_id)).first()
+    if not subjects:
+        logger.warning(f"Subject {subjectTest_create.subject_id} does not exist, so no subjectTest creatable")
+        raise HTTPException(status_code=404, detail="Subject not found")
+
     # Test von n8n anfordern
     webhook_url = "https://n8n.Forschungsding.com/start"
     header = {"Content-Type": "application/json"}
@@ -26,16 +36,23 @@ def create_subjectTest(
     #file = open("BDP_01_NoSQL_Einfuehrung.pdf", "rb")
     scriptPath = Path(__file__).parent
     filePath = scriptPath / "BDP_01_NoSQL_Einfuehrung.pdf"
-    file = open(filePath, "rb")
+    #file = open(filePath, "rb")
+    with open(filePath, "rb") as file:
     # TODO: Auth einfügen, sobald auf Branch bereitgestellt
-    try:
-        response = requests.post(url=webhook_url,
-                                headers=header,
-                                json=data,
-                                files={"file": file}) # auth= später
-    except requests.exceptions.RequestException as err:
-        logger.warning(err)
-        raise HTTPException(status_code=408, detail="Failed to generate test")
+        try:
+            response = requests.post(url=webhook_url,
+                                    headers=header,
+                                    json=data,
+                                    files={"file": file},
+                                    # timeout = (Conncect Timeout, Read Timeout) in seconds
+                                    timeout=(3, 30)) # auth= später
+        except requests.exceptions.RequestException as err:
+            logger.warning(err)
+            raise HTTPException(status_code=408, detail="Failed to generate test")
+        
+    if not response:
+        logger.warning(f"No answer from n8n")
+        raise HTTPException(status_code=500, detail="No answer was generated")
 
     # Test einspeisen
     # test = response.json()
@@ -43,7 +60,7 @@ def create_subjectTest(
     db_subjectTest = SubjectTest(
         name = subjectTest_create.name,
         # Ausgabe des Inhalts in response, sollte nur xml sein
-        test = response.content,
+        test = response.text,
         question_type = subjectTest_create.question_type,
         question_count = subjectTest_create.question_count,
         subject_id = subjectTest_create.subject_id
@@ -52,7 +69,7 @@ def create_subjectTest(
     session.add(db_subjectTest)
     session.commit()
     session.refresh(db_subjectTest)
-    logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.id} has been created")
+    logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.subject_id} has been created")
     return db_subjectTest
 
 # Testfunktion, um Daten für andere API Anfragen einzufügen
@@ -87,10 +104,12 @@ def read_subjectTests_of_subject(
     subject_id: int,
     session: SessionDep
 ):
-    subjectTests = session.exec(select(SubjectTest).where(SubjectTest.subject_id == subject_id)).all()
-    if not subjectTests:
+    subject = session.exec(select(Subject).where(Subject.id == subject_id)).first()
+    if not subject:
         logger.warning(f"Subject {subject_id} does not exist, so no subjectTests found")
         raise HTTPException(status_code=404, detail="Subject not found")
+    
+    subjectTests = session.exec(select(SubjectTest).where(SubjectTest.subject_id == subject_id)).all()
     return subjectTests
 
 @router.get("/{subjectTest_id}", response_model=SubjectTestRead)
@@ -104,7 +123,7 @@ def get_subjectTest(
         raise HTTPException(status_code=404, detail="SubjectTest not found")
     return subjectTest
 
-@router.patch("/{subjectTest_id}", response_model=SubjectTestUpdate)
+@router.patch("/{subjectTest_id}", response_model=SubjectTestRead)
 def update_subjectTest(
     subjectTest_id: int,
     subjectTest_update: SubjectTestUpdate,
@@ -115,6 +134,11 @@ def update_subjectTest(
         logger.warning(f"SubjectTest {subjectTest_id} does not exist, so no update")
         raise HTTPException(status_code=404, detail="SubjectTest not found")
     
+    if subjectTest_update.name == None:
+        logger.warning(f"No name to update entered")
+        raise HTTPException(status_code=400, detail="No Name has been entered")
+
+    
     subjectTest_name_subject_id_combo_exists = session.exec(select(SubjectTest)
                                                             .where(SubjectTest.name == subjectTest_update.name)
                                                             .where(SubjectTest.subject_id == subjectTest.subject_id)).first()
@@ -124,6 +148,7 @@ def update_subjectTest(
         raise HTTPException(status_code=409, detail="Subject already has subjectTest with this name")
     
     subjectTest.name = subjectTest_update.name
+    subjectTest.updated_at = datetime.now(timezone.utc)
     
     session.add(subjectTest)
     session.commit()
