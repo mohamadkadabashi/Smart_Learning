@@ -5,13 +5,15 @@ from db.database import SessionDep
 from config.logger_config import logger
 from models.subject import Subject, SubjectCreate, SubjectRead, SubjectUpdate
 from models.user import User
+from dependencies.dependency import CurrentUser
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
 
 @router.post("/", response_model=SubjectRead, status_code=201)
 def create_subject(
     subject_create: SubjectCreate,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     user_id_exists = session.exec(select(User).where(User.id == subject_create.user_id)).first()
     if not user_id_exists:
@@ -38,7 +40,8 @@ def create_subject(
 
 @router.get("/", response_model=List[SubjectRead])
 def read_subjects(
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subjects = session.exec(select(Subject)).all()
     return subjects
@@ -46,7 +49,8 @@ def read_subjects(
 @router.get("/byUser/{user_id}", response_model=List[SubjectRead])
 def read_subjects_of_user(
     user_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subjects = session.exec(select(Subject).where(Subject.user_id == user_id)).all()
     if not subjects:
@@ -57,7 +61,8 @@ def read_subjects_of_user(
 @router.get("/{subject_id}", response_model=SubjectRead)
 def get_subject(
     subject_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
@@ -69,7 +74,8 @@ def get_subject(
 def update_subject(
     subject_id: int,
     subject_update: SubjectUpdate,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
@@ -94,7 +100,8 @@ def update_subject(
 @router.delete("/{subject_id}", status_code=204)
 def delete_subject(
     subject_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
