@@ -1,3 +1,5 @@
+token_header = {"Content-Type": "application/x-www-form-urlencoded"}
+
 def test_read_subjectTests(client):
     # create user for subject
     r1 = client.post("/users/", json={
@@ -8,12 +10,22 @@ def test_read_subjectTests(client):
 
     assert r1.status_code == 201
 
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     # create subjects
-    r2 = client.post("/subjects/", json={
+    r2 = client.post("/subjects/", headers=headers, json={
         "name": "DBS",
         "user_id": 1
     })
-    r3 = client.post("/subjects/", json={
+    r3 = client.post("/subjects/", headers=headers, json={
         "name": "DBS2",
         "user_id": 1
     })
@@ -22,13 +34,13 @@ def test_read_subjectTests(client):
     assert r3.status_code == 201
 
     # create subjectTests
-    r4 = client.post("/subjecttests/TEST", json={
+    r4 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
         "question_type": "Single-Choice",
         "question_count": 8
     })
-    r5 = client.post("/subjecttests/TEST", json={
+    r5 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Joins",
         "subject_id": 2,
         "question_type": "Multiple-Choice",
@@ -39,7 +51,7 @@ def test_read_subjectTests(client):
     assert r5.status_code == 201
 
     # read subjects
-    response = client.get("/subjecttests/")
+    response = client.get("/subjecttests/", headers=headers)
     assert response.status_code == 200
 
     data = response.json()
@@ -79,8 +91,18 @@ def test_read_subjectTests_bySubject(client):
 
     assert r1.status_code == 201
 
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     # create subject
-    r2 = client.post("/subjects/", json={
+    r2 = client.post("/subjects/", headers=headers, json={
         "name": "DBS",
         "user_id": 1
     })
@@ -88,13 +110,13 @@ def test_read_subjectTests_bySubject(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r4 = client.post("/subjecttests/TEST", json={
+    r4 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
         "question_type": "Single-Choice",
         "question_count": 8
     })
-    r5 = client.post("/subjecttests/TEST", json={
+    r5 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Joins",
         "subject_id": 1,
         "question_type": "Multiple-Choice",
@@ -107,7 +129,7 @@ def test_read_subjectTests_bySubject(client):
     # read subject
     subject = r2.json()
     subject_id = subject["id"]
-    response = client.get(f"/subjecttests/bySubject/{subject_id}")
+    response = client.get(f"/subjecttests/bySubject/{subject_id}", headers=headers)
     assert response.status_code == 200
 
     data = response.json()
@@ -137,8 +159,27 @@ def test_read_subjectTests_bySubject(client):
         assert "updated_at" in subject
 
 def test_read_subjectTests_bySubject_noexistent_subject_id(client):
+    # create user for login
+    r1 = client.post("/users/", json={
+        "username": "alice",
+        "email": "alice@example.com",
+        "password": "password123"
+    })
+
+    assert r1.status_code == 201
+
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     subject_id = 42
-    response = client.get(f"/subjecttests/bySubject/{subject_id}")
+    response = client.get(f"/subjecttests/bySubject/{subject_id}", headers=headers)
     assert response.status_code == 404
 
 def test_read_subject(client):
@@ -151,8 +192,18 @@ def test_read_subject(client):
 
     assert r1.status_code == 201
 
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     # create subject
-    r2 = client.post("/subjects/", json={
+    r2 = client.post("/subjects/", headers=headers, json={
         "name": "DBS",
         "user_id": 1
     })
@@ -160,7 +211,7 @@ def test_read_subject(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", json={
+    r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
         "question_type": "Single-Choice",
@@ -171,7 +222,7 @@ def test_read_subject(client):
 
     # read subjectTest
     subjectTest_id = r3.json()["id"]
-    response = client.get(f"/subjecttests/{subjectTest_id}")
+    response = client.get(f"/subjecttests/{subjectTest_id}", headers=headers)
 
     assert response.status_code == 200
 
@@ -185,8 +236,27 @@ def test_read_subject(client):
     assert "updated_at" in subjectTest
 
 def test_read_subjectTest_noexistent_id(client):
+    # create user for login
+    r1 = client.post("/users/", json={
+        "username": "alice",
+        "email": "alice@example.com",
+        "password": "password123"
+    })
+
+    assert r1.status_code == 201
+
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     subjectTest_id = 42
-    response = client.get(f"/subjecttests/{subjectTest_id}")
+    response = client.get(f"/subjecttests/{subjectTest_id}", headers=headers)
     assert response.status_code == 404
 
 def test_update_subjectTest(client):
@@ -199,8 +269,18 @@ def test_update_subjectTest(client):
 
     assert r1.status_code == 201
 
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     # create subject
-    r2 = client.post("/subjects/", json={
+    r2 = client.post("/subjects/", headers=headers, json={
         "name": "DBS",
         "user_id": 1
     })
@@ -208,7 +288,7 @@ def test_update_subjectTest(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", json={
+    r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
         "question_type": "Single-Choice",
@@ -219,7 +299,7 @@ def test_update_subjectTest(client):
 
     # update subjectTest
     subjectTest_id = r3.json()["id"]
-    r4 = client.patch(f"/subjecttests/{subjectTest_id}", json={
+    r4 = client.patch(f"/subjecttests/{subjectTest_id}", headers=headers, json={
         "name": "Joins"
     })
 
@@ -228,9 +308,28 @@ def test_update_subjectTest(client):
     assert r4.json()["name"] == "Joins"
 
 def test_update_subjectTest_noexistent_id(client):
-     # update subject
+    # create user for login
+    r1 = client.post("/users/", json={
+        "username": "alice",
+        "email": "alice@example.com",
+        "password": "password123"
+    })
+
+    assert r1.status_code == 201
+
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    # update subject
     subjectTest_id = 42
-    r3 = client.patch(f"/subjecttests/{subjectTest_id}", json={
+    r3 = client.patch(f"/subjecttests/{subjectTest_id}", headers=headers, json={
         "name": "Joins"
     })
     assert r3.status_code == 404
@@ -245,8 +344,18 @@ def test_update_subjectTest_name_subeject_id_combo_already_exists(client):
 
     assert r1.status_code == 201
 
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     # create subject
-    r2 = client.post("/subjects/", json={
+    r2 = client.post("/subjects/", headers=headers, json={
         "name": "DBS",
         "user_id": 1
     })
@@ -254,13 +363,13 @@ def test_update_subjectTest_name_subeject_id_combo_already_exists(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", json={
+    r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
         "question_type": "Single-Choice",
         "question_count": 8
     })
-    r4 = client.post("/subjecttests/TEST", json={
+    r4 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Joins",
         "subject_id": 1,
         "question_type": "Multiple-Choice",
@@ -272,7 +381,7 @@ def test_update_subjectTest_name_subeject_id_combo_already_exists(client):
 
     # update subject
     subjectTest_id = r3.json()["id"]
-    r5 = client.patch(f"/subjecttests/{subjectTest_id}", json={
+    r5 = client.patch(f"/subjecttests/{subjectTest_id}", headers=headers, json={
         "name": "Joins"
     })
 
@@ -288,8 +397,18 @@ def test_delete_subjectTest(client):
 
     assert r1.status_code == 201
 
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     # create subject
-    r2 = client.post("/subjects/", json={
+    r2 = client.post("/subjects/", headers=headers, json={
         "name": "DBS",
         "user_id": 1
     })
@@ -297,7 +416,7 @@ def test_delete_subjectTest(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", json={
+    r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
         "question_type": "Single-Choice",
@@ -308,13 +427,32 @@ def test_delete_subjectTest(client):
 
     # delete subject
     subjectTest_id = r3.json()["id"]
-    r4 = client.delete(f"/subjecttests/{subjectTest_id}")
+    r4 = client.delete(f"/subjecttests/{subjectTest_id}", headers=headers)
 
     assert r4.status_code == 204
 
 def test_delete_subjectTest_noexistent_id(client):
+    # create user for login
+    r1 = client.post("/users/", json={
+        "username": "alice",
+        "email": "alice@example.com",
+        "password": "password123"
+    })
+
+    assert r1.status_code == 201
+
+    # login as user to get token
+    response_login = client.post("/users/login",
+    data={"username": "alice", "password": "password123"},
+    headers=token_header
+    )
+    assert response_login.status_code == 200, response_login.text
+
+    token = response_login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
     # delete subject
     subjectTest_id = 42
-    r1 = client.delete(f"/subjecttests/{subjectTest_id}")
+    r1 = client.delete(f"/subjecttests/{subjectTest_id}", headers=headers)
 
     assert r1.status_code == 404
