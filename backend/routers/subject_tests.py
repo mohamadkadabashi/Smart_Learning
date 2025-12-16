@@ -6,6 +6,7 @@ from typing import List
 from sqlmodel import select
 from config.logger_config import logger
 from datetime import datetime, timezone
+from dependencies.dependency import CurrentUser
 import requests
 from pathlib import Path
 
@@ -14,7 +15,8 @@ router = APIRouter(prefix="/subjecttests", tags=["subjecttests"])
 @router.post("/", response_model=SubjectTestRead, status_code=201)
 def create_subjectTest(
     subjectTest_create: SubjectTestCreate,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     if not subjectTest_create.question_count > 0:
         logger.warning(f"Number of questions needs to be larger then 0 ({subjectTest_create.question_count})")
@@ -76,7 +78,8 @@ def create_subjectTest(
 @router.post("/TEST", response_model = SubjectTestRead, status_code=201)
 def PLACEHOLDERTESTcreate_subjectTest(
     subjectTest_create: SubjectTestCreate,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     db_subjectTest = SubjectTest(
         name = subjectTest_create.name,
@@ -94,7 +97,8 @@ def PLACEHOLDERTESTcreate_subjectTest(
 
 @router.get("/", response_model=List[SubjectTestRead])
 def read_subjectTests(
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subjectTests = session.exec(select(SubjectTest)).all()
     return subjectTests
@@ -102,7 +106,8 @@ def read_subjectTests(
 @router.get("/bySubject/{subject_id}")
 def read_subjectTests_of_subject(
     subject_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subject = session.exec(select(Subject).where(Subject.id == subject_id)).first()
     if not subject:
@@ -115,7 +120,8 @@ def read_subjectTests_of_subject(
 @router.get("/{subjectTest_id}", response_model=SubjectTestRead)
 def get_subjectTest(
     subjectTest_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subjectTest = session.get(SubjectTest, subjectTest_id)
     if not subjectTest:
@@ -127,7 +133,8 @@ def get_subjectTest(
 def update_subjectTest(
     subjectTest_id: int,
     subjectTest_update: SubjectTestUpdate,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subjectTest = session.get(SubjectTest, subjectTest_id)
     if not subjectTest:
@@ -159,7 +166,8 @@ def update_subjectTest(
 @router.delete("/{subjectTest_id}", status_code=204)
 def delete_subjectTest(
     subjectTest_id: int,
-    session: SessionDep
+    session: SessionDep,
+    current_user: CurrentUser
 ):
     subjectTest = session.get(SubjectTest, subjectTest_id)
     if not subjectTest:
