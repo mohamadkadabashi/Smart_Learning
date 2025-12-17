@@ -21,6 +21,7 @@ input {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
+    font-family: "Open Sans";
 }
 
 input:focus,
@@ -43,9 +44,16 @@ label.upload-btn {
     background-color: #D6D6D6;
     padding: 20px 20px;
     background-image: url('../images/plus-icon.svg');
-    background-size: 7%;   /* size of icon inside button */
+    background-size: 5%;   /* size of icon inside button */
     background-position: center;
     background-repeat: no-repeat;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    height: 3rem;
+    width: 30vw;
+}
+label.upload-btn:hover {
+    background-size: 6%;
+    background-color: #cfcfcf;
 }
 
 /* Number input */
@@ -53,6 +61,7 @@ input[type="number"]::-webkit-inner-spin-button, /* blend out original spinner b
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+    font-family: "Open Sans";
 }
 
 /* Single/Multiple Choice */
@@ -114,6 +123,7 @@ input[type="number"]::-webkit-outer-spin-button {
 /* Buttons */
 button {
     transition: background 0.3s ease, transform 0.2s ease;
+    font-family: "Open Sans";
 }
 
 button.secondary {
@@ -167,8 +177,13 @@ button.number-plus {
     margin-left: 15px;
     background-image: url('../images/plus-icon.svg');
     background-size: 50%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
     background-position: center;
     background-repeat: no-repeat;
+}
+button.number-plus:hover {
+    background-size: 60%;
+    background-color: #cfcfcf;
 }
 
 button.number-minus {
@@ -180,8 +195,13 @@ button.number-minus {
     margin-left: 15px;
     background-image: url('../images/minus-icon.svg');
     background-size: 70%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
     background-position: center;
     background-repeat: no-repeat;
+}
+button.number-minus:hover {
+    background-size: 90%;
+    background-color: #cfcfcf;
 }
 
 /* Dropdowns */
@@ -191,9 +211,10 @@ select {
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
     background-image: url('../images/arrow-down-icon.svg');
-    background-size: 5%;
-    background-position: right;
+    background-size: 3%;
+    background-position: right 0.75rem center;
     background-repeat: no-repeat;
+    font-family: "Open Sans";
 }
 select:focus,
 select:focus-visible {
@@ -201,6 +222,15 @@ select:focus-visible {
     background-color: var(--text-entry-focus-bg);
     border: var(--text-entry-border-width) solid var(--primary-color);
     box-shadow: none;
+}
+
+label {
+    font-family: "Open Sans";
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 250;
+    letter-spacing: 0px;
+    margin-bottom: 6px;
 }
 
 
