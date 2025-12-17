@@ -18,5 +18,17 @@ module.exports = {
         }
       ])
     ]
-  }
+    },
+
+    chainWebpack: config => {
+        const svgRule = config.module.rule('svg');
+
+        // Entferne vorhandenen loader
+        svgRule.uses.clear();
+
+        // Füge vue-svg-loader hinzu
+        svgRule
+            .use('vue-svg-loader')
+            .loader('vue-svg-loader');
+    }
 };
