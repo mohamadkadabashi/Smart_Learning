@@ -30,7 +30,7 @@ const routes = [
     name: 'form',
     component: Test,
     meta: {
-      title: 'n8nFormular'
+      title: 'Test erstellen'
     }
   }
 ]
