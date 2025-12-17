@@ -9,7 +9,7 @@ Vue.use(VueRouter)
 //TODO: add "requiresAuth" for specific sites to handle expired tokens
 const routes = [
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
     component: Home,
     meta: {
@@ -95,4 +95,10 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
+  if (to.matched.some((record) => record.meta.requiresAuth) && !token) {
+    next("/login");
+  } else {
+    next();
+  }
+});
 export default router
