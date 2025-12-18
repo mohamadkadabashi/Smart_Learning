@@ -1,22 +1,26 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from models.subject_tests import SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate
 from models.subject import Subject
 from database import SessionDep
-from typing import List
+from typing import List, Annotated
 from sqlmodel import select
 from config.logger_config import logger
 from datetime import datetime, timezone
 from dependencies.dependency import CurrentUser
+from fastapi.security import OAuth2PasswordBearer
 import requests
 from pathlib import Path
 
 router = APIRouter(prefix="/subjecttests", tags=["subjecttests"])
+# OAuth2 Scheme
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/login")
 
 @router.post("/", response_model=SubjectTestRead, status_code=201)
 def create_subjectTest(
     subjectTest_create: SubjectTestCreate,
     session: SessionDep,
-    current_user: CurrentUser
+    current_user: CurrentUser,
+    token: Annotated[str, Depends(oauth2_scheme)],
 ):
     if not subjectTest_create.question_count > 0:
         logger.warning(f"Number of questions needs to be larger then 0 ({subjectTest_create.question_count})")
@@ -28,33 +32,34 @@ def create_subjectTest(
         raise HTTPException(status_code=404, detail="Subject not found")
 
     # Test von n8n anfordern
-    webhook_url = "https://n8n.Forschungsding.com/start"
-    header = {"Content-Type": "application/json"}
+    webhook_url = "https://n8n.rattenserver.duckdns.org/webhook-test/d0575add-b533-4d10-9069-250f79d935c0"
+    header = {"Authorization": f"Bearer {token}",
+              "Accept": "application/json",}
     data = {
         "question_type": subjectTest_create.question_type,
-        "question_count": subjectTest_create.question_count
+        "question_count": str(subjectTest_create.question_count)
     }
     # TODO: File durch Nutzer auswählbar programmieren
     #file = open("BDP_01_NoSQL_Einfuehrung.pdf", "rb")
     scriptPath = Path(__file__).parent
     filePath = scriptPath / "BDP_01_NoSQL_Einfuehrung.pdf"
     #file = open(filePath, "rb")
-    with open(filePath, "rb") as file:
-    # TODO: Auth einfügen, sobald auf Branch bereitgestellt
-        try:
-            response = requests.post(url=webhook_url,
-                                    headers=header,
-                                    json=data,
-                                    files={"file": file},
-                                    # timeout = (Conncect Timeout, Read Timeout) in seconds
-                                    timeout=(3, 30)) # auth= später
-        except requests.exceptions.RequestException as err:
-            logger.warning(err)
-            raise HTTPException(status_code=408, detail="Failed to generate test")
+    try:
+        with open(filePath, "rb") as file:
+            response = requests.post(
+                url=webhook_url,
+                headers=header,
+                data=data,
+                files={"file": (filePath.name, file, "application/pdf")},
+                timeout=(30, 60),
+            )
+    except requests.exceptions.RequestException as err:
+        logger.warning(err)
+        raise HTTPException(status_code=408, detail="Failed to generate test")
         
     if not response:
         logger.warning(f"No answer from n8n")
-        raise HTTPException(status_code=500, detail="No answer was generated")
+        raise HTTPException(status_code=500, detail="No test was generated")
 
     # Test einspeisen
     # test = response.json()
