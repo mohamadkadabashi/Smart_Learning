@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Test from '../views/test.vue'
+import Login from '../views/LoginRegistrationView.vue'
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,14 @@ const routes = [
     component: Test,
     meta: {
       title: 'Test erstellen'
+    }
+  },
+  {
+    path: '/login',
+    name: 'Login/Registrierung',
+    component: Login,
+    meta: {
+       title: 'Smart Learning Login/Registrierung'
     }
   }
 ]

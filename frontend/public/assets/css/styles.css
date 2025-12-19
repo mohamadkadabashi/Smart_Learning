@@ -8,7 +8,7 @@
     --choice-control-checkbox-bg: #D9D9D9;
     --choice-control-checkbox-border-color: #000000;
     --text-entry-border-width: 2px;
-    --text-entry-border-radius: 30px;
+    --text-entry-border-radius: 50px;
     --choice-control-border-width: 2px;
     --choice-control-border-radius: 30px;
     --choice-control-checkbox-border-width: 1px;
@@ -22,15 +22,17 @@ input {
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
     font-family: "Open Sans";
+    height: 3rem;
+    width: 30vw;
 }
 
-input:focus,
-input:focus-visible {
-    outline: none;
-    background-color: var(--text-entry-focus-bg);
-    border: var(--text-entry-border-width) solid var(--primary-color);
-    box-shadow: none;
-}
+    input:focus,
+    input:focus-visible {
+        outline: none;
+        background-color: var(--text-entry-focus-bg);
+        border: var(--text-entry-border-width) solid var(--primary-color);
+        box-shadow: none;
+    }
 
 /* File Upload */
 input.upload {
@@ -76,54 +78,56 @@ input[type="number"]::-webkit-outer-spin-button {
     background-color: var(--choice-control-radio-bg);
 }
 
-[role=checkbox][aria-checked=true],
-[role=checkbox][aria-checked=true]:focus:not(:focus-visible),
-[role=radio][aria-checked=true],
-[role=radio][aria-checked=true]:focus:not(:focus-visible) {
-    border: var(--choice-control-border-width) solid var(--primary-color);
-    border-radius: var(--choice-control-border-radius);
-    background-color: var(--choice-control-checked-bg);
-}
+    [role=checkbox][aria-checked=true],
+    [role=checkbox][aria-checked=true]:focus:not(:focus-visible),
+    [role=radio][aria-checked=true],
+    [role=radio][aria-checked=true]:focus:not(:focus-visible) {
+        border: var(--choice-control-border-width) solid var(--primary-color);
+        border-radius: var(--choice-control-border-radius);
+        background-color: var(--choice-control-checked-bg);
+    }
 
-[role=checkbox][aria-checked=false]:focus:not(:focus-visible),
-[role=radio][aria-checked=false]:focus:not(:focus-visible) {
-    border: var(--choice-control-border-width) solid transparent;
-    border-radius: var(--choice-control-border-radius);
-}
+    [role=checkbox][aria-checked=false]:focus:not(:focus-visible),
+    [role=radio][aria-checked=false]:focus:not(:focus-visible) {
+        border: var(--choice-control-border-width) solid transparent;
+        border-radius: var(--choice-control-border-radius);
+    }
 
-[role=checkbox]:not(.control-hidden):focus-visible,
-[role=radio]:not(.control-hidden):focus-visible {
-    border: var(--choice-control-border-width) solid var(--choice-control-focus-border-color);
-    border-radius: var(--choice-control-border-radius);
-}
+    [role=checkbox]:not(.control-hidden):focus-visible,
+    [role=radio]:not(.control-hidden):focus-visible {
+        border: var(--choice-control-border-width) solid var(--choice-control-focus-border-color);
+        border-radius: var(--choice-control-border-radius);
+    }
 
-[role=checkbox]:not(.control-hidden):before {
-    margin: 0 .95rem;
-    border-color: var(--choice-control-checkbox-border-color);
-}
+    [role=checkbox]:not(.control-hidden):before {
+        margin: 0 .95rem;
+        border-color: var(--choice-control-checkbox-border-color);
+    }
 
-[role=radio]:not(.control-hidden):before {
-    width: 0;
-    height: 0;
-    border: none;
-}
+    [role=radio]:not(.control-hidden):before {
+        width: 0;
+        height: 0;
+        border: none;
+    }
 
-[role=checkbox]:not(.control-hidden):focus:before,
-[role=radio]:not(.control-hidden):focus:before {
-    box-shadow: none;
-    border-color: var(--choice-control-checkbox-border-color);
-}
+    [role=checkbox]:not(.control-hidden):focus:before,
+    [role=radio]:not(.control-hidden):focus:before {
+        box-shadow: none;
+        border-color: var(--choice-control-checkbox-border-color);
+    }
 
-[role=checkbox][aria-checked=true]:not(.control-hidden):before {
-    background-color: var(--choice-control-checkbox-bg);
-    background-image: url('../images/checkbox-checked.svg') !important;
-    border: none;
-}
+    [role=checkbox][aria-checked=true]:not(.control-hidden):before {
+        background-color: var(--choice-control-checkbox-bg);
+        background-image: url('../images/checkbox-checked.svg') !important;
+        border: none;
+    }
 
 /* Buttons */
 button {
     transition: background 0.3s ease, transform 0.2s ease;
     font-family: "Open Sans";
+    min-width: 8vw;
+    min-height: 3rem;
 }
 
 button.secondary {
