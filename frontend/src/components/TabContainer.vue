@@ -53,6 +53,7 @@
     border: none;
     border-bottom: 3px solid var(--secondary-color);
     cursor: pointer;
+    font-size: 1.5rem;
 }
 
     .tab-btn.active {
