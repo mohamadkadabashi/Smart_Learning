@@ -4,6 +4,8 @@
       <router-view class="h-100"/>
     </transition>
   </div>
+
+
 </template>
 
 <style>
@@ -17,3 +19,5 @@
   opacity: 0;
 }
 </style>
+
+

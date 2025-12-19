@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Test from '../views/test.vue'
 import Login from '../views/LoginRegistrationView.vue'
 
 Vue.use(VueRouter)
@@ -24,15 +25,23 @@ const routes = [
     meta: {
       title: 'Test Runner'
     }
-    },
-    {
-        path: '/login',
-        name: 'Login/Registrierung',
-        component: Login,
-        meta: {
-            title: 'Smart Learning Login/Registrierung'
-        }
+  },
+  {
+    path: '/form',
+    name: 'form',
+    component: Test,
+    meta: {
+      title: 'Test erstellen'
     }
+  },
+  {
+    path: '/login',
+    name: 'Login/Registrierung',
+    component: Login,
+    meta: {
+      title: 'Login/Registrierung'
+    }
+  }
 ]
 
 // Make this work when deployed to a /testrunner/ folder in production

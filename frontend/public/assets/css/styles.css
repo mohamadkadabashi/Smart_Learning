@@ -23,6 +23,7 @@ input {
     padding: .2rem .4rem;
     height: 3rem;
     width: 30vw;
+    font-family: "Open Sans";
 }
 
     input:focus,
@@ -32,6 +33,38 @@ input {
         border: var(--text-entry-border-width) solid var(--primary-color);
         box-shadow: none;
     }
+
+/* File Upload */
+input.upload {
+    display: none; /* remove original upload style */
+}
+
+label.upload-btn {
+    display: inline-block;
+    border: none;
+    border-radius: var(--text-entry-border-radius);
+    background-color: #D6D6D6;
+    padding: 20px 20px;
+    background-image: url('../images/plus-icon.svg');
+    background-size: 5%;   /* size of icon inside button */
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    height: 3rem;
+    width: 30vw;
+}
+label.upload-btn:hover {
+    background-size: 6%;
+    background-color: #cfcfcf;
+}
+
+/* Number input */
+input[type="number"]::-webkit-inner-spin-button, /* blend out original spinner buttons */
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    font-family: "Open Sans";
+}
 
 /* Single/Multiple Choice */
 [role=checkbox] {
@@ -94,6 +127,7 @@ button {
     transition: background 0.3s ease, transform 0.2s ease;
     min-width: 8vw;
     min-height: 3rem;
+    font-family: "Open Sans";
 }
 
 button.secondary {
@@ -137,3 +171,76 @@ button.primary {
     button.primary[disabled] {
         background-color: #FFD1B2;
     }
+
+button.number-plus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/plus-icon.svg');
+    background-size: 50%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+button.number-plus:hover {
+    background-size: 60%;
+    background-color: #cfcfcf;
+}
+
+button.number-minus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/minus-icon.svg');
+    background-size: 70%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+button.number-minus:hover {
+    background-size: 90%;
+    background-color: #cfcfcf;
+}
+
+/* Dropdowns */
+select {
+    appearance: none; /* remove standard arrow icon */
+    border: var(--text-entry-border-width) solid var(--primary-color);
+    border-radius: var(--text-entry-border-radius);
+    padding: .2rem .4rem;
+    background-image: url('../images/arrow-down-icon.svg');
+    background-size: 3%;
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    font-family: "Open Sans";
+}
+select:focus,
+select:focus-visible {
+    outline: none;
+    background-color: var(--text-entry-focus-bg);
+    border: var(--text-entry-border-width) solid var(--primary-color);
+    box-shadow: none;
+}
+
+/* Labels & Überschriften */
+label {
+    font-family: "Open Sans";
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 250;
+    letter-spacing: 0px;
+    margin-bottom: 6px;
+}
+
+
+
+
+
+
+

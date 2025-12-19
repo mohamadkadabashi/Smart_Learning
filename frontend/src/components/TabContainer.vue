@@ -34,7 +34,7 @@
 
 <style scoped>
 .tab-box {
-    border: 3px solid var(--secondary-color);
+    border: 4px solid var(--secondary-color);
     border-radius: 50px;
     width: 50vw;
     height: 80vh;
@@ -51,7 +51,7 @@
     padding: 10px;
     background-color: transparent;
     border: none;
-    border-bottom: 3px solid var(--secondary-color);
+    border-bottom: 4px solid var(--secondary-color);
     cursor: pointer;
 }
 
