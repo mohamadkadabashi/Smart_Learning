@@ -10,10 +10,16 @@
                     class="toggle-button"
                     @click="showPassword = !showPassword"
                     :aria-label="isVisible ? 'Passwort verbergen' : 'Passwort anzeigen'">
-                <!-- hidden -->
-                <EyeIcon v-if="showPassword && password" class="icon" />
                 <!-- visible -->
-                <EyeOffIcon v-if="!showPassword && password" class="icon" />
+                <EyeIcon role="img" 
+                         v-if="showPassword && password" 
+                         class="icon"
+                         alt="Passwort ausblenden"/>
+                <!-- hidden -->
+                <EyeOffIcon role="img" 
+                            v-if="!showPassword && password" 
+                            class="icon" 
+                            alt="Passwort anzeigen"/>
 
             </button>
         </div>
