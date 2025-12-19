@@ -39,7 +39,7 @@ const routes = [
     name: 'Login/Registrierung',
     component: Login,
     meta: {
-       title: 'Smart Learning Login/Registrierung'
+      title: 'Login/Registrierung'
     }
   }
 ]

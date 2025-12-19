@@ -21,6 +21,8 @@ input {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
+    height: 3rem;
+    width: 30vw;
     font-family: "Open Sans";
     height: 3rem;
     width: 30vw;
@@ -125,6 +127,8 @@ input[type="number"]::-webkit-outer-spin-button {
 /* Buttons */
 button {
     transition: background 0.3s ease, transform 0.2s ease;
+    min-width: 8vw;
+    min-height: 3rem;
     font-family: "Open Sans";
     min-width: 8vw;
     min-height: 3rem;
@@ -228,6 +232,7 @@ select:focus-visible {
     box-shadow: none;
 }
 
+/* Labels & Überschriften */
 label {
     font-family: "Open Sans";
     font-style: italic;
