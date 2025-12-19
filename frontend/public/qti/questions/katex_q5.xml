@@ -30,10 +30,8 @@
 
     <qti-item-body>
         <qti-choice-interaction
-            response-identifier="RESPONSE"
-            shuffle="true"
-            max-choices="4">
-            <qti-prompt>Hier ist ein Test der Rendering-Engine.</qti-prompt>
+            response-identifier="RESPONSE" shuffle="true" max-choices="4">
+            <qti-prompt>Hier ist ein Test der Rendering-Engine. Wähle die Formel.</qti-prompt>
             <qti-simple-choice identifier="A">Formel: $$ x_{1,2} = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} $$</qti-simple-choice>
             <qti-simple-choice identifier="B">Integral: $$ \int_{a}^{b} f(x) dx = F(b) - F(a) $$</qti-simple-choice>
             <qti-simple-choice identifier="C">Pythagoras: $$ \alpha^2 + \beta^2 = \gamma^2 $$</qti-simple-choice>

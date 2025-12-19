@@ -13,7 +13,7 @@
   </qti-outcome-declaration>
 
   <qti-item-body>
-    <qti-choice-interaction response-identifier="RESPONSE" max-choices="4">
+    <qti-choice-interaction response-identifier="RESPONSE" max-choices="4" shuffle="true">
       <qti-prompt>Was ist die Lösung der quadratischen Gleichung $x^2 - 5x + 6 = 0$?</qti-prompt>
       <qti-simple-choice identifier="$x = 2$">$x = 2$</qti-simple-choice>
       <qti-simple-choice identifier="$x = 3$">$x = 3$</qti-simple-choice>

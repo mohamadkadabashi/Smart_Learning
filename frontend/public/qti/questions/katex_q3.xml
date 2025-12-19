@@ -14,7 +14,7 @@
   </qti-outcome-declaration>
 
   <qti-item-body>
-    <qti-choice-interaction response-identifier="RESPONSE" max-choices="3">
+    <qti-choice-interaction response-identifier="RESPONSE" max-choices="3" shuffle="true">
       <qti-prompt>Welche der folgenden Aussagen über den Pythagoras-Satz $a^2 + b^2 = c^2$ sind korrekt?</qti-prompt>
       <qti-simple-choice identifier="A">Er gilt nur für rechtwinklige Dreiecke</qti-simple-choice>
       <qti-simple-choice identifier="B">$c$ ist die Hypotenuse</qti-simple-choice>

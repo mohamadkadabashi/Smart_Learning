@@ -30,9 +30,7 @@
 
     <qti-item-body>
         <qti-choice-interaction
-            response-identifier="RESPONSE"
-            shuffle="true"
-            max-choices="1">
+            response-identifier="RESPONSE" shuffle="true" max-choices="1">
             <qti-prompt>Was ist die Ableitung von $f(x) = 3x^2 + 2x - 1$?</qti-prompt>
             <qti-simple-choice identifier="choice0">$f'(x) = 6x + 2$</qti-simple-choice>
             <qti-simple-choice identifier="choice1">$f'(x) = 3x + 2$</qti-simple-choice>

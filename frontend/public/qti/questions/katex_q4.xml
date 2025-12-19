@@ -30,9 +30,7 @@
 
     <qti-item-body>
         <qti-choice-interaction
-            response-identifier="RESPONSE"
-            shuffle="true"
-            max-choices="1">
+            response-identifier="RESPONSE" shuffle="true" max-choices="1">
             <qti-prompt>Vereinfache: $\sqrt{16} + \sqrt{25} - \sqrt{9} = ?$</qti-prompt>
             <qti-simple-choice identifier="A">$6$</qti-simple-choice>
             <qti-simple-choice identifier="B">$8$</qti-simple-choice>
