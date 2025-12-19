@@ -232,7 +232,7 @@ select:focus-visible {
     box-shadow: none;
 }
 
-/* Labels & Überschriften */
+/* Labels & Headings */
 label {
     font-family: "Open Sans";
     font-style: italic;
