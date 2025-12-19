@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Test from '../views/test.vue'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,14 @@ const routes = [
     component: () => import(/* webpackChunkName: "test" */ '../views/TestRunner.vue'),
     meta: {
       title: 'Test Runner'
+    }
+  },
+  {
+    path: '/form',
+    name: 'form',
+    component: Test,
+    meta: {
+      title: 'Test erstellen'
     }
   }
 ]
