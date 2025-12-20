@@ -57,9 +57,17 @@ def create_subjectTest(
         logger.warning(err)
         raise HTTPException(status_code=408, detail="Failed to generate test")
         
-    if not response:
-        logger.warning(f"No answer from n8n")
-        raise HTTPException(status_code=500, detail="No test was generated")
+    if response is None:
+        logger.warning("No response object from n8n")
+        raise HTTPException(status_code=502, detail="No response from n8n")
+
+    if response.status_code >= 400:
+        logger.warning(
+            "n8n error status=%s body=%s",
+            response.status_code,
+            response.text[:1000],
+        )
+        raise HTTPException(status_code=502, detail=f"n8n returned {response.status_code}")
 
     # Test einspeisen
     # test = response.json()
