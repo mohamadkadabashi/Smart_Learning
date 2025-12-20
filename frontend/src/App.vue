@@ -28,10 +28,11 @@
 }
 
 .full-height {
-    min-height: calc(100vh - 75px);
+    height: calc(100vh - 80px);
     position: absolute;
     bottom: 0;
     width: 100%;
+    overflow: auto;
 }
 </style>
 

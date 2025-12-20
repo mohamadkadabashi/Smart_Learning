@@ -83,7 +83,7 @@
 
 @media (max-width: 600px) {
   .app-name {
-    font-size: 1rem;
+    font-size: 26px;
   }
 }
 </style>
