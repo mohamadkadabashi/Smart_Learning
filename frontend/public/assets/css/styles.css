@@ -14,6 +14,7 @@
     --choice-control-checkbox-border-width: 1px;
     --button-focus-border-width: 2px;
     --button-focus-border-color: #000000;
+    font-family: "Open Sans";
 }
 
 /* Text Entry */
@@ -23,7 +24,6 @@ input {
     padding: .2rem .4rem;
     height: 3rem;
     min-width: 30vw;
-    font-family: "Open Sans";
 }
 
     input:focus,
@@ -46,7 +46,7 @@ label.upload-btn {
     background-color: #D6D6D6;
     padding: 20px 20px;
     background-image: url('../images/plus-icon.svg');
-    background-size: 5%;   /* size of icon inside button */
+    background-size: 5%; /* size of icon inside button */
     background-position: center;
     background-repeat: no-repeat;
     transition: background-size 0.2s ease, background-color 0.2s ease;
@@ -63,7 +63,6 @@ input[type="number"]::-webkit-inner-spin-button, /* blend out original spinner b
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
-    font-family: "Open Sans";
 }
 
 /* Single/Multiple Choice */
@@ -125,7 +124,6 @@ input[type="number"]::-webkit-outer-spin-button {
 /* Buttons */
 button {
     transition: background 0.3s ease, transform 0.2s ease;
-    font-family: "Open Sans";
 }
 
 button.secondary {
@@ -220,7 +218,6 @@ select {
     background-size: 3%;
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
-    font-family: "Open Sans";
 }
 select:focus,
 select:focus-visible {
@@ -232,10 +229,15 @@ select:focus-visible {
 
 /* Labels & Headings */
 label {
-    font-family: "Open Sans";
     font-style: italic;
     font-size: 24px;
     font-weight: 250;
     letter-spacing: 0px;
     margin-bottom: 6px;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 0;
 }
