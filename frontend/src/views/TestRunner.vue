@@ -1,7 +1,5 @@
 <template>
   <div>
-    <TopBar />
-
     <div class="container py-5 d-flex justify-content-center">
       <div class="w-100" style="max-width: 700px;">
 
@@ -97,11 +95,10 @@
 import Qti3Player from 'qti3-item-player'
 import 'qti3-item-player/dist/qti3Player.css'
 import '@/../public/assets/css/styles.css'
-import TopBar from '@/components/TopBar.vue';
 
 export default {
   name: 'Test',
-  components: { Qti3Player, TopBar },
+  components: { Qti3Player },
   data() {
     return {
       qti3player: null,
