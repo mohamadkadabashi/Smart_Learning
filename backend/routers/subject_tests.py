@@ -35,10 +35,13 @@ def create_subjectTest(
     webhook_url = "https://n8n.rattenserver.duckdns.org/webhook-test/d0575add-b533-4d10-9069-250f79d935c0"
     header = {"Authorization": f"Bearer {token}",
               "Accept": "application/json",}
+    
     data = {
-        "question_type": subjectTest_create.question_type,
-        "question_count": str(subjectTest_create.question_count)
+        "Thema": subjects.name,
+        "Fragentyp": subjectTest_create.question_type,                            
+        "question_count": str(subjectTest_create.question_count),
     }
+
     # TODO: File durch Nutzer auswählbar programmieren
     #file = open("BDP_01_NoSQL_Einfuehrung.pdf", "rb")
     scriptPath = Path(__file__).parent
@@ -68,6 +71,9 @@ def create_subjectTest(
             response.text[:1000],
         )
         raise HTTPException(status_code=502, detail=f"n8n returned {response.status_code}")
+    
+    if not response.text.strip().startswith("<?xml"):
+        logger.warning("Response is not XML: %s", response.text[:200])
 
     # Test einspeisen
     # test = response.json()
