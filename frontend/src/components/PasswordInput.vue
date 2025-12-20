@@ -4,12 +4,13 @@
 
         <div class="input-wrapper">
             <input :type="inputType"
-                   v-model="password" />
+                   v-model="password"
+                   class="w-100" />
 
             <button type="button"
                     class="toggle-button"
                     @click="showPassword = !showPassword"
-                    :aria-label="isVisible ? 'Passwort verbergen' : 'Passwort anzeigen'">
+                    :aria-label="showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'">
                 <!-- visible -->
                 <EyeIcon role="img" 
                          v-if="showPassword && password" 

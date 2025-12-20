@@ -22,7 +22,7 @@ input {
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
     height: 3rem;
-    width: 30vw;
+    min-width: 30vw;
     font-family: "Open Sans";
 }
 
