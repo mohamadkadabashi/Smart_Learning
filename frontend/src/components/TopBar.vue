@@ -5,7 +5,7 @@
                  v-if="showHomeIcon" 
                  @click="navigateToHome" 
                  style="cursor: pointer;"
-                 aria-label="Zur�ck zur Startseite">
+                 aria-label="Zurück zur Startseite">
                 <HomeIcon role="presentation" />
             </div>
         </div>
@@ -15,7 +15,7 @@
             <div role="button" 
                  v-if="showUserIcon" 
                  style="cursor: pointer;"
-                 aria-label="�ffne die Nutzereinstellungen">
+                 aria-label="Öffne die Nutzereinstellungen">
                 <UserIcon role="presentation" />
             </div>
         </div>
