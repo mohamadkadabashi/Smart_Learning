@@ -63,6 +63,15 @@ def create_subjectTest(
     if response is None:
         logger.warning("No response object from n8n")
         raise HTTPException(status_code=502, detail="No response from n8n")
+    
+    xml = (response.text or "").strip()
+    if not xml:
+        logger.warning("n8n returned empty body")
+        raise HTTPException(status_code=502, detail="n8n returned empty test content")
+
+    if not xml.startswith("<") and not xml.startswith("<?xml"):
+        logger.warning("n8n returned non-xml: %r", xml[:200])
+        raise HTTPException(status_code=502, detail="n8n returned non-xml content")
 
     if response.status_code >= 400:
         logger.warning(
@@ -71,9 +80,6 @@ def create_subjectTest(
             response.text[:1000],
         )
         raise HTTPException(status_code=502, detail=f"n8n returned {response.status_code}")
-    
-    if not response.text.strip().startswith("<?xml"):
-        logger.warning("Response is not XML: %s", response.text[:200])
 
     # Test einspeisen
     # test = response.json()
