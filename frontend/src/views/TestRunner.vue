@@ -149,6 +149,8 @@ export default {
       };
 
       this.qti3player.loadItemFromXml(item.xml, config);
+      // KaTeX Rendern aufrufen
+      this.renderMath();
     },
 
     next() {
@@ -268,6 +270,23 @@ export default {
       : texts[0];
   },
 
+  // KaTeX Rendern
+renderMath() {
+      this.$nextTick(() => {
+        
+        if (window.renderMathInElement) {
+          window.renderMathInElement(this.$el, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    },
   },
   created() {
     //
