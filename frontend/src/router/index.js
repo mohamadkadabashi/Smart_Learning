@@ -12,7 +12,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      title: 'Test Runner Home'
+      title: 'SmartLearning Home'
     }
   },
   {
@@ -31,7 +31,8 @@ const routes = [
     name: 'form',
     component: Test,
     meta: {
-      title: 'Test erstellen'
+      title: 'Test erstellen',
+      headerTitle: 'Neuen Test anlegen'
     }
   },
   {

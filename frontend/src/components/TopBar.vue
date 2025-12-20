@@ -1,16 +1,54 @@
 <template>
-  <header class="top-bar">
-    <div class="logo-section">
+    <header class="top-bar d-flex align-items-center">
+        <div class="home-section">
+            <div role="button" 
+                 v-if="showHomeIcon" 
+                 @click="navigateToHome" 
+                 style="cursor: pointer;"
+                 aria-label="Zur�ck zur Startseite">
+                <HomeIcon role="presentation" />
+            </div>
+        </div>
+        <h1 class="app-name">{{ headerTitle }}</h1>
 
-      <span class="app-name">QTI-Question-Parser</span>
-    </div>
-  </header>
+        <div class="user-section">
+            <div role="button" 
+                 v-if="showUserIcon" 
+                 style="cursor: pointer;"
+                 aria-label="�ffne die Nutzereinstellungen">
+                <UserIcon role="presentation" />
+            </div>
+        </div>
+    </header>
 </template>
 
 <script>
-export default {
-  name: 'TopBar'
-};
+    import HomeIcon from '@/../public/assets/images/home.svg';
+    import UserIcon from '@/../public/assets/images/person-sharp.svg';
+
+    export default {
+        name: 'TopBar',
+        computed: {
+            headerTitle() {
+                return this.$route.meta.headerTitle || 'SmartLearning'
+            },
+            showUserIcon() {
+                return this.$route.name !== 'Login';
+            },
+            showHomeIcon() {
+                return this.showUserIcon && this.$route.name !== 'Home';
+            }
+        },
+        methods: {
+            navigateToHome() {
+                this.$router.push({ name: 'Home' });
+            }
+        },
+        components: {
+            HomeIcon,
+            UserIcon
+        },
+    };
 </script>
 
 <style scoped>
@@ -19,18 +57,19 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #3c4e62;
-  color: #ffffff;
-  padding: 0.75rem 1rem;
+  background-color: var(--primary-color);
+  padding: 0 2rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  height: 75px;
 }
 
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-left: 0.25rem; 
+.home-section {
+  width: 5rem; 
+}
+
+.user-section {
+    right: 2rem;
+    position: absolute;
 }
 
 .icon {
@@ -39,8 +78,6 @@ export default {
 }
 
 .app-name {
-  font-size: 1.25rem;
-  font-weight: 600;
   white-space: nowrap;
 }
 
