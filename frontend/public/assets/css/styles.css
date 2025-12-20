@@ -241,3 +241,8 @@ h1 {
     font-weight: 600;
     margin-bottom: 0;
 }
+
+h2 {
+    font-size: 28px;
+    font-weight: 500;
+}

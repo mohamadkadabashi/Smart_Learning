@@ -23,7 +23,8 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "test" */ '../views/TestRunner.vue'),
     meta: {
-      title: 'Test Runner'
+      title: 'Test Runner',
+      headerTitle: 'Lernen'
     }
   },
   {
