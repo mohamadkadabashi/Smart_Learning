@@ -33,7 +33,7 @@
                 return this.$route.meta.headerTitle || 'SmartLearning'
             },
             showUserIcon() {
-                return this.$route.name !== 'Login';
+                return this.$route.name !== 'Login/Registrierung';
             },
             showHomeIcon() {
                 return this.showUserIcon && this.$route.name !== 'Home';
