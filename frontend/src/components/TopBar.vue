@@ -1,23 +1,21 @@
 <template>
     <header class="top-bar d-flex align-items-center">
         <div class="home-section">
-            <div role="button" 
-                 v-if="showHomeIcon" 
-                 @click="navigateToHome" 
-                 style="cursor: pointer;"
-                 aria-label="Zurück zur Startseite">
+            <button v-if="showHomeIcon" 
+                    @click="navigateToHome" 
+                    style="cursor: pointer;"
+                    aria-label="Zurück zur Startseite">
                 <HomeIcon role="presentation" />
-            </div>
+            </button>
         </div>
         <h1 class="app-name">{{ headerTitle }}</h1>
 
         <div class="user-section">
-            <div role="button" 
-                 v-if="showUserIcon" 
-                 style="cursor: pointer;"
-                 aria-label="Öffne die Nutzereinstellungen">
+            <button v-if="showUserIcon" 
+                    style="cursor: pointer;"
+                    aria-label="Öffne die Nutzereinstellungen">
                 <UserIcon role="presentation" />
-            </div>
+            </button>
         </div>
     </header>
 </template>
@@ -79,6 +77,13 @@
 
 .app-name {
   white-space: nowrap;
+}
+
+button {
+    width: fit-content;
+    padding: .3rem;
+    background-color: transparent;
+    border: none;
 }
 
 @media (max-width: 600px) {
