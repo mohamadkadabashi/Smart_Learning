@@ -4,9 +4,9 @@
       <div class="w-100" style="max-width: 700px;">
 
         <!-- Test-Titel -->
-        <h1 class="text-center mb-4" style="padding-top: 50px;">
+        <h2 class="text-center mb-4" style="padding-top: 50px;">
           {{ test.title }}
-        </h1>
+        </h2>
 
         <!-- Progress-Bar -->
         <div class="d-flex justify-content-center gap-2 mb-4">
