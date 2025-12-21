@@ -18,7 +18,7 @@ console.log("Hallo");
         <!-- Modul -->
         <div class="form-group">
           <label>Modul</label>
-          <select>
+          <select title="Modul wählen" id="module-input">
             <option value="">Bitte auswählen</option>
             <option>Medieninformatik</option>
             <option>Beispiel</option>
@@ -37,8 +37,8 @@ console.log("Hallo");
 
         <!-- Aufgabentyp -->
         <div class="form-group">
-          <label>Aufgabentyp</label>
-          <select>
+          <label for="task-type-input">Aufgabentyp</label>
+          <select title="Aufgabentyp wählen" id="task-type-input">
             <option value="">Bitte auswählen</option>
             <option>Single Choice</option>
             <option>Multiple Choice</option>
@@ -50,17 +50,17 @@ console.log("Hallo");
       <div class="column">
         <!-- Testname -->
         <div class="form-group">
-          <label>Name des Tests</label>
-          <input type="text" placeholder="Gib einen Testnamen ein" />
+          <label for="test-name-input">Name des Tests</label>
+          <input type="text" placeholder="Gib einen Testnamen ein" id="test-name-input" />
         </div>
 
         <div class="form-group">
         <!-- Anzahl -->
-          <label>Anzahl</label>
+          <label for="num-input">Anzahl der Fragen</label>
           <div class="number-wrapper">
-            <input type="number" placeholder="z. B. 10" v-model.number="value"/>
-            <button type="button" class="number-minus" @click="value--"></button>
-            <button  type="button" class="number-plus" @click="value++"></button>
+            <input id="num-input" type="number" placeholder="z. B. 10" v-model.number="value"/>
+            <button type="button" class="number-minus" @click="value--" aria-label="Minimiere die Anzahl der Fragen"></button>
+            <button  type="button" class="number-plus" @click="value++" aria-label="Erhöhe die Anzahl der Fragen"></button>
           </div>
         </div>
 
