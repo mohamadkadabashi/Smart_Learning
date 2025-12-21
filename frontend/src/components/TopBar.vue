@@ -47,13 +47,13 @@
                 return this.$route.name === ROUTE_LOGIN;
             },
             showHomeIcon() {
-                return !this.isHomeRoute && !this.isLoginRoute;
+                return !this.isHomeRoute;
             },
             showUserIcon() {
                 return !this.isLoginRoute;
             },
             showLoginIcon() {
-                return !this.isLoginRoute;
+                return this.isHomeRoute;
             }
         },
         methods: {
