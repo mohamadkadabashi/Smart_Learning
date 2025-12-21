@@ -11,7 +11,8 @@
         <h1 class="app-name">{{ headerTitle }}</h1>
 
         <div class="user-section d-flex gap-3">
-            <button style="cursor: pointer;"
+            <button v-if="showLoginIcon"
+                    style="cursor: pointer;"
                     @click="navigateToLogin"
                     aria-label="Zur Anmeldung/Registrierung">
                 <LoginIcon role="presentation" />
@@ -30,6 +31,9 @@
     import UserIcon from '@/../public/assets/images/person-sharp.svg';
     import LoginIcon from '@/../public/assets/images/log-in.svg';
 
+    const ROUTE_HOME = 'Home';
+    const ROUTE_LOGIN = 'Login/Registrierung';
+
     export default {
         name: 'TopBar',
         computed: {
@@ -37,24 +41,27 @@
                 return this.$route.meta.headerTitle || 'SmartLearning'
             },
             isHomeRoute() {
-                return this.$route.name === 'Home';
+                return this.$route.name === ROUTE_HOME;
             },
             isLoginRoute() {
-                return this.$route.name === 'Login/Registrierung';
+                return this.$route.name === ROUTE_LOGIN;
             },
             showHomeIcon() {
                 return !this.isHomeRoute && !this.isLoginRoute;
             },
             showUserIcon() {
                 return !this.isLoginRoute;
+            },
+            showLoginIcon() {
+                return !this.isLoginRoute;
             }
         },
         methods: {
             navigateToHome() {
-                this.$router.push({ name: 'Home' });
+                this.$router.push({ name: ROUTE_HOME });
             },
             navigateToLogin() {
-                this.$router.push({ name: 'Login/Registrierung' });
+                this.$router.push({ name: ROUTE_LOGIN });
             }
         },
         components: {
