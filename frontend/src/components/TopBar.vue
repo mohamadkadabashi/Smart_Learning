@@ -30,11 +30,17 @@
             headerTitle() {
                 return this.$route.meta.headerTitle || 'SmartLearning'
             },
-            showUserIcon() {
-                return this.$route.name !== 'Login/Registrierung';
+            isHomeRoute() {
+                return this.$route.name === 'Home';
+            },
+            isLoginRoute() {
+                return this.$route.name === 'Login/Registrierung';
             },
             showHomeIcon() {
-                return this.showUserIcon && this.$route.name !== 'Home';
+                return !this.isHomeRoute && !this.isLoginRoute;
+            },
+            showUserIcon() {
+                return !this.isLoginRoute;
             }
         },
         methods: {
