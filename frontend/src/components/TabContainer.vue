@@ -1,5 +1,5 @@
 <template>
-    <div class="tab-box d-flex flex-column">
+    <div class="tab-box d-flex flex-column align-self-center">
         <div class="tab-header">
             <button v-for="(tab, index) in tabs"
                     :key="index"
@@ -37,8 +37,8 @@
     border: 4px solid var(--secondary-color);
     border-radius: 50px;
     width: 50vw;
-    min-height: 70vh;
-    height: auto;
+    height: 65vh;
+    min-height: fit-content;
     overflow: hidden;
 }
 
@@ -72,5 +72,6 @@
 .tab-content {
     padding: 20px;
     height: 100%;
+    min-height: fit-content;
 }
 </style>
