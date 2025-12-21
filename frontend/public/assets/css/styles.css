@@ -226,6 +226,8 @@ select {
     background-size: 3%;
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
+    height: 3rem;
+    min-width: 30vw;
 }
 select:focus,
 select:focus-visible {
