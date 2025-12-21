@@ -12,7 +12,6 @@
 
         <div class="user-section d-flex gap-3">
             <button v-if="showLoginIcon"
-                    style="cursor: pointer;"
                     @click="navigateToLogin"
                     aria-label="Zur Anmeldung/Registrierung">
                 <LoginIcon role="presentation" />
