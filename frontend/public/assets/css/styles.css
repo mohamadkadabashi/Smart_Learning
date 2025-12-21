@@ -235,6 +235,10 @@ select:focus-visible {
     box-shadow: none;
 }
 
+select option {
+    background-color: #FFFFFF;
+}
+
 /* Labels & Headings */
 label {
     font-style: italic;
