@@ -5,8 +5,6 @@
             <router-view class="full-height" />
         </transition>
     </div>
-
-
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template class="h-100">
     <div>
-        <div class="main-content container-fluid py-5 d-flex justify-content-center h-100">
+        <div class="main-content container-fluid py-5 d-flex justify-content-center flex-wrap h-100">
             <TabContainer :tabs="['Login', 'Registrieren']">
                 <template #tab-0>
                     <Login />
