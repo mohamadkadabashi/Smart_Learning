@@ -10,8 +10,12 @@
         </div>
         <h1 class="app-name">{{ headerTitle }}</h1>
 
-        <div class="user-section">
-            <button v-if="showUserIcon" 
+        <div class="user-section d-flex gap-3">
+            <button style="cursor: pointer;"
+                    aria-label="Zur Anmeldung/Registrierung">
+                <LoginIcon role="presentation" />
+            </button>
+            <button v-if="showUserIcon"
                     style="cursor: pointer;"
                     aria-label="Öffne die Nutzereinstellungen">
                 <UserIcon role="presentation" />
@@ -23,6 +27,7 @@
 <script>
     import HomeIcon from '@/../public/assets/images/home.svg';
     import UserIcon from '@/../public/assets/images/person-sharp.svg';
+    import LoginIcon from '@/../public/assets/images/log-in.svg';
 
     export default {
         name: 'TopBar',
@@ -50,7 +55,8 @@
         },
         components: {
             HomeIcon,
-            UserIcon
+            UserIcon,
+            LoginIcon
         },
     };
 </script>
