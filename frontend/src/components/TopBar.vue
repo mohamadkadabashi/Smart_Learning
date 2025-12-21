@@ -12,6 +12,7 @@
 
         <div class="user-section d-flex gap-3">
             <button style="cursor: pointer;"
+                    @click="navigateToLogin"
                     aria-label="Zur Anmeldung/Registrierung">
                 <LoginIcon role="presentation" />
             </button>
@@ -51,6 +52,9 @@
         methods: {
             navigateToHome() {
                 this.$router.push({ name: 'Home' });
+            },
+            navigateToLogin() {
+                this.$router.push({ name: 'Login/Registrierung' });
             }
         },
         components: {
