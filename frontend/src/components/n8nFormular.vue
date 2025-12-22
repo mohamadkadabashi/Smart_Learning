@@ -54,11 +54,11 @@ const value = ref(1)
         <!-- count of tasks -->
           <label for="num-input">Anzahl der Fragen</label>
           <div class="number-wrapper">
-            <input id="num-input" type="number" min="1" placeholder="z. B. 10" v-model.number="value"/>
+            <input id="num-input" type="number" min="0" placeholder="z. B. 10" v-model.number="value"/>
             <button type="button" 
                     class="number-minus" 
                     @click="value--" 
-                    :disabled="value <= 1"
+                    :disabled="value <= 0"
                     aria-label="Minimiere die Anzahl der Fragen" />
             <button  type="button" 
                     class="number-plus" 
