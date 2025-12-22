@@ -1,7 +1,6 @@
 <template>
   <div class="settings-profile">
     <div class="cards-row">
-      <!-- Personal Data -->
       <div class="settings-card">
         <h2>Persönliche Daten ändern</h2>
 
@@ -12,7 +11,6 @@
         <input type="email" v-model="email" />
       </div>
 
-      <!-- Daily Goal -->
       <div class="settings-card">
         <h2>Tagesziel anpassen</h2>
 
@@ -28,7 +26,6 @@
             </div>
           </div>
 
-          <!-- Right -->
           <div class="goal-right">
             <label>Streak 🔥</label>
             <input
@@ -42,7 +39,6 @@
       </div>
     </div>
 
-    <!-- Save -->
     <div class="save-row">
       <button class="primary" @click="save">
         Speichern
@@ -77,7 +73,6 @@ export default {
 </script>
 
 <style scoped>
-/* layout only */
 .settings-profile {
   margin-bottom: 3rem;
 }
@@ -94,7 +89,6 @@ export default {
   min-width: 320px;
 }
 
-/* daily goal layout */
 .goal-row {
   display: flex;
   align-items: center;
@@ -115,13 +109,11 @@ export default {
   gap: 0.5rem;
 }
 
-/* counter layout only */
 .counter {
   display: flex;
   align-items: center;
 }
 
-/* save button alignment */
 .save-row {
   display: flex;
   justify-content: flex-end;

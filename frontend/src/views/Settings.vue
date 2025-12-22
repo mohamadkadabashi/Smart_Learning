@@ -27,17 +27,14 @@ export default {
 </script>
 
 <style scoped>
-/* space below fixed TopBar */
 .main-content {
   margin-top: 3rem;
 }
 
-/* center settings and limit width */
 .settings-wrapper {
   max-width: 1200px;
 }
 
-/* vertical spacing between sections */
 .settings-wrapper > *:not(:last-child) {
   margin-bottom: 3rem;
 }
