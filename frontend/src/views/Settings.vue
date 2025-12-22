@@ -2,10 +2,7 @@
   <div>
     <TopBar />
 
-    <div
-      class="main-content container-fluid py-5 d-flex justify-content-center"
-      style="margin-top: 50px;"
-    >
+    <div class="main-content container-fluid py-5 d-flex justify-content-center">
       <div class="settings-wrapper w-100">
         <SettingsProfile />
         <SettingsPassword />
@@ -30,17 +27,18 @@ export default {
 </script>
 
 <style scoped>
+/* space below fixed TopBar */
 .main-content {
-  margin-top: 50px;
+  margin-top: 3rem;
 }
 
-/* Keep settings content centered and not too wide */
+/* center settings and limit width */
 .settings-wrapper {
   max-width: 1200px;
 }
 
-/* Optional: spacing between profile + password blocks */
+/* vertical spacing between sections */
 .settings-wrapper > *:not(:last-child) {
-  margin-bottom: 40px;
+  margin-bottom: 3rem;
 }
 </style>

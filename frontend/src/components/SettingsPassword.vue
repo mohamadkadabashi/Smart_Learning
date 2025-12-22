@@ -1,69 +1,25 @@
 <template>
-  <div class="settings-card password-card">
-    <h3>Passwort ändern</h3>
+  <div class="settings-password-wrapper">
+    <!-- Grey card -->
+    <div class="settings-card">
+      <h2>Passwort ändern</h2>
 
-    <div class="password-row">
-      <!-- New password -->
-      <div class="password-field">
-        <label>Neues Passwort</label>
+      <div class="password-row">
+        <PasswordInput
+          label="Neues Passwort"
+          v-model="password"
+        />
 
-        <div class="input-wrapper">
-          <input
-            :type="showPassword ? 'text' : 'password'"
-            v-model="password"
-          />
-
-          <span class="eye" @click="showPassword = !showPassword">
-            <!-- hidden -->
-            <svg v-if="!showPassword" viewBox="0 0 24 24">
-              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"
-                    fill="none" stroke="currentColor" stroke-width="2"/>
-              <line x1="3" y1="21" x2="21" y2="3"
-                    stroke="currentColor" stroke-width="2"/>
-            </svg>
-
-            <!-- visible -->
-            <svg v-else viewBox="0 0 24 24">
-              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"
-                    fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="12" cy="12" r="3"
-                      fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </span>
-        </div>
-      </div>
-
-      <!-- Repeat -->
-      <div class="password-field">
-        <label>Neues Passwort wiederholen</label>
-
-        <div class="input-wrapper">
-          <input
-            :type="showRepeat ? 'text' : 'password'"
-            v-model="repeat"
-          />
-
-          <span class="eye" @click="showRepeat = !showRepeat">
-            <svg v-if="!showRepeat" viewBox="0 0 24 24">
-              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"
-                    fill="none" stroke="currentColor" stroke-width="2"/>
-              <line x1="3" y1="21" x2="21" y2="3"
-                    stroke="currentColor" stroke-width="2"/>
-            </svg>
-
-            <svg v-else viewBox="0 0 24 24">
-              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"
-                    fill="none" stroke="currentColor" stroke-width="2"/>
-              <circle cx="12" cy="12" r="3"
-                      fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </span>
-        </div>
+        <PasswordInput
+          label="Neues Passwort wiederholen"
+          v-model="repeat"
+        />
       </div>
     </div>
 
+    <!-- Button outside grey card -->
     <div class="btn-row">
-      <button class="primary-btn" @click="changePassword">
+      <button class="primary" @click="changePassword">
         Passwort ändern
       </button>
     </div>
@@ -71,89 +27,49 @@
 </template>
 
 <script>
+import PasswordInput from '@/components/PasswordInput.vue'
+
 export default {
   name: 'SettingsPassword',
+  components: {
+    PasswordInput
+  },
   data() {
     return {
       password: '',
-      repeat: '',
-      showPassword: false,
-      showRepeat: false
+      repeat: ''
     }
   },
   methods: {
     changePassword() {
-      console.log('Password change')
+      console.log('Password change', this.password, this.repeat)
     }
   }
 }
 </script>
 
 <style scoped>
+/* wrapper spacing only */
+.settings-password-wrapper {
+  margin-top: 3rem;
+}
+
+/* layout only – visual styles come from styles.css */
 .settings-card {
-  background: #f3f3f3;
-  border-radius: 30px;
-  padding: 30px;
+  padding: 2rem;
 }
 
-h3 {
-  font-weight: 400;
-  margin-bottom: 20px;
-}
-
+/* input layout */
 .password-row {
   display: flex;
-  gap: 40px;
+  gap: 3rem;
+  margin-top: 1.5rem;
 }
 
-.password-field {
-  flex: 1;
-}
-
-label {
-  font-style: italic;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.input-wrapper {
-  position: relative;
-}
-
-input {
-  width: 100%;
-  height: 56px;
-  border-radius: 30px;
-  border: 3px solid #f08844;
-  padding: 0 56px 0 20px;
-}
-
-.eye {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #f08844;
-}
-
-.eye svg {
-  width: 22px;
-  height: 22px;
-}
-
+/* button alignment */
 .btn-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: 30px;
-}
-
-.primary-btn {
-  background: #f08844;
-  border-radius: 30px;
-  padding: 12px 30px;
-  font-size: 22px;
-  font-weight: 600;
-  border: none;
+  margin-top: 1.5rem;
 }
 </style>
