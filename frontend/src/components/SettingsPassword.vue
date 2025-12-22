@@ -17,7 +17,6 @@
       </div>
     </div>
 
-    <!-- Button outside grey card -->
     <div class="btn-row">
       <button class="primary" @click="changePassword">
         Passwort ändern
@@ -54,19 +53,16 @@ export default {
   margin-top: 3rem;
 }
 
-/* layout only – visual styles come from styles.css */
 .settings-card {
   padding: 2rem;
 }
 
-/* input layout */
 .password-row {
   display: flex;
   gap: 3rem;
   margin-top: 1.5rem;
 }
 
-/* button alignment */
 .btn-row {
   display: flex;
   justify-content: flex-end;
