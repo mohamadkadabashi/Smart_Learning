@@ -13,7 +13,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      title: 'SmartLearning Home',
+      title: 'SmartLearning',
       requiresAuth: false
     }
   },
@@ -25,16 +25,18 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "test" */ '../views/TestRunner.vue'),
     meta: {
-      title: 'Lernen',
+      title: 'Test Runner',
+      headerTitle: 'Lernen',
       requiresAuth: true
     }
   },
   {
-    path: '/form',
-    name: 'form',
+    path: '/create',
+    name: 'Test erstellen',
     component: Test,
     meta: {
-      title: 'Neuen Test anlegen',
+      title: 'Test erstellen',
+      headerTitle: 'Neuen Test anlegen',
       // TODO: change it to true later
       requiresAuth: false,
 
