@@ -35,7 +35,9 @@ const routes = [
     component: Test,
     meta: {
       title: 'Neuen Test anlegen',
-      requiresAuth: true
+      // TODO: change it to true later
+      requiresAuth: false,
+
     }
   },
   {
