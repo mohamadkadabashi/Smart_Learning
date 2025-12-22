@@ -89,7 +89,7 @@ router.beforeEach((to, from, next) => {
   const hasToken = !!localStorage.getItem("access_token");
 
   if (to.matched.some(r => r.meta.requiresAuth) && !hasToken) {
-    return next("/login");
+    return next("/login-or-register");
   }
 
   next();
