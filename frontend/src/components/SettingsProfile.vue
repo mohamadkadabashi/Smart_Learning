@@ -3,7 +3,7 @@
     <div class="cards-row">
       <!-- Personal Data -->
       <div class="settings-card">
-        <h3>Persönliche Daten ändern</h3>
+        <h2>Persönliche Daten ändern</h2>
 
         <label>Nutzername</label>
         <input type="text" v-model="username" />
@@ -14,35 +14,37 @@
 
       <!-- Daily Goal -->
       <div class="settings-card">
-        <h3>Tagesziel anpassen</h3>
+        <h2>Tagesziel anpassen</h2>
 
         <div class="goal-row">
-          <!-- Left block -->
+          <!-- Left -->
           <div class="goal-left">
-            <span class="goal-label">Tests bestehen pro Tag</span>
+            <label>Tests bestehen pro Tag</label>
 
             <div class="counter">
-              <button @click="decrease">−</button>
+              <button class="number-minus" @click="decrease" />
               <input type="number" v-model.number="goal" />
-              <button @click="increase">+</button>
+              <button class="number-plus" @click="increase" />
             </div>
           </div>
 
-          <!-- Right block -->
+          <!-- Right -->
           <div class="goal-right">
-            <span class="goal-label">Streak 🔥</span>
-            <label class="switch">
-              <input type="checkbox" v-model="streak" />
-              <span class="slider"></span>
-            </label>
+            <label>Streak 🔥</label>
+            <input
+              type="checkbox"
+              role="checkbox"
+              :aria-checked="streak"
+              @click="streak = !streak"
+            />
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Save button -->
+    <!-- Save -->
     <div class="save-row">
-      <button class="primary-btn" @click="save">
+      <button class="primary" @click="save">
         Speichern
       </button>
     </div>
@@ -75,143 +77,54 @@ export default {
 </script>
 
 <style scoped>
-/* layout */
+/* layout only */
 .settings-profile {
-  margin-bottom: 40px;
+  margin-bottom: 3rem;
 }
 
 .cards-row {
   display: flex;
-  gap: 40px;
+  gap: 3rem;
   flex-wrap: wrap;
 }
 
-/* cards */
 .settings-card {
-  background: #f3f3f3;
-  border-radius: 30px;
-  padding: 30px;
+  padding: 2rem;
   flex: 1;
   min-width: 320px;
 }
 
-/* titles */
-h3 {
-  font-weight: 400;
-  margin-bottom: 20px;
-}
-
-/* inputs */
-label {
-  font-style: italic;
-  margin-top: 15px;
-  display: block;
-}
-
-input {
-  width: 100%;
-  height: 56px;
-  border-radius: 30px;
-  border: 3px solid #f08844;
-  padding: 0 20px;
-  margin-bottom: 10px;
-}
-
-/* --- Daily goal layout --- */
+/* daily goal layout */
 .goal-row {
   display: flex;
   align-items: center;
-  margin-top: 20px;
-  gap: 100px; /* 🔥 controls horizontal distance (Figma-like) */
+  gap: 6rem;
+  margin-top: 1.5rem;
 }
 
 .goal-left {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.75rem;
 }
 
 .goal-right {
   display: flex;
-  flex-direction: column;   /* label above toggle */
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
-.goal-label {
-  font-style: italic;
-}
-
-/* counter */
+/* counter layout only */
 .counter {
   display: flex;
-  gap: 10px;
   align-items: center;
 }
 
-.counter button {
-  width: 40px;
-  height: 40px;
-  background: #d9d9d9;
-  border-radius: 5px;
-  border: none;
-  font-size: 24px;
-}
-
-.counter input {
-  width: 80px;
-  height: 40px;
-  text-align: center;
-  margin: 0;
-}
-
-/* toggle */
-.switch {
-  position: relative;
-  width: 60px;
-  height: 30px;
-}
-
-.switch input {
-  opacity: 0;
-}
-
-.slider {
-  position: absolute;
-  inset: 0;
-  background: #f08844;
-  border-radius: 30px;
-}
-
-.slider::before {
-  content: '';
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  background: #fff;
-  border-radius: 50%;
-  top: 4px;
-  left: 4px;
-  transition: 0.3s;
-}
-
-.switch input:checked + .slider::before {
-  transform: translateX(30px);
-}
-
-/* save button */
+/* save button alignment */
 .save-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: 30px;
-}
-
-.primary-btn {
-  background: #f08844;
-  border-radius: 30px;
-  padding: 12px 30px;
-  font-size: 22px;
-  font-weight: 600;
-  border: none;
+  margin-top: 2rem;
 }
 </style>
