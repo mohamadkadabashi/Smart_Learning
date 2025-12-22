@@ -36,5 +36,8 @@ pnpm-debug.log*
 # test database files
 **/tests/db/
 
+# Environment variables file
+.env
+
 git-workflow.md
 .vs

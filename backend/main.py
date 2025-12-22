@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
     # Shutdown (optional)
     print("Application shutting down")
 
-app = FastAPI(lifespan=lifespan, title="SmartLearning Backend")
+app = FastAPI(lifespan=lifespan, title="SmartLearning Backend", description="Backend API for SmartLearning Application")
 
 app.add_middleware(
     CORSMiddleware,

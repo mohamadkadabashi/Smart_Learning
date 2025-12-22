@@ -1,11 +1,7 @@
 <template>
   <div>
-    <TopBar />
-
     <div
-      class="main-content container-fluid py-5 d-flex justify-content-center"
-      style="margin-top: 50px;"
-    >
+      class="main-content container-fluid py-5 d-flex justify-content-center">
       <div class="card w-100" style="max-width: 60vw;">
         <div class="card-header">
           Tests
@@ -38,11 +34,8 @@
 </template>
 
 <script>
-import TopBar from '@/components/TopBar.vue'
-
 export default {
   name: 'Home',
-  components: { TopBar },
   data() {
     return {
       tests: []
@@ -55,10 +48,6 @@ export default {
 </script>
 
 <style scoped>
-.main-content {
-  margin-top: 50px;
-}
-
 .card {
   border-radius: 0.5rem;
 }

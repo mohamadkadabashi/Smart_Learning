@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qti-assessment-item
+    xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0
+                        https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd"
+    identifier="ableitung"
+    title="Ableitungsfrage"
+    adaptive="false"
+    time-dependent="false"
+    xml:lang="de">
+
+    <qti-response-declaration
+        identifier="RESPONSE"
+        cardinality="single"
+        base-type="identifier">
+        <qti-correct-response>
+            <qti-value>choice0</qti-value>
+        </qti-correct-response>
+    </qti-response-declaration>
+
+    <qti-outcome-declaration
+        identifier="SCORE"
+        cardinality="single"
+        base-type="float">
+        <qti-default-value>
+            <qti-value>1.0</qti-value>
+        </qti-default-value>
+    </qti-outcome-declaration>
+
+    <qti-item-body>
+        <qti-choice-interaction
+            response-identifier="RESPONSE" shuffle="true" max-choices="1">
+            <qti-prompt>Was ist die Ableitung von $f(x) = 3x^2 + 2x - 1$?</qti-prompt>
+            <qti-simple-choice identifier="choice0">$f'(x) = 6x + 2$</qti-simple-choice>
+            <qti-simple-choice identifier="choice1">$f'(x) = 3x + 2$</qti-simple-choice>
+            <qti-simple-choice identifier="choice2">$f'(x) = 6x^2 + 2x$</qti-simple-choice>
+            <qti-simple-choice identifier="choice3">$f'(x) = x^2 + x$</qti-simple-choice>
+        </qti-choice-interaction>
+    </qti-item-body>
+
+    <qti-response-processing template="https://purl.imsglobal.org/spec/qti/v3p0/rptemplates/match_correct.xml"/>
+</qti-assessment-item>
