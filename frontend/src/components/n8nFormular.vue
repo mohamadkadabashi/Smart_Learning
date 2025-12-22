@@ -107,10 +107,6 @@ const value = ref(1)
   padding: 10px 12px;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-}
-
 .number-wrapper {
   display: flex;
   align-items: center;

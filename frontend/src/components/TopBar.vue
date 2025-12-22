@@ -1,41 +1,51 @@
 <template>
-    <header class="top-bar d-flex align-items-center">
-        <div class="home-section">
-            <button v-if="showHomeIcon" 
-                    @click="navigateToHome" 
-                    style="cursor: pointer;"
-                    aria-label="Zurück zur Startseite">
-                <HomeIcon role="presentation" />
-            </button>
-        </div>
-        <h1 class="app-name">{{ headerTitle }}</h1>
+    <div>
+        <header class="top-bar d-flex align-items-center">
+            <div class="home-section">
+                <button v-if="showHomeIcon"
+                        @click="navigateToHome"
+                        aria-label="Zurück zur Startseite">
+                    <HomeIcon role="presentation" />
+                </button>
+            </div>
+            <h1 class="app-name">{{ headerTitle }}</h1>
 
-        <div class="user-section d-flex gap-3">
-            <button v-if="showLoginIcon"
-                    style="cursor: pointer;"
-                    @click="navigateToLogin"
-                    aria-label="Zur Anmeldung/Registrierung">
-                <LoginIcon role="presentation" />
-            </button>
-            <button v-if="showUserIcon"
-                    style="cursor: pointer;"
-                    aria-label="Öffne die Nutzereinstellungen">
-                <UserIcon role="presentation" />
-            </button>
-        </div>
-    </header>
+            <div class="user-section d-flex gap-3">
+                <button v-if="showLoginIcon"
+                        @click="navigateToLogin"
+                        aria-label="Zur Anmeldung/Registrierung">
+                    <LoginIcon role="presentation" />
+                </button>
+                <button v-if="showUserIcon"
+                        @click="toggleDropdown"
+                        aria-label="Öffne die Nutzereinstellungen">
+                    <UserIcon role="presentation" />
+                </button>
+            </div>
+        </header>
+
+        <!-- User Icon Dropdown -->
+        <UserDropdown v-if="showUserDropdown" />
+    </div>
 </template>
+
 
 <script>
     import HomeIcon from '@/../public/assets/images/home.svg';
     import UserIcon from '@/../public/assets/images/person-sharp.svg';
     import LoginIcon from '@/../public/assets/images/log-in.svg';
+    import UserDropdown from '@/components/UserDropdown.vue';
 
     const ROUTE_HOME = 'Home';
     const ROUTE_LOGIN = 'Login/Registrierung';
 
     export default {
         name: 'TopBar',
+        data() {
+            return {
+                showUserDropdown: false
+            };
+        },
         computed: {
             headerTitle() {
                 return this.$route.meta.headerTitle || 'SmartLearning'
@@ -62,13 +72,22 @@
             },
             navigateToLogin() {
                 this.$router.push({ name: ROUTE_LOGIN });
+            },
+            toggleDropdown() {
+                this.showUserDropdown = !this.showUserDropdown;
             }
         },
         components: {
             HomeIcon,
             UserIcon,
-            LoginIcon
+            LoginIcon,
+            UserDropdown
         },
+        watch: {
+            $route() {
+                this.showUserDropdown = false
+            }
+        }
     };
 </script>
 
