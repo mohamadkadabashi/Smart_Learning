@@ -193,7 +193,7 @@ button.number-plus {
     background-position: center;
     background-repeat: no-repeat;
 }
-button.number-plus:not(:disabled):hover {
+button.number-plus:hover {
     background-size: 60%;
     background-color: #cfcfcf;
 }
@@ -211,7 +211,7 @@ button.number-minus {
     background-position: center;
     background-repeat: no-repeat;
 }
-button.number-minus:not(:disabled):hover {
+button.number-minus:hover {
     background-size: 90%;
     background-color: #cfcfcf;
 }
