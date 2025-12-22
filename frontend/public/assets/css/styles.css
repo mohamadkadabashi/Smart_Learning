@@ -18,12 +18,15 @@
 }
 
 /* Text Entry */
+input[type=text] {
+    height: 3rem;
+    min-width: 30vw;
+}
+
 input, input.text-entry-default {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
-    height: 3rem;
-    min-width: 30vw;
 }
 
     input:focus,
@@ -57,7 +60,7 @@ label.upload-btn {
     background-repeat: no-repeat;
     transition: background-size 0.2s ease, background-color 0.2s ease;
     height: 3rem;
-    width: 30vw;
+    min-width: 30vw;
 }
 label.upload-btn:hover {
     background-size: 6%;
