@@ -48,7 +48,16 @@ input.text-entry-default {
 
 /* File Upload */
 input[type=file] {
-    display: none; /* remove original upload style */
+    /* remove original upload style */
+    position: absolute;
+    width: 0;
+    height: 0;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+input[type=file]:focus + label.upload-btn {
+    border: var(--choice-control-border-width) solid var(--choice-control-focus-border-color);
 }
 
 label.upload-btn {

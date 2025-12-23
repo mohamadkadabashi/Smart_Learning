@@ -38,8 +38,8 @@
         <!-- upload file -->
         <div class="form-group">
             <label>Skript hochladen</label>
+            <input type="file" id="file-upload" class="upload" @change="showFileName" title="Skript hochladen">
             <label for="file-upload" class="upload-btn"></label>
-            <input type="file" id="file-upload" class="upload" @change="showFileName">
             <div v-if="fileName" class="d-flex gap-2 align-items-center">
                 <span class="file-text">{{ fileName }}</span>
                 <button type="button" class="delete-btn" @click="removeFile"><DeleteIcon /></button>
