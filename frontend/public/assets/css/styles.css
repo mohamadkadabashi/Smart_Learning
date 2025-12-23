@@ -1,4 +1,7 @@
-:root, .qti3-player-container, .qti3-player-container-fluid {
+:root, 
+body,
+.qti3-player-container, 
+.qti3-player-container-fluid {
     --primary-color: #F08844;
     --secondary-color: #AFAFAF;
     --text-entry-focus-bg: #EC660C37;
@@ -44,7 +47,7 @@ input.text-entry-default {
 }
 
 /* File Upload */
-input.upload {
+input[type=file] {
     display: none; /* remove original upload style */
 }
 
