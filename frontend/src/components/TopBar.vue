@@ -12,7 +12,6 @@
 
         <div class="user-section d-flex gap-3">
             <button v-if="showLoginIcon"
-                    style="cursor: pointer;"
                     @click="navigateToLogin"
                     aria-label="Zur Anmeldung/Registrierung">
                 <LoginIcon role="presentation" />
@@ -25,6 +24,7 @@
         </div>
     </header>
 </template>
+
 
 <script>
     import HomeIcon from '@/../public/assets/images/home.svg';
@@ -72,6 +72,7 @@
     };
 </script>
 
+
 <style scoped>
 .top-bar {
   position: fixed;
@@ -93,10 +94,10 @@
     position: absolute;
 }
 
-.icon {
-  width: 28px;
-  height: 28px;
-}
+    .icon {
+        width: 28px;
+        height: 28px;
+    }
 
 .app-name {
   white-space: nowrap;

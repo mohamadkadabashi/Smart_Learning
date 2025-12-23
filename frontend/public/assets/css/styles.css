@@ -1,4 +1,7 @@
-:root, .qti3-player-container, .qti3-player-container-fluid {
+:root, 
+body,
+.qti3-player-container, 
+.qti3-player-container-fluid {
     --primary-color: #F08844;
     --secondary-color: #AFAFAF;
     --text-entry-focus-bg: #EC660C37;
@@ -18,12 +21,15 @@
 }
 
 /* Text Entry */
+input[type=text] {
+    height: 3rem;
+    min-width: 30vw;
+}
+
 input, input.text-entry-default {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
-    height: 3rem;
-    min-width: 30vw;
 }
 
     input:focus,
@@ -41,8 +47,17 @@ input.text-entry-default {
 }
 
 /* File Upload */
-input.upload {
-    display: none; /* remove original upload style */
+input[type=file] {
+    /* remove original upload style */
+    position: absolute;
+    width: 0;
+    height: 0;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+input[type=file]:focus + label.upload-btn {
+    border: var(--choice-control-border-width) solid var(--choice-control-focus-border-color);
 }
 
 label.upload-btn {
@@ -57,7 +72,7 @@ label.upload-btn {
     background-repeat: no-repeat;
     transition: background-size 0.2s ease, background-color 0.2s ease;
     height: 3rem;
-    width: 30vw;
+    min-width: 30vw;
 }
 label.upload-btn:hover {
     background-size: 6%;
@@ -226,6 +241,8 @@ select {
     background-size: 3%;
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
+    height: 3rem;
+    min-width: 30vw;
 }
 select:focus,
 select:focus-visible {
