@@ -3,9 +3,15 @@
 
     <!-- Name of module, clickable -->
     <button class="module-name" @click="$emit('open', moduleName)">
-      test
       {{ moduleName }}
     </button>
+
+    <!-- optional progress text for list element on home page -->
+    <div class="progress-wrapper" v-if="showProgressText">
+      <span class="progress-text">
+        {{ completed }}/{{ total }} Tests
+      </span>
+    </div>
 
     <!-- progressbar -->
     <div class="progress-wrapper">
@@ -15,6 +21,11 @@
         </div>
       </div>
     </div>
+
+    <!-- button for test lists element on module pages -->
+    <button v-if="showButton" class="primary" @click="$emit('open', action)">
+      {{ action }}
+    </button>
 
   </div>
 </template>
@@ -26,7 +37,15 @@ export default {
   props: {
     moduleName: {
       type: String,
-      required: true
+      required: true,
+    },
+    showProgressText: {
+      type: Boolean,
+      default: false
+    },
+    showButton: {
+      type: Boolean,
+      default: false
     },
     completed: {
       type: Number,
@@ -74,6 +93,10 @@ export default {
 /* Fortschrittsbereich */
 .progress-wrapper {
   width: 50%;
+  font-family: "Open Sans";
+  font-size: 18px;
+  font-weight: 400;
+  padding: 20px;
 }
 
 /* Balken */
