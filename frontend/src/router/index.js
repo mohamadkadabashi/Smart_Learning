@@ -34,6 +34,7 @@ const routes = [
     path: '/create',
     name: 'Test erstellen',
     component: Test,
+    props: true,
     meta: {
       title: 'Test erstellen',
       headerTitle: 'Neuen Test anlegen',
