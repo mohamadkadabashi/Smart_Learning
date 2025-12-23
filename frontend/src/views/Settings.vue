@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="settings-page">
     <TopBar />
 
-    <div class="main-content container-fluid py-5 d-flex justify-content-center">
-      <div class="settings-wrapper w-100">
+    <div class="settings-content">
+      <div class="settings-wrapper">
         <SettingsProfile />
         <SettingsPassword />
       </div>
@@ -27,15 +27,18 @@ export default {
 </script>
 
 <style scoped>
-.main-content {
-  margin-top: 3rem;
+.settings-content {
+  padding-top: 1.5rem;
+  padding-bottom: 4rem;
 }
 
 .settings-wrapper {
-  max-width: 1200px;
-}
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
 
-.settings-wrapper > *:not(:last-child) {
-  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
 }
 </style>
