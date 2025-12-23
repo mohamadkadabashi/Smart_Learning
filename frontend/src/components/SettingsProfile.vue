@@ -1,6 +1,7 @@
 <template>
   <div class="settings-section">
     <div class="settings-grid">
+      <!-- Persönliche Daten -->
       <div class="settings-card">
         <h2>Persönliche Daten ändern</h2>
 
@@ -21,16 +22,17 @@
         />
       </div>
 
+      <!-- Tagesziel -->
       <div class="settings-card">
         <h2>Tagesziel anpassen</h2>
 
         <div class="settings-goal-row">
           <div class="settings-goal-left">
-            <label class="settings-inline-label" for="settings-goal">Tests bestehen pro Tag</label>
+            <label class="settings-inline-label" for="settings-goal">
+              Tests bestehen pro Tag
+            </label>
 
-            <div class="settings-counter">
-              <button class="number-minus" type="button" @click="decrease" aria-label="Minus"></button>
-
+            <div class="number-wrapper">
               <input
                 id="settings-goal"
                 class="settings-goal-input"
@@ -39,7 +41,20 @@
                 min="1"
               />
 
-              <button class="number-plus" type="button" @click="increase" aria-label="Plus"></button>
+              <button
+                type="button"
+                class="number-minus"
+                @click="decrease"
+                :disabled="goal <= 1"
+                aria-label="Minus"
+              />
+
+              <button
+                type="button"
+                class="number-plus"
+                @click="increase"
+                aria-label="Plus"
+              />
             </div>
           </div>
 
@@ -54,6 +69,7 @@
         </div>
       </div>
 
+      <!-- Aktionen -->
       <div class="settings-actions">
         <button class="primary" type="button" @click="save">
           Speichern
@@ -82,7 +98,13 @@ export default {
       if (this.goal > 1) this.goal -= 1
     },
     save() {
-      console.log('Profile settings saved', this.username, this.email, this.goal, this.streak)
+      console.log(
+        'Profile settings saved',
+        this.username,
+        this.email,
+        this.goal,
+        this.streak
+      )
     }
   }
 }
