@@ -1,48 +1,64 @@
 <template>
-  <div class="settings-profile">
-    <div class="cards-row">
+  <div class="settings-section">
+    <div class="settings-grid">
       <div class="settings-card">
         <h2>Persönliche Daten ändern</h2>
 
-        <label>Nutzername</label>
-        <input type="text" v-model="username" />
+        <label for="settings-username">Nutzername</label>
+        <input
+          id="settings-username"
+          class="settings-input"
+          type="text"
+          v-model="username"
+        />
 
-        <label>E-Mail-Adresse</label>
-        <input type="email" v-model="email" />
+        <label for="settings-email">E-Mail-Adresse</label>
+        <input
+          id="settings-email"
+          class="settings-input"
+          type="email"
+          v-model="email"
+        />
       </div>
 
       <div class="settings-card">
         <h2>Tagesziel anpassen</h2>
 
-        <div class="goal-row">
-          <!-- Left -->
-          <div class="goal-left">
-            <label>Tests bestehen pro Tag</label>
+        <div class="settings-goal-row">
+          <div class="settings-goal-left">
+            <label class="settings-inline-label" for="settings-goal">Tests bestehen pro Tag</label>
 
-            <div class="counter">
-              <button class="number-minus" @click="decrease" />
-              <input type="number" v-model.number="goal" />
-              <button class="number-plus" @click="increase" />
+            <div class="settings-counter">
+              <button class="number-minus" type="button" @click="decrease" aria-label="Minus"></button>
+
+              <input
+                id="settings-goal"
+                class="settings-goal-input"
+                type="number"
+                v-model.number="goal"
+                min="1"
+              />
+
+              <button class="number-plus" type="button" @click="increase" aria-label="Plus"></button>
             </div>
           </div>
 
-          <div class="goal-right">
-            <label>Streak 🔥</label>
-            <input
-              type="checkbox"
-              role="checkbox"
-              :aria-checked="streak"
-              @click="streak = !streak"
-            />
+          <div class="settings-goal-right">
+            <label class="settings-inline-label">Streak 🔥</label>
+
+            <label class="settings-switch">
+              <input type="checkbox" v-model="streak" />
+              <span class="settings-slider"></span>
+            </label>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="save-row">
-      <button class="primary" @click="save">
-        Speichern
-      </button>
+      <div class="settings-actions">
+        <button class="primary" type="button" @click="save">
+          Speichern
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -60,63 +76,14 @@ export default {
   },
   methods: {
     increase() {
-      this.goal++
+      this.goal += 1
     },
     decrease() {
-      if (this.goal > 1) this.goal--
+      if (this.goal > 1) this.goal -= 1
     },
     save() {
-      console.log('Profile settings saved')
+      console.log('Profile settings saved', this.username, this.email, this.goal, this.streak)
     }
   }
 }
 </script>
-
-<style scoped>
-.settings-profile {
-  margin-bottom: 3rem;
-}
-
-.cards-row {
-  display: flex;
-  gap: 3rem;
-  flex-wrap: wrap;
-}
-
-.settings-card {
-  padding: 2rem;
-  flex: 1;
-  min-width: 320px;
-}
-
-.goal-row {
-  display: flex;
-  align-items: center;
-  gap: 6rem;
-  margin-top: 1.5rem;
-}
-
-.goal-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.goal-right {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.counter {
-  display: flex;
-  align-items: center;
-}
-
-.save-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 2rem;
-}
-</style>

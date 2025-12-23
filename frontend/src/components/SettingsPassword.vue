@@ -1,10 +1,9 @@
 <template>
   <div class="settings-password-wrapper">
-    <!-- Grey card -->
-    <div class="settings-card">
+    <div class="settings-card settings-card-wide">
       <h2>Passwort ändern</h2>
 
-      <div class="password-row">
+      <div class="settings-password-row">
         <PasswordInput
           label="Neues Passwort"
           v-model="password"
@@ -17,8 +16,8 @@
       </div>
     </div>
 
-    <div class="btn-row">
-      <button class="primary" @click="changePassword">
+    <div class="settings-password-actions">
+      <button class="primary" type="button" @click="changePassword">
         Passwort ändern
       </button>
     </div>
@@ -46,26 +45,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/* wrapper spacing only */
-.settings-password-wrapper {
-  margin-top: 3rem;
-}
-
-.settings-card {
-  padding: 2rem;
-}
-
-.password-row {
-  display: flex;
-  gap: 3rem;
-  margin-top: 1.5rem;
-}
-
-.btn-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-}
-</style>

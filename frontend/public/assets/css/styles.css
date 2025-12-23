@@ -258,3 +258,376 @@ h2 {
     font-size: 28px;
     font-weight: 500;
 }
+
+:root, .qti3-player-container, .qti3-player-container-fluid {
+    --primary-color: #F08844;
+    --secondary-color: #AFAFAF;
+    --text-entry-focus-bg: #EC660C37;
+    --choice-control-radio-bg: #D6D6D6;
+    --choice-control-checked-bg: #F9B78B;
+    --choice-control-focus-border-color: #000000;
+    --choice-control-checkbox-bg: #D9D9D9;
+    --choice-control-checkbox-border-color: #000000;
+    --text-entry-border-width: 2px;
+    --text-entry-border-radius: 50px;
+    --choice-control-border-width: 2px;
+    --choice-control-border-radius: 30px;
+    --choice-control-checkbox-border-width: 1px;
+    --button-focus-border-width: 2px;
+    --button-focus-border-color: #000000;
+    font-family: "Open Sans";
+}
+
+/* Text Entry */
+input, input.text-entry-default {
+    border: var(--text-entry-border-width) solid var(--primary-color);
+    border-radius: var(--text-entry-border-radius);
+    padding: .2rem .4rem;
+    height: 3rem;
+    min-width: 30vw;
+}
+
+input:focus,
+input:focus-visible,
+input.text-entry-default:focus,
+input.text-entry-default:focus-visible {
+    outline: none;
+    background-color: var(--text-entry-focus-bg);
+    border: var(--text-entry-border-width) solid var(--primary-color);
+    box-shadow: none;
+}
+
+input.text-entry-default {
+    height: 2.5rem;
+}
+
+/* File Upload */
+input.upload {
+    display: none;
+}
+
+label.upload-btn {
+    display: inline-block;
+    border: none;
+    border-radius: var(--text-entry-border-radius);
+    background-color: #D6D6D6;
+    padding: 20px 20px;
+    background-image: url('../images/plus-icon.svg');
+    background-size: 5%;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    height: 3rem;
+    width: 30vw;
+}
+label.upload-btn:hover {
+    background-size: 6%;
+    background-color: #cfcfcf;
+}
+
+/* Number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Buttons */
+button {
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button.secondary {
+    background: var(--secondary-color);
+    padding: .5rem 1rem;
+    border-radius: 30px;
+    border: none;
+    font-weight: 500;
+    min-width: 8vw;
+    min-height: 3rem;
+}
+
+button.secondary:not([disabled]):hover {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+
+button.secondary:focus-visible {
+    border: var(--button-focus-border-width) solid var(--button-focus-border-color);
+}
+
+button.secondary[disabled] {
+    background-color: #DEDEDE;
+}
+
+button.primary {
+    background: var(--primary-color);
+    padding: .5rem 1rem;
+    border-radius: 30px;
+    border: none;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+    min-width: 8vw;
+    min-height: 3rem;
+}
+
+button.primary:not([disabled]):hover {
+    background-color: #F9B78B;
+}
+
+button.primary:focus-visible {
+    border: var(--button-focus-border-width) solid var(--button-focus-border-color);
+}
+
+button.primary[disabled] {
+    background-color: #FFD1B2;
+}
+
+button.number-plus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/plus-icon.svg');
+    background-size: 50%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+button.number-plus:not(:disabled):hover {
+    background-size: 60%;
+    background-color: #cfcfcf;
+}
+
+button.number-minus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/minus-icon.svg');
+    background-size: 70%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+button.number-minus:not(:disabled):hover {
+    background-size: 90%;
+    background-color: #cfcfcf;
+}
+
+/* Labels & Headings */
+label {
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 250;
+    letter-spacing: 0px;
+    margin-bottom: 6px;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+/* SETTINGS PAGE (Figma) */
+
+.settings-page {
+    background: #ffffff;
+}
+
+/* layout */
+.settings-page .settings-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+}
+
+.settings-page .settings-grid {
+    display: grid;
+    grid-template-columns: 548px 548px;
+    gap: 32px 33px;
+    justify-content: center;
+    margin-top: 84px;
+}
+
+/* cards */
+.settings-page .settings-card {
+    background: #F3F3F3;
+    border-radius: 30px;
+    padding: 22px 20px;
+}
+
+.settings-page .settings-card-wide {
+    grid-column: 1 / -1;
+}
+
+.settings-page .settings-card h2 {
+    margin: 0 0 12px 0;
+    font-weight: 400;
+}
+
+/* inputs */
+.settings-page .settings-input {
+    width: 507px;
+    min-width: 0;
+    background: #ffffff;
+    border: 3px solid var(--primary-color);
+    border-radius: 30px;
+    height: 56px;
+    padding: 0 18px;
+    box-sizing: border-box;
+    margin-bottom: 18px;
+}
+
+.settings-page .settings-inline-label {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+/* goal section */
+.settings-page .settings-goal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-top: 6px;
+}
+
+.settings-page .settings-goal-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settings-page .settings-counter {
+    display: flex;
+    align-items: center;
+}
+
+.settings-page .settings-goal-input {
+    width: 190px;
+    min-width: 0;
+    background: #ffffff;
+    border: 3px solid var(--primary-color);
+    border-radius: 30px;
+    height: 56px;
+    padding: 0 18px;
+    box-sizing: border-box;
+    margin: 0 15px;
+    text-align: center;
+}
+
+.settings-page .settings-goal-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-top: 2px;
+}
+
+/* streak switch */
+.settings-page .settings-switch {
+    position: relative;
+    display: inline-block;
+    width: 66px;
+    height: 30px;
+}
+
+.settings-page .settings-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.settings-page .settings-slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    background: var(--primary-color);
+    border-radius: 30px;
+}
+
+.settings-page .settings-slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 21px;
+    left: 6px;
+    top: 5px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.settings-page .settings-switch input:checked + .settings-slider::before {
+    transform: translateX(33px);
+}
+
+/* actions */
+.settings-page .settings-actions {
+    grid-column: 2 / 3;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -8px;
+}
+
+.settings-page .settings-actions button.primary {
+    width: 161px;
+    height: 61px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* password section */
+.settings-page .settings-password-wrapper {
+    margin-top: 24px;
+}
+
+.settings-page .settings-password-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    margin-top: 12px;
+}
+
+.settings-page .settings-password-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.settings-page .settings-password-actions button.primary {
+    width: 262px;
+    height: 61px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* responsive */
+@media (max-width: 1200px) {
+    .settings-page .settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-page .settings-input {
+        width: 100%;
+    }
+
+    .settings-page .settings-password-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
