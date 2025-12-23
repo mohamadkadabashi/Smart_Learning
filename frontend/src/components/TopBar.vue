@@ -26,6 +26,7 @@
     </header>
 </template>
 
+
 <script>
     import HomeIcon from '@/../public/assets/images/home.svg';
     import UserIcon from '@/../public/assets/images/person-sharp.svg';
@@ -72,6 +73,7 @@
     };
 </script>
 
+
 <style scoped>
 .top-bar {
   position: fixed;
@@ -93,10 +95,10 @@
     position: absolute;
 }
 
-.icon {
-  width: 28px;
-  height: 28px;
-}
+    .icon {
+        width: 28px;
+        height: 28px;
+    }
 
 .app-name {
   white-space: nowrap;

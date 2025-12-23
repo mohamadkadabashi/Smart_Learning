@@ -1,8 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+    /* eslint-disable no-unused-vars */
+    import { ref, computed } from 'vue'
+    import DeleteIcon from '@/../public/assets/images/delete.svg'
 
-// eslint-disable-next-line no-unused-vars
-const value = ref(1)
+    const value = ref(1)
+    const file = ref(null)
+
+    function showFileName(event) {
+        file.value = event.target.files[0] || null
+    }
+
+    function removeFile() {
+        file.value = null
+        document.getElementById('file-upload').value = ''
+    }
+
+    const fileName = computed(() => file.value?.name || '')
 </script>
 
 <template>
@@ -24,11 +37,13 @@ const value = ref(1)
 
         <!-- upload file -->
         <div class="form-group">
-          <label>Skript hochladen</label>
-          <label for="file-upload" class="upload-btn"></label>
-          <form>
-            <input type="file" id="file-upload" name="file-upload" class="upload">
-          </form>
+            <label>Skript hochladen</label>
+            <input type="file" id="file-upload" class="upload" @change="showFileName" title="Skript hochladen">
+            <label for="file-upload" class="upload-btn"></label>
+            <div v-if="fileName" class="d-flex gap-2 align-items-center">
+                <span class="file-text">{{ fileName }}</span>
+                <button type="button" class="delete-btn" @click="removeFile"><DeleteIcon /></button>
+            </div>
         </div>
 
         <!-- task type -->
@@ -83,13 +98,13 @@ const value = ref(1)
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 100px;
-  padding: 100px;
+  padding: 3vw;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 30px;
 }
 
 .formular-container {
@@ -100,15 +115,12 @@ const value = ref(1)
 .form-group {
   display: flex;
   flex-direction: column;
+  min-height: 125px;
 }
 
 .form-group input,
 .form-group select {
   padding: 10px 12px;
-}
-
-.form-group input:focus,
-.form-group select:focus {
 }
 
 .number-wrapper {
@@ -126,5 +138,41 @@ const value = ref(1)
 
 .number-minus:disabled {
     opacity: 0.5;
+}
+
+.delete-btn {
+    border: none;
+    background-color: transparent;
+}
+
+.delete-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.delete-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.file-text {
+    max-width: 34vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 890px) {
+    .form-grid {
+        display: block;
+    }
+
+    .column {
+        gap: 0;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
 }
 </style>
