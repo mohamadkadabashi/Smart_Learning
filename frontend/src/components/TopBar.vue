@@ -94,10 +94,10 @@
     position: absolute;
 }
 
-    .icon {
-        width: 28px;
-        height: 28px;
-    }
+.icon {
+    width: 28px;
+    height: 28px;
+}
 
 .app-name {
   white-space: nowrap;

@@ -95,19 +95,4 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-  if (to.matched.some((record) => record.meta.requiresAuth) && !token) {
-    next("/login");
-  } else {
-    next();
-  }
-
-  const hasToken = !!localStorage.getItem("access_token");
-
-  if (to.matched.some(r => r.meta.requiresAuth) && !hasToken) {
-    return next("/login");
-  }
-
-  next();
-});
-
 export default router
