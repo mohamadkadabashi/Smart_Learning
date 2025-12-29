@@ -35,6 +35,7 @@
     import UserIcon from '@/../public/assets/images/person-sharp.svg';
     import LoginIcon from '@/../public/assets/images/log-in.svg';
     import UserDropdown from '@/components/UserDropdown.vue';
+    import { isAuthenticated } from '@/services/auth.js';
 
     const ROUTE_HOME = 'Home';
     const ROUTE_LOGIN = 'Login/Registrierung';
@@ -60,10 +61,10 @@
                 return !this.isHomeRoute;
             },
             showUserIcon() {
-                return !this.isLoginRoute;
+                return !this.isLoginRoute && isAuthenticated();
             },
             showLoginIcon() {
-                return this.isHomeRoute;
+                return this.isHomeRoute && !isAuthenticated();
             }
         },
         methods: {

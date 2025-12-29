@@ -31,6 +31,7 @@
     import LogOutIcon from '@/../public/assets/images/log-out.svg';
     import HelpIcon from '@/../public/assets/images/help.svg';
     import ToggleSwitch from '@/components/ToggleSwitch.vue';
+    import { logout } from '@/services/auth.js';
 
     export default {
         name: 'UserDropdown',
@@ -44,7 +45,7 @@
                 document.body.classList.toggle('dark', this.darkmode)
             },
             logout() {
-                this.$router.push({ name: 'Login/Registrierung' });
+                logout();
             }
         },
         components: {
