@@ -1,4 +1,5 @@
-import {api} from "./api";
+import { api } from "./api";
+import router from '@/router/index.js';
 
 export async function register(username, email, password) {
   const payload = { username, email, password };
@@ -27,4 +28,21 @@ export async function login(identifier, password) {
 export function logout(){
     localStorage.removeItem("access_token");
     localStorage.removeItem("access_token_expires_at");
+    router.push({ name: 'Login/Registrierung' });
+}
+
+export function isAuthenticated() {
+    const token = localStorage.getItem("access_token");
+    const expiresAt = localStorage.getItem("access_token_expires_at");
+
+    if (!token || !expiresAt) {
+        return false;
+    }
+
+    if (Date.now() > Number(expiresAt)) {
+        logout();
+        return false;
+    }
+
+    return true;
 }
