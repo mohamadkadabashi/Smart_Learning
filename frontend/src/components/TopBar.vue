@@ -92,6 +92,7 @@
     };
 </script>
 
+
 <style scoped>
 .top-bar {
   position: fixed;
@@ -114,8 +115,8 @@
 }
 
 .icon {
-  width: 28px;
-  height: 28px;
+    width: 28px;
+    height: 28px;
 }
 
 .app-name {
