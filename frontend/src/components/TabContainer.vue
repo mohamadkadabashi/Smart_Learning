@@ -37,7 +37,7 @@
     border: 4px solid var(--secondary-color);
     border-radius: 50px;
     width: 50vw;
-    height: 65vh;
+    height: auto;
     min-height: fit-content;
     overflow: hidden;
 }
