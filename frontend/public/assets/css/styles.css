@@ -153,6 +153,11 @@ button {
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
+button:focus-visible {
+    border: var(--button-focus-border-width) solid var(--button-focus-border-color);
+    outline: var(--button-focus-border-width) solid var(--button-focus-border-color);
+}
+
 button.secondary {
     background: var(--secondary-color);
     padding: .5rem 1rem;
@@ -166,10 +171,6 @@ button.secondary {
     button.secondary:not([disabled]):hover {
         background-color: #000000;
         color: #FFFFFF;
-    }
-
-    button.secondary:focus-visible {
-        border: var(--button-focus-border-width) solid var(--button-focus-border-color);
     }
 
     button.secondary[disabled] {
@@ -189,10 +190,6 @@ button.primary {
 
     button.primary:not([disabled]):hover {
         background-color: #F9B78B;
-    }
-
-    button.primary:focus-visible {
-        border: var(--button-focus-border-width) solid var(--button-focus-border-color);
     }
 
     button.primary[disabled] {
