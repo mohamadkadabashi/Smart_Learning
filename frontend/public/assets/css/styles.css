@@ -239,6 +239,7 @@ select {
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
     background-image: url('../images/arrow-down-icon.svg');
+    background-color: transparent;
     background-size: 3%;
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
