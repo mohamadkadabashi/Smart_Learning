@@ -1,87 +1,39 @@
 <template>
-  <div class="settings-section">
-    <div class="settings-grid">
-      <!-- Persönliche Daten -->
-      <div class="settings-card">
-        <h2>Persönliche Daten ändern</h2>
+  <section class="profile-section">
+    <div class="profile-grid">
+      <SettingsPersonalData
+        :username="username"
+        :email="email"
+        @update:username="username = $event"
+        @update:email="email = $event"
+      />
 
-        <label for="settings-username">Nutzername</label>
-        <input
-          id="settings-username"
-          class="settings-input"
-          type="text"
-          v-model="username"
-        />
+      <SettingsDailyGoal
+        :goal="goal"
+        :streak="streak"
+        @update:goal="goal = $event"
+        @update:streak="streak = $event"
+      />
 
-        <label for="settings-email">E-Mail-Adresse</label>
-        <input
-          id="settings-email"
-          class="settings-input"
-          type="email"
-          v-model="email"
-        />
-      </div>
-
-      <!-- Tagesziel -->
-      <div class="settings-card">
-        <h2>Tagesziel anpassen</h2>
-
-        <div class="settings-goal-row">
-          <div class="settings-goal-left">
-            <label class="settings-inline-label" for="settings-goal">
-              Tests bestehen pro Tag
-            </label>
-
-            <div class="number-wrapper">
-              <input
-                id="settings-goal"
-                class="settings-goal-input"
-                type="number"
-                v-model.number="goal"
-                min="1"
-              />
-
-              <button
-                type="button"
-                class="number-minus"
-                @click="decrease"
-                :disabled="goal <= 1"
-                aria-label="Minus"
-              />
-
-              <button
-                type="button"
-                class="number-plus"
-                @click="increase"
-                aria-label="Plus"
-              />
-            </div>
-          </div>
-
-          <div class="settings-goal-right">
-            <label class="settings-inline-label">Streak 🔥</label>
-
-            <label class="settings-switch">
-              <input type="checkbox" v-model="streak" />
-              <span class="settings-slider"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Aktionen -->
-      <div class="settings-actions">
-        <button class="primary" type="button" @click="save">
+      <div class="profile-actions">
+        <button class="primary" type="button">
           Speichern
         </button>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
+import SettingsPersonalData from '@/components/SettingsPersonalData.vue'
+import SettingsDailyGoal from '@/components/SettingsDailyGoal.vue'
+
 export default {
   name: 'SettingsProfile',
+  components: {
+    SettingsPersonalData,
+    SettingsDailyGoal
+  },
   data() {
     return {
       username: '',
@@ -89,23 +41,60 @@ export default {
       goal: 3,
       streak: true
     }
-  },
-  methods: {
-    increase() {
-      this.goal += 1
-    },
-    decrease() {
-      if (this.goal > 1) this.goal -= 1
-    },
-    save() {
-      console.log(
-        'Profile settings saved',
-        this.username,
-        this.email,
-        this.goal,
-        this.streak
-      )
-    }
   }
 }
 </script>
+
+<style scoped>
+.profile-section {
+  margin-top: 84px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 548px 548px;
+  column-gap: 33px;
+  row-gap: 12px;
+
+  grid-template-areas:
+    "personal goal"
+    ".        save";
+
+  justify-content: center;
+  align-items: start;
+}
+
+.profile-grid > :nth-child(1) {
+  grid-area: personal;
+}
+
+.profile-grid > :nth-child(2) {
+  grid-area: goal;
+}
+
+.profile-actions {
+  grid-area: save;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-actions .primary {
+  width: 161px;
+  height: 61px;
+  font-size: 28px;
+  font-weight: 600;
+  border-radius: 30px;
+  color: #000;
+}
+
+@media (max-width: 1200px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "personal"
+      "goal"
+      "save";
+    row-gap: 24px;
+  }
+}
+</style>
