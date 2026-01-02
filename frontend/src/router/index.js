@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Test from '../views/test.vue'
 import Login from '../views/LoginRegistrationView.vue'
+import createModule from "@/components/createModule";
 
 Vue.use(VueRouter)
 
@@ -37,6 +38,18 @@ const routes = [
     meta: {
       title: 'Test erstellen',
       headerTitle: 'Neuen Test anlegen',
+      // TODO: change it to true later
+      requiresAuth: false,
+
+    }
+  },
+  {
+    path: '/createModule',
+    name: 'Modul erstellen',
+    component: createModule,
+    meta: {
+      title: 'Modul erstellen',
+      headerTitle: 'Neues Modul erstellen',
       // TODO: change it to true later
       requiresAuth: false,
 
