@@ -1,6 +1,6 @@
 <template class="h-100">
     <div>
-        <div class="main-content container-fluid py-5 d-flex justify-content-center flex-wrap h-100">
+        <div class="main-content container-fluid py-5 d-flex justify-content-center flex-wrap py-2">
             <TabContainer :tabs="['Login', 'Registrieren']">
                 <template #tab-0>
                     <Login />
@@ -23,3 +23,9 @@
         components: { TabContainer, Login, Registration }
     }
 </script>
+
+<style scoped>
+    .container-fluid {
+        min-height: 100%;
+    }
+</style>

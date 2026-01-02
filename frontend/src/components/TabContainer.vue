@@ -38,7 +38,6 @@
     border-radius: 50px;
     width: 50vw;
     height: auto;
-    min-height: fit-content;
     overflow: hidden;
 }
 
@@ -70,8 +69,8 @@
     }
 
 .tab-content {
-    padding: 20px;
-    height: 100%;
-    min-height: fit-content;
+    margin: 1rem 0;
+    overflow-y: auto;
+    height: 600px;
 }
 </style>
