@@ -23,7 +23,8 @@ const routes = [
     name: 'Settings',
     component: Settings,
     meta: {
-      title: 'Settings'
+      title: 'Settings',
+      headerTitle: 'Einstellungen'
     }
   },
   {
