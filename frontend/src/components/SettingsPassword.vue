@@ -65,7 +65,6 @@ export default {
 .password-item {
   width: 100%;
   min-width: 0;
-  max-width: 100%;
 }
 
 :deep(.password-field),
@@ -88,6 +87,7 @@ export default {
   height: 61px;
   font-size: 28px;
   font-weight: 600;
+  color: #000;
 }
 
 @media (max-width: 1200px) {

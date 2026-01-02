@@ -61,7 +61,8 @@ export default {
     ".        save";
 
   justify-content: center;
-  align-items: start;
+
+  align-items: stretch;
 }
 
 .profile-grid > :nth-child(1) {
@@ -70,6 +71,11 @@ export default {
 
 .profile-grid > :nth-child(2) {
   grid-area: goal;
+}
+
+.profile-grid > :nth-child(1),
+.profile-grid > :nth-child(2) {
+  height: 100%;
 }
 
 .profile-actions {
@@ -95,6 +101,11 @@ export default {
       "goal"
       "save";
     row-gap: 24px;
+  }
+
+  .profile-grid > :nth-child(1),
+  .profile-grid > :nth-child(2) {
+    height: auto;
   }
 }
 </style>
