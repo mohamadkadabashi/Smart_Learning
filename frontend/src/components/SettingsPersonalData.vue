@@ -5,7 +5,6 @@
     <label for="settings-username">Nutzername</label>
     <input
       id="settings-username"
-      class="input"
       type="text"
       :value="username"
       @input="$emit('update:username', $event.target.value)"
@@ -14,7 +13,6 @@
     <label for="settings-email">E-Mail-Adresse</label>
     <input
       id="settings-email"
-      class="input"
       type="email"
       :value="email"
       @input="$emit('update:email', $event.target.value)"
@@ -36,6 +34,7 @@ export default {
 <style scoped>
 .card {
   width: 548px;
+  min-height: 310px;
   background: #f3f3f3;
   border-radius: 30px;
   padding: 22px 20px;
@@ -45,34 +44,25 @@ export default {
 h2 {
   margin: 0 0 12px 0;
   font-weight: 400;
-  font-size: 28px;
 }
 
 label {
   display: block;
   margin: 0 0 6px 0;
-  font-style: italic;
-  font-weight: 400;
-  font-size: 24px;
   line-height: 33px;
   color: #000;
 }
 
-.input {
+input {
   width: 507px;
   min-width: 0;
   height: 56px;
-  box-sizing: border-box;
-
-  background: #ffffff;
-  border: 3px solid var(--primary-color);
-  border-radius: 30px;
-
   padding: 0 18px;
   margin: 0 0 18px 0;
+  box-sizing: border-box;
 }
 
-.input:last-of-type {
+input:last-of-type {
   margin-bottom: 0;
 }
 
@@ -80,7 +70,8 @@ label {
   .card {
     width: 100%;
   }
-  .input {
+
+  input {
     width: 100%;
   }
 }

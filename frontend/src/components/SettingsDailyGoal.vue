@@ -3,22 +3,30 @@
     <h2>Tagesziel anpassen</h2>
 
     <div class="labels-row">
-      <span class="label-italic">Tests bestehen pro Tag</span>
-      <span class="label-italic">Streak 🔥</span>
+      <label>Tests bestehen pro Tag</label>
+      <label>Streak 🔥</label>
     </div>
 
     <div class="controls-row">
       <div class="left-group">
         <input
-          class="goal-input"
           type="number"
           min="1"
           :value="goal"
           @input="$emit('update:goal', toNumber($event.target.value))"
         />
 
-        <button class="btn" @click="$emit('update:goal', goal + 1)">+</button>
-        <button class="btn" @click="$emit('update:goal', Math.max(1, goal - 1))">−</button>
+        <button
+          class="number-plus"
+          type="button"
+          @click="$emit('update:goal', goal + 1)"
+        />
+
+        <button
+          class="number-minus"
+          type="button"
+          @click="$emit('update:goal', Math.max(1, goal - 1))"
+        />
       </div>
 
       <label class="switch">
@@ -53,7 +61,7 @@ export default {
 <style scoped>
 .card {
   width: 548px;
-  min-height: 271px;
+  min-height: 310px;
   background: #f3f3f3;
   border-radius: 30px;
   padding: 22px 20px;
@@ -62,13 +70,7 @@ export default {
 
 h2 {
   margin: 0 0 12px;
-  font-size: 28px;
   font-weight: 400;
-}
-
-.label-italic {
-  font-style: italic;
-  font-size: 24px;
 }
 
 .labels-row {
@@ -87,46 +89,18 @@ h2 {
   display: flex;
   align-items: center;
   gap: 16px;
-  min-width: 0;
 }
 
-.goal-input {
-  flex: 0 0 150px;
+.left-group input {
   width: 150px;
-  min-width: 0;
   height: 56px;
-
-  background: #ffffff;
-  border: 3px solid var(--primary-color);
-  border-radius: 30px;
   text-align: center;
-}
-
-.btn {
-  width: 40px;
-  height: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: #d9d9d9;
-  border-radius: 5px;
-  border: none;
-
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1;
-  padding: 0;
-
-  cursor: pointer;
 }
 
 .switch {
   width: 66px;
   height: 30px;
   position: relative;
-  flex: 0 0 auto;
 }
 
 .switch input {
@@ -145,7 +119,7 @@ h2 {
   position: absolute;
   width: 21px;
   height: 20px;
-  background: white;
+  background: #ffffff;
   border-radius: 50%;
   top: 5px;
   left: 6px;
@@ -157,7 +131,7 @@ h2 {
 }
 
 @media (max-width: 480px) {
-  .labels-row span:last-child {
+  .labels-row label:last-child {
     display: none;
   }
 
@@ -169,45 +143,32 @@ h2 {
   .left-group {
     width: 100%;
     justify-content: space-between;
-    gap: 10px;
   }
 
-  .goal-input {
-    flex: 0 0 120px;
+  .left-group input {
     width: 120px;
   }
 
   .switch {
     margin-left: auto;
-    width: 66px;
     height: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 6px;
-    position: relative;
   }
 
   .switch::before {
     content: "Streak 🔥";
     font-style: italic;
     font-size: 24px;
-    line-height: 1.2;
     white-space: nowrap;
   }
 
   .slider {
     position: relative;
-    inset: auto;
     width: 66px;
     height: 30px;
-  }
-
-  .switch input {
-    position: absolute;
-    width: 0;
-    height: 0;
-    opacity: 0;
   }
 }
 
