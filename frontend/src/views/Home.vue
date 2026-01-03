@@ -37,17 +37,22 @@
                     </div>
                 </div>
             </div>
+	      	<div style="position: absolute; right: 3rem;">
+	        	<CircularProgress value="65" />
+	      	</div>
         </div>
     </div>
 </template>
 
 <script>
     import StatsCard from '@/components/StatsCard.vue';
+    import CircularProgress from '@/components/CircularProgress.vue';
 
     export default {
         name: 'Home',
         components: {
-            StatsCard
+            StatsCard,
+            CircularProgress
         },
         data() {
             return {
