@@ -275,3 +275,15 @@ h2 {
     font-size: 28px;
     font-weight: 500;
 }
+
+/* Cards */
+.small-card {
+    background: #F3F3F3;
+    border-radius: 22px;
+    padding: 16px 20px;
+    width: 300px;
+}
+
+    .small-card .title {
+        font-weight: 500;
+    }
