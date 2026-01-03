@@ -1,50 +1,57 @@
 <template>
-  <div>
-    <div
-      class="main-content container-fluid py-5 d-flex justify-content-center">
-      <div class="card w-100" style="max-width: 60vw;">
-        <div class="card-header">
-          Tests
+    <div>
+        <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
+            <div class="card w-100">
+                <div class="card-header">
+                    Tests
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Test</th>
+                                    <th class="text-end">Questions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="test in tests" :key="test.id">
+                                    <td>
+                                        <router-link :to="{ name: 'Test', params: { id: test.id } }">
+                                            {{ test.title }}
+                                        </router-link>
+                                    </td>
+                                    <td class="text-end">{{ test.items.length }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <CreateTestCard />
+            </div>
         </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table mb-0">
-              <thead>
-                <tr>
-                  <th>Test</th>
-                  <th class="text-end">Questions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="test in tests" :key="test.id">
-                  <td>
-                    <router-link :to="{ name: 'Test', params: { id: test.id } }">
-                      {{ test.title }}
-                    </router-link>
-                  </td>
-                  <td class="text-end">{{ test.items.length }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>
-export default {
-  name: 'Home',
-  data() {
-    return {
-      tests: []
-    }
-  },
-  created() {
-    this.tests = this.$testService.getTests()
-  }
-}
+    import CreateTestCard from '@/components/CreateTestCard.vue';
+
+    export default {
+      name: 'Home',
+      components: {
+        CreateTestCard
+      },
+      data() {
+        return {
+          tests: []
+        };
+      },
+      created() {
+        this.tests = this.$testService.getTests();
+      }
+    };
 </script>
 
 <style scoped>
