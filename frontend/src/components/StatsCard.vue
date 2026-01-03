@@ -1,6 +1,6 @@
-﻿<template>
-    <div class="stats-card">
-        <div class="title">{{ title }}</div>
+<template>
+    <div class="small-card">
+        <div class="headline">{{ title }}</div>
 
         <div class="main">
             <div class="icon">
@@ -10,7 +10,7 @@
                      class="icon-img" />
             </div>
 
-            <div class="value">{{ value }}</div>
+            <div class="title">{{ value }}</div>
         </div>
 
         <div v-showS="subtitle" class="subtitle" :class="subtitleClass">
@@ -49,14 +49,8 @@
 </script>
 
 <style scoped>
-    .stats-card {
-        background: #F3F3F3;
-        border-radius: 22px;
-        padding: 16px 20px;
-        min-width: 300px;
-    }
 
-    .title {
+    .headline {
         color: #6B6B6B;
         font-size: 16px;
         margin-bottom: 16px;
@@ -80,9 +74,8 @@
         height: 34px;
     }
 
-    .value {
+    .title {
         font-size: 28px;
-        font-weight: 500;
     }
 
     .subtitle {
