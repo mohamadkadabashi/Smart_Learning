@@ -1,6 +1,15 @@
 <template>
     <div>
         <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
+            <div class="d-flex gap-3">
+                <StatsCard v-for="(card, index) in statsCards"
+                           :key="index"
+                           :title="card.title"
+                           :value="card.value"
+                           :subtitle="card.subtitle"
+                           :subtitleClass="card.subtitleClass"
+                           :iconSrc="card.iconSrc" />
+            </div>
             <div class="card w-100">
                 <div class="card-header">
                     Tests
@@ -28,6 +37,9 @@
                     </div>
                 </div>
             </div>
+	      	<div style="position: absolute; right: 3rem;">
+	        	<CircularProgress value="65" />
+	      	</div>
             <div>
                 <CreateTestCard />
             </div>
@@ -36,22 +48,47 @@
 </template>
 
 <script>
+    import StatsCard from '@/components/StatsCard.vue';
+    import CircularProgress from '@/components/CircularProgress.vue';
     import CreateTestCard from '@/components/CreateTestCard.vue';
 
     export default {
-      name: 'Home',
-      components: {
-        CreateTestCard
-      },
-      data() {
-        return {
-          tests: []
-        };
-      },
-      created() {
-        this.tests = this.$testService.getTests();
-      }
-    };
+        name: 'Home',
+        components: {
+            StatsCard,
+            CircularProgress,
+            CreateTestCard
+        },
+        data() {
+            return {
+                tests: [],
+                statsCards: [
+                    {
+                        title: 'Lernzeit diese Woche',
+                        value: '2h 34min',
+                        subtitle: '+15% zur Vorwoche',
+                        subtitleClass: 'subtitle-positive',
+                        iconSrc: '/assets/images/clock.svg'
+                    },
+                    {
+                        title: 'Erfolgsquote',
+                        value: '82%',
+                        subtitle: 'Durchschnitliche Erfolgsquote',
+                        iconSrc: '/assets/images/checked-circle.svg'
+                    },
+                    {
+                        title: 'Tests bestanden',
+                        value: '3/5 Tests',
+                        subtitle: '27 u. 4 Prüfungen',
+                        iconSrc: '/assets/images/document-text-sharp.svg'
+                    }
+                ]
+            }
+        },
+        created() {
+        this.tests = this.$testService.getTests()
+        }
+    }
 </script>
 
 <style scoped>
