@@ -26,7 +26,7 @@
 }
 
 .full-height {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 75px);
     position: absolute;
     bottom: 0;
     width: 100%;

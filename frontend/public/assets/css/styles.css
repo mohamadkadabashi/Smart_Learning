@@ -21,7 +21,7 @@ body,
 }
 
 /* Text Entry */
-input[type=text] {
+input {
     height: 3rem;
     min-width: 30vw;
 }
@@ -84,6 +84,10 @@ input[type="number"]::-webkit-inner-spin-button, /* blend out original spinner b
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+input[type="number"] {
+    min-width: 10vw;
 }
 
 /* Single/Multiple Choice */
@@ -149,6 +153,11 @@ button {
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
+button:focus-visible {
+    border: var(--button-focus-border-width) solid var(--button-focus-border-color);
+    outline: var(--button-focus-border-width) solid var(--button-focus-border-color);
+}
+
 button.secondary {
     background: var(--secondary-color);
     padding: .5rem 1rem;
@@ -162,10 +171,6 @@ button.secondary {
     button.secondary:not([disabled]):hover {
         background-color: #000000;
         color: #FFFFFF;
-    }
-
-    button.secondary:focus-visible {
-        border: var(--button-focus-border-width) solid var(--button-focus-border-color);
     }
 
     button.secondary[disabled] {
@@ -185,10 +190,6 @@ button.primary {
 
     button.primary:not([disabled]):hover {
         background-color: #F9B78B;
-    }
-
-    button.primary:focus-visible {
-        border: var(--button-focus-border-width) solid var(--button-focus-border-color);
     }
 
     button.primary[disabled] {
@@ -238,6 +239,7 @@ select {
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
     background-image: url('../images/arrow-down-icon.svg');
+    background-color: transparent;
     background-size: 3%;
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
@@ -275,3 +277,15 @@ h2 {
     font-size: 28px;
     font-weight: 500;
 }
+
+/* Cards */
+.small-card {
+    background: #F3F3F3;
+    border-radius: 22px;
+    padding: 16px 20px;
+    width: 300px;
+}
+
+    .small-card .title {
+        font-weight: 500;
+    }

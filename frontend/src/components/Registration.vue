@@ -5,13 +5,13 @@
     >
         <div class="d-flex flex-column gap-2">
             <label for="reg-username">Nutzername</label>
-            <input type="text" id="reg-username" v-model="username" autocomplete="username" required/>
+            <input type="text" id="reg-username" v-model="username" autocomplete="username" required />
 
             <label for="reg-email" class="mt-3">E-Mail-Adresse</label>
-            <input type="email" id="reg-email"  v-model="email" autocomplete="email" required/>
+            <input type="email" id="reg-email" v-model="email" autocomplete="email" required />
 
             <div class="mt-3">
-                <PasswordInput label="Passwort" v-model="password"/>
+                <PasswordInput label="Passwort" v-model="password" />
             </div>
 
             <div class="mt-3">
