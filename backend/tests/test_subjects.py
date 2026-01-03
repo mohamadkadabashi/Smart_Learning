@@ -2,7 +2,7 @@ token_header = {"Content-Type": "application/x-www-form-urlencoded"}
 
 def test_create_subject(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -37,7 +37,7 @@ def test_create_subject(client):
 
 def test_create_subject_no_name(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -95,7 +95,7 @@ def test_create_subject_no_user_id(client):
 
 def test_create_two_subjects_same_name(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -128,7 +128,7 @@ def test_create_two_subjects_same_name(client):
 
 def test_read_subjects(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -181,7 +181,7 @@ def test_read_subjects(client):
 
 def test_read_subjects_byUser(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -260,7 +260,7 @@ def test_read_subjects_byUser_noexistent_user_id(client):
 
 def test_read_subject(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -325,7 +325,7 @@ def test_read_subject_noexistent_id(client):
 
 def test_update_subject(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -390,7 +390,7 @@ def test_update_subject_noexistent_id(client):
 
 def test_update_subject_name_user_id_combo_already_exists(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -431,7 +431,7 @@ def test_update_subject_name_user_id_combo_already_exists(client):
 
 def test_delete_subject(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"

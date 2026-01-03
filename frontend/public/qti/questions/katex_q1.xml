@@ -1,0 +1,26 @@
+<qti-assessment-item identifier="qgleichung" title="Quadratische Gleichung" adaptive="false" time-dependent="false">
+  <qti-response-declaration identifier="RESPONSE" cardinality="multiple" base-type="identifier">
+    <qti-correct-response>
+      <qti-value>$x = 2$</qti-value>
+      <qti-value>$x = 3$</qti-value>
+    </qti-correct-response>
+  </qti-response-declaration>
+
+  <qti-outcome-declaration identifier="SCORE" cardinality="single" base-type="float">
+    <qti-default-value>
+      <qti-value>0</qti-value>
+    </qti-default-value>
+  </qti-outcome-declaration>
+
+  <qti-item-body>
+    <qti-choice-interaction response-identifier="RESPONSE" max-choices="4" shuffle="true">
+      <qti-prompt>Was ist die Lösung der quadratischen Gleichung $x^2 - 5x + 6 = 0$?</qti-prompt>
+      <qti-simple-choice identifier="$x = 2$">$x = 2$</qti-simple-choice>
+      <qti-simple-choice identifier="$x = 3$">$x = 3$</qti-simple-choice>
+      <qti-simple-choice identifier="$x = -2$">$x = -2$</qti-simple-choice>
+      <qti-simple-choice identifier="$x = 1$">$x = 1$</qti-simple-choice>
+    </qti-choice-interaction>
+  </qti-item-body>
+
+  <qti-response-processing template="https://purl.imsglobal.org/spec/qti/v3p0/rptemplates/match_correct"/>
+</qti-assessment-item>

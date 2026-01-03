@@ -1,4 +1,7 @@
-:root, .qti3-player-container, .qti3-player-container-fluid {
+:root, 
+body,
+.qti3-player-container, 
+.qti3-player-container-fluid {
     --primary-color: #F08844;
     --secondary-color: #AFAFAF;
     --text-entry-focus-bg: #EC660C37;
@@ -8,27 +11,79 @@
     --choice-control-checkbox-bg: #D9D9D9;
     --choice-control-checkbox-border-color: #000000;
     --text-entry-border-width: 2px;
-    --text-entry-border-radius: 10px;
+    --text-entry-border-radius: 50px;
     --choice-control-border-width: 2px;
     --choice-control-border-radius: 30px;
     --choice-control-checkbox-border-width: 1px;
     --button-focus-border-width: 2px;
     --button-focus-border-color: #000000;
+    font-family: "Open Sans";
 }
 
 /* Text Entry */
-input {
+input[type=text] {
+    height: 3rem;
+    min-width: 30vw;
+}
+
+input, input.text-entry-default {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
 }
 
-input:focus,
-input:focus-visible {
-    outline: none;
-    background-color: var(--text-entry-focus-bg);
-    border: var(--text-entry-border-width) solid var(--primary-color);
-    box-shadow: none;
+    input:focus,
+    input:focus-visible,
+    input.text-entry-default:focus,
+    input.text-entry-default:focus-visible {
+        outline: none;
+        background-color: var(--text-entry-focus-bg);
+        border: var(--text-entry-border-width) solid var(--primary-color);
+        box-shadow: none;
+    }
+
+input.text-entry-default {
+    height: 2.5rem;
+}
+
+/* File Upload */
+input[type=file] {
+    /* remove original upload style */
+    position: absolute;
+    width: 0;
+    height: 0;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+input[type=file]:focus + label.upload-btn {
+    border: var(--choice-control-border-width) solid var(--choice-control-focus-border-color);
+}
+
+label.upload-btn {
+    display: inline-block;
+    border: none;
+    border-radius: var(--text-entry-border-radius);
+    background-color: #D6D6D6;
+    padding: 20px 20px;
+    background-image: url('../images/plus-icon.svg');
+    background-size: 5%; /* size of icon inside button */
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    height: 3rem;
+    min-width: 30vw;
+}
+label.upload-btn:hover {
+    background-size: 6%;
+    background-color: #cfcfcf;
+}
+
+/* Number input */
+input[type="number"]::-webkit-inner-spin-button, /* blend out original spinner buttons */
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Single/Multiple Choice */
@@ -43,49 +98,51 @@ input:focus-visible {
     background-color: var(--choice-control-radio-bg);
 }
 
-[role=checkbox][aria-checked=true],
-[role=checkbox][aria-checked=true]:focus:not(:focus-visible),
-[role=radio][aria-checked=true],
-[role=radio][aria-checked=true]:focus:not(:focus-visible) {
-    border: var(--choice-control-border-width) solid var(--primary-color);
-    border-radius: var(--choice-control-border-radius);
-    background-color: var(--choice-control-checked-bg);
-}
+    [role=checkbox][aria-checked=true],
+    [role=checkbox][aria-checked=true]:focus:not(:focus-visible),
+    [role=radio][aria-checked=true],
+    [role=radio][aria-checked=true]:focus:not(:focus-visible) {
+        border: var(--choice-control-border-width) solid var(--primary-color);
+        border-radius: var(--choice-control-border-radius);
+        background-color: var(--choice-control-checked-bg);
+    }
 
-[role=checkbox][aria-checked=false]:focus:not(:focus-visible),
-[role=radio][aria-checked=false]:focus:not(:focus-visible) {
-    border: var(--choice-control-border-width) solid transparent;
-    border-radius: var(--choice-control-border-radius);
-}
+    [role=checkbox][aria-checked=false]:focus:not(:focus-visible),
+    [role=radio][aria-checked=false]:focus:not(:focus-visible) {
+        border: var(--choice-control-border-width) solid transparent;
+        border-radius: var(--choice-control-border-radius);
+    }
 
-[role=checkbox]:not(.control-hidden):focus-visible,
-[role=radio]:not(.control-hidden):focus-visible {
-    border: var(--choice-control-border-width) solid var(--choice-control-focus-border-color);
-    border-radius: var(--choice-control-border-radius);
-}
+    [role=checkbox]:not(.control-hidden):focus-visible,
+    [role=radio]:not(.control-hidden):focus-visible {
+        border: var(--choice-control-border-width) solid var(--choice-control-focus-border-color);
+        border-radius: var(--choice-control-border-radius);
+    }
 
-[role=checkbox]:not(.control-hidden):before {
-    margin: 0 .95rem;
-    border-color: var(--choice-control-checkbox-border-color);
-}
+    [role=checkbox]:not(.control-hidden):before {
+        margin: 0 .95rem;
+        border-color: var(--choice-control-checkbox-border-color);
+        background-color: var(--choice-control-checkbox-bg);
+        border: none;
+    }
 
-[role=radio]:not(.control-hidden):before {
-    width: 0;
-    height: 0;
-    border: none;
-}
+    [role=radio]:not(.control-hidden):before {
+        width: 0;
+        height: 0;
+        border: none;
+    }
 
-[role=checkbox]:not(.control-hidden):focus:before,
-[role=radio]:not(.control-hidden):focus:before {
-    box-shadow: none;
-    border-color: var(--choice-control-checkbox-border-color);
-}
+    [role=checkbox]:not(.control-hidden):focus:before,
+    [role=radio]:not(.control-hidden):focus:before {
+        box-shadow: none;
+        border-color: var(--choice-control-checkbox-border-color);
+    }
 
-[role=checkbox][aria-checked=true]:not(.control-hidden):before {
-    background-color: var(--choice-control-checkbox-bg);
-    background-image: url('../images/checkbox-checked.svg') !important;
-    border: none;
-}
+    [role=checkbox][aria-checked=true]:not(.control-hidden):before {
+        background-color: var(--choice-control-checkbox-bg);
+        background-image: url('../images/checkbox-checked.svg') !important;
+        border: none;
+    }
 
 /* Buttons */
 button {
@@ -98,6 +155,8 @@ button.secondary {
     border-radius: 30px;
     border: none;
     font-weight: 500;
+    min-width: 8vw;
+    min-height: 3rem;
 }
 
     button.secondary:not([disabled]):hover {
@@ -120,6 +179,8 @@ button.primary {
     border: none;
     font-weight: 500;
     transition: background 0.3s ease, transform 0.2s ease;
+    min-width: 8vw;
+    min-height: 3rem;
 }
 
     button.primary:not([disabled]):hover {
@@ -133,3 +194,84 @@ button.primary {
     button.primary[disabled] {
         background-color: #FFD1B2;
     }
+
+button.number-plus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/plus-icon.svg');
+    background-size: 50%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+button.number-plus:not(:disabled):hover {
+    background-size: 60%;
+    background-color: #cfcfcf;
+}
+
+button.number-minus {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+    border: none;
+    margin-left: 15px;
+    background-image: url('../images/minus-icon.svg');
+    background-size: 70%;
+    transition: background-size 0.2s ease, background-color 0.2s ease;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+button.number-minus:not(:disabled):hover {
+    background-size: 90%;
+    background-color: #cfcfcf;
+}
+
+/* Dropdowns */
+select {
+    appearance: none; /* remove standard arrow icon */
+    border: var(--text-entry-border-width) solid var(--primary-color);
+    border-radius: var(--text-entry-border-radius);
+    padding: .2rem .4rem;
+    background-image: url('../images/arrow-down-icon.svg');
+    background-size: 3%;
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    height: 3rem;
+    min-width: 30vw;
+}
+select:focus,
+select:focus-visible {
+    outline: none;
+    background-color: var(--text-entry-focus-bg);
+    border: var(--text-entry-border-width) solid var(--primary-color);
+    box-shadow: none;
+}
+
+select option {
+    background-color: #FFFFFF;
+}
+
+/* Labels & Headings */
+label {
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 250;
+    letter-spacing: 0px;
+    margin-bottom: 6px;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 500;
+}
