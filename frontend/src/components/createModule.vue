@@ -2,7 +2,7 @@
   <div class="modal-overlay">
     <div class="modal-container">
 
-      <button class="close-btn" @click="$emit('close')">×</button>
+      <button class="close-btn" @click="$emit('close')"></button>
 
       <h2 class="heading">Neues Modul erstellen</h2>
 
@@ -37,50 +37,40 @@ export default {
 }
  .modal-overlay {
    position: fixed;
-   inset: 0;
-   background: rgba(0, 0, 0, 0.35);
+   width: 100vw;
+   height: 100vh;
+   background: rgba(217, 217, 217, 0.5);
    display: flex;
    align-items: center;
    justify-content: center;
-   z-index: 1000;
  }
 
-/* Popup Box */
 .modal-container {
   position: relative;
   background: #ffffff;
-  width: 600px;
+  width: 700px;
   max-width: 90%;
   padding: 48px;
   border-radius: 32px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   text-align: center;
 }
 
-/* Close Button */
 .close-btn {
   position: absolute;
   top: 24px;
   right: 24px;
-  background: none;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  color: #f2994a;
 }
 
-/* Heading */
 .heading {
   margin-bottom: 48px;
 }
 
-/* Form */
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 48px;
 }
-
 </style>
 

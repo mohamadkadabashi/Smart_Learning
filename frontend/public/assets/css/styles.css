@@ -232,6 +232,22 @@ button.number-minus:not(:disabled):hover {
     background-color: #cfcfcf;
 }
 
+button.close-btn {
+    background-image: url('../images/close-icon.svg');
+    border: none;
+    background-size: 70%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #ffffff;
+    width: 30px;
+    height: 30px;
+    transition: background-size 0.2s ease;
+}
+
+button.close-btn:not(:disabled):hover {
+    background-size: 100%;
+}
+
 /* Dropdowns */
 select {
     appearance: none; /* remove standard arrow icon */
