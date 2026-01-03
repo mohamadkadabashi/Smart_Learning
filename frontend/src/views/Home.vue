@@ -29,22 +29,30 @@
           </div>
         </div>
       </div>
+      <div style="position: absolute; right: 3rem;">
+        <CircularProgress value="65" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'Home',
-  data() {
-    return {
-      tests: []
+    import CircularProgress from '@/components/CircularProgress.vue';
+
+    export default {
+        name: 'Home',
+        components: {
+            CircularProgress
+        },
+        data() {
+            return {
+                tests: []
+            }
+        },
+        created() {
+        this.tests = this.$testService.getTests()
+        }
     }
-  },
-  created() {
-    this.tests = this.$testService.getTests()
-  }
-}
 </script>
 
 <style scoped>
