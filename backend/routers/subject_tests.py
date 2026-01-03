@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
-from models.subject_tests import SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate
+from fastapi import APIRouter, Body, HTTPException, Depends
+from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus
 from models.subject import Subject
 from database import SessionDep
 from typing import List, Annotated
@@ -8,96 +8,117 @@ from config.logger_config import logger
 from datetime import datetime, timezone
 from dependencies.dependency import CurrentUser
 from fastapi.security import OAuth2PasswordBearer
-import requests
+import uuid
+import httpx
 from pathlib import Path
 
 router = APIRouter(prefix="/subjecttests", tags=["subjecttests"])
 # OAuth2 Scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/login")
 
-@router.post("/", response_model=SubjectTestRead, status_code=201)
-def create_subjectTest(
+@router.post("/", response_model=SubjectTestRead, status_code=202)
+async def create_subjectTest(
     subjectTest_create: SubjectTestCreate,
     session: SessionDep,
     current_user: CurrentUser,
     token: Annotated[str, Depends(oauth2_scheme)],
 ):
-    if not subjectTest_create.question_count > 0:
-        logger.warning(f"Number of questions needs to be larger then 0 ({subjectTest_create.question_count})")
+    if subjectTest_create.question_count <= 0:
         raise HTTPException(status_code=400, detail="Number of questions needs to be larger then 0")
-    
-    subjects = session.exec(select(Subject).where(Subject.id == subjectTest_create.subject_id)).first()
-    if not subjects:
-        logger.warning(f"Subject {subjectTest_create.subject_id} does not exist, so no subjectTest creatable")
+
+    subject = session.exec(select(Subject).where(Subject.id == subjectTest_create.subject_id)).first()
+    if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
 
-    # Test von n8n anfordern
-    webhook_url = "https://n8n.rattenserver.duckdns.org/webhook-test/d0575add-b533-4d10-9069-250f79d935c0"
-    header = {"Authorization": f"Bearer {token}",
-              "Accept": "application/json",}
-    
-    data = {
-        "Thema": subjects.name,
-        "Fragentyp": subjectTest_create.question_type,                            
-        "question_count": str(subjectTest_create.question_count),
-    }
-
-    # TODO: File durch Nutzer auswählbar programmieren
-    #file = open("BDP_01_NoSQL_Einfuehrung.pdf", "rb")
-    scriptPath = Path(__file__).parent
-    filePath = scriptPath / "BDP_01_NoSQL_Einfuehrung.pdf"
-    #file = open(filePath, "rb")
-    try:
-        with open(filePath, "rb") as file:
-            response = requests.post(
-                url=webhook_url,
-                headers=header,
-                data=data,
-                files={"file": (filePath.name, file, "application/pdf")},
-                timeout=(30, 60),
-            )
-    except requests.exceptions.RequestException as err:
-        logger.warning(err)
-        raise HTTPException(status_code=408, detail="Failed to generate test")
-        
-    if response is None:
-        logger.warning("No response object from n8n")
-        raise HTTPException(status_code=502, detail="No response from n8n")
-    
-    xml = (response.text or "").strip()
-    if not xml:
-        logger.warning("n8n returned empty body")
-        raise HTTPException(status_code=502, detail="n8n returned empty test content")
-
-    if not xml.startswith("<") and not xml.startswith("<?xml"):
-        logger.warning("n8n returned non-xml: %r", xml[:200])
-        raise HTTPException(status_code=502, detail="n8n returned non-xml content")
-
-    if response.status_code >= 400:
-        logger.warning(
-            "n8n error status=%s body=%s",
-            response.status_code,
-            response.text[:1000],
-        )
-        raise HTTPException(status_code=502, detail=f"n8n returned {response.status_code}")
-
-    # Test einspeisen
-    # test = response.json()
-    # response beinhaltet nur xml, also diese nicht erst als json ausgeben
+    # 1) create Job (PENDING)
+    job_id = str(uuid.uuid4())
     db_subjectTest = SubjectTest(
-        name = subjectTest_create.name,
-        # Ausgabe des Inhalts in response, sollte nur xml sein
-        test = response.text,
-        question_type = subjectTest_create.question_type,
-        question_count = subjectTest_create.question_count,
-        subject_id = subjectTest_create.subject_id
+        name=subjectTest_create.name,
+        test="",  # empty
+        question_type=subjectTest_create.question_type,
+        question_count=subjectTest_create.question_count,
+        subject_id=subjectTest_create.subject_id,
+        status=SubjectTestStatus.PENDING,
+        job_id=job_id,
     )
-
     session.add(db_subjectTest)
     session.commit()
     session.refresh(db_subjectTest)
-    logger.info(f"SubjectTest {db_subjectTest.name} (ID: {db_subjectTest.id}) for subject {db_subjectTest.subject_id} has been created")
+
+    # 2) trigger n8n
+    webhook_url = "https://n8n.rattenserver.duckdns.org/webhook-test/d0575add-b533-4d10-9069-250f79d935c0"
+
+    # Callback URL:
+    callback_url = f"https://localhost:8000/subjecttest-callback/{job_id}"
+
+    data = {
+        "Thema": subject.name,
+        "Fragentyp": subjectTest_create.question_type,
+        "question_count": str(subjectTest_create.question_count),
+        "job_id": job_id,
+        "callback_url": callback_url,
+    }
+
+    scriptPath = Path(__file__).parent
+    filePath = scriptPath / "BDP_01_NoSQL_Einfuehrung.pdf"
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json",
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, connect=10.0)) as client:
+            with open(filePath, "rb") as f:
+                files = {"file": (filePath.name, f, "application/pdf")}
+                resp = await client.post(webhook_url, headers=headers, data=data, files=files)
+                resp.raise_for_status()
+
+    except Exception as e:
+        # if Trigger failed then:
+        db_subjectTest.status = SubjectTestStatus.FAILED
+        db_subjectTest.error_message = f"Failed to trigger n8n: {e}"
+        session.add(db_subjectTest)
+        session.commit()
+        raise HTTPException(status_code=502, detail="Failed to trigger n8n")
+    
     return db_subjectTest
+
+@router.post("/n8n/subjecttest-callback/{job_id}", status_code=204)
+async def n8n_subjecttest_callback(
+    job_id: str,
+    session: SessionDep,
+    payload: N8NCallbackPayload
+):
+
+    db_subjectTest = session.exec(select(SubjectTest).where(SubjectTest.job_id == job_id)).first()
+    if not db_subjectTest:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    if "error" in payload and payload["error"]:
+        db_subjectTest.status = "FAILED"
+        db_subjectTest.error = str(payload["error"])
+        db_subjectTest.finished_at = datetime.now(timezone.utc)
+        session.add(db_subjectTest)
+        session.commit()
+        return
+
+    xml = (payload.get("xml") or "").strip()
+    if not xml:
+        raise HTTPException(status_code=400, detail="Missing xml")
+
+    # XML basic check
+    if not (xml.startswith("<") or xml.startswith("<?xml")):
+        raise HTTPException(status_code=400, detail="Invalid xml")
+
+    db_subjectTest.test = xml
+    db_subjectTest.status = "DONE"
+    db_subjectTest.error = None
+    db_subjectTest.finished_at = datetime.now(timezone.utc)
+
+    session.add(db_subjectTest)
+    session.commit()
+    return
 
 # Testfunktion, um Daten für andere API Anfragen einzufügen
 @router.post("/TEST", response_model = SubjectTestRead, status_code=201)
