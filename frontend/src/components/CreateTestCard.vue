@@ -42,6 +42,7 @@
 <style scoped>
     .title {
         font-size: 22px;
+        margin-bottom: 16px;
     }
 
     .create-btn {
