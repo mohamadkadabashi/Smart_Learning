@@ -1,6 +1,5 @@
 <template>
   <div class="settings-page">
-
     <div class="settings-wrapper">
       <div class="settings-grid">
         <SettingsPersonalData />
@@ -39,10 +38,6 @@ export default {
 </script>
 
 <style scoped>
-.settings-page {
-  background: #ffffff;
-}
-
 .settings-wrapper {
   max-width: 1280px;
   margin: 0 auto;
@@ -68,15 +63,6 @@ export default {
 .save-row {
   display: flex;
   justify-content: flex-end;
-}
-
-.save-row .primary {
-  width: 161px;
-  height: 61px;
-  font-size: 28px;
-  font-weight: 600;
-  border-radius: 30px;
-  color: #000;
 }
 
 .password-grid-item {
