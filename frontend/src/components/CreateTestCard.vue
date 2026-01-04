@@ -6,8 +6,7 @@
 
         <button class="primary create-btn" 
                 type="button" 
-                @click.stop="onClick"
-                :disabled="!hasClickListener">
+                @click="navigateToCreateTestForm">
             <PlusIcon class="plus-icon" />
         </button>
     </div>
@@ -23,17 +22,9 @@
             PlusIcon
         },
 
-        computed: {
-            hasClickListener() {
-                return Boolean(this.$listeners.click);
-;
-            }
-        },
-
         methods: {
-            onClick() {
-                if (!this.hasClickListener) return;
-                this.$emit("click");
+            navigateToCreateTestForm() {
+                this.$router.push({ path: '/create' });
             }
         }
     };
