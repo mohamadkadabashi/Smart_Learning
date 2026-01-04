@@ -53,6 +53,10 @@ def create_user(
     logger.info(f"User created successfully: {db_user.username} (ID: {db_user.id})")
     return db_user
 
+@router.get("/me", response_model=UserRead)
+def read_me(current_user: CurrentUser):
+    return current_user
+
 @router.get("/", response_model=List[UserRead])
 def read_users(
     session: SessionDep,
