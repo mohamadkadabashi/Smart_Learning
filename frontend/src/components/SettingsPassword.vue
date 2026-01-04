@@ -82,14 +82,6 @@ export default {
   margin-top: 24px;
 }
 
-.password-actions .primary {
-  width: 262px;
-  height: 61px;
-  font-size: 28px;
-  font-weight: 600;
-  color: #000;
-}
-
 @media (max-width: 1200px) {
   .password-grid {
     grid-template-columns: 1fr;
