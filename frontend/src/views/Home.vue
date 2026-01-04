@@ -1,5 +1,10 @@
 <template>
   <div>
+
+    <!-- Button for create module popup -->
+    <button class="primary popup-btn" @click="showCreateModule = true"></button>
+    <createModule v-if="showCreateModule" @close="showCreateModule = false"/>
+
     <div
       class="main-content container-fluid py-5 d-flex justify-content-center">
       <div class="card w-100" style="max-width: 60vw;">
@@ -34,11 +39,15 @@
 </template>
 
 <script>
+import createModule from "@/components/createModule.vue";
 export default {
   name: 'Home',
+  components: {
+    createModule
+  },
   data() {
     return {
-      tests: []
+      tests: [], showCreateModule: false
     }
   },
   created() {

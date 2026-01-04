@@ -19,7 +19,6 @@
   </div>
 </template>
 
-
 <script>
 export default {
   name: "createModule",
@@ -37,12 +36,15 @@ export default {
 }
  .modal-overlay {
    position: fixed;
-   width: 100vw;
-   height: 100vh;
+
    background: rgba(217, 217, 217, 0.5);
    display: flex;
    align-items: center;
    justify-content: center;
+   z-index: 1;
+   inset: 0;
+   width: 100vw;
+   height: 100vh;
  }
 
 .modal-container {
