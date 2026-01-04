@@ -1,42 +1,52 @@
 <template>
   <div>
+    <!-- Button for create module popup -->
+    <button class="primary popup-btn" @click="showCreateModule = true"></button>
+    <createModule v-if="showCreateModule" @close="showCreateModule = false"/>
+
     <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
       <div class="d-flex gap-3">
         <StatsCard v-for="(card, index) in statsCards" :key="index" :title="card.title" :value="card.value"
           :subtitle="card.subtitle" :subtitleClass="card.subtitleClass" :iconSrc="card.iconSrc" />
       </div>
-      <div class="card w-100">
-        <div class="card-header">
-          Tests
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table mb-0">
-              <thead>
-                <tr>
-                  <th>Test</th>
-                  <th class="text-end">Questions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="test in tests" :key="test.id">
-                  <td>
-                    <router-link :to="{ name: 'Test', params: { id: test.id } }">
-                      {{ test.title }}
-                    </router-link>
-                  </td>
-                  <td class="text-end">{{ test.items.length }}</td>
-                </tr>
-              </tbody>
-            </table>
+    </div>
+
+    <div class="card w-100">
+      <div
+        class="main-content container-fluid py-5 d-flex justify-content-center">
+        <div class="card w-100" style="max-width: 60vw;">
+          <div class="card-header">
+            Tests
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead>
+                  <tr>
+                    <th>Test</th>
+                    <th class="text-end">Questions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="test in tests" :key="test.id">
+                    <td>
+                      <router-link :to="{ name: 'Test', params: { id: test.id } }">
+                        {{ test.title }}
+                      </router-link>
+                    </td>
+                    <td class="text-end">{{ test.items.length }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
-      <div style="position: absolute; right: 3rem;">
-        <CircularProgress value="65" />
-      </div>
-      <div>
-        <CreateTestCard />
+        <div style="position: absolute; right: 3rem;">
+          <CircularProgress value="65" />
+        </div>
+        <div>
+          <CreateTestCard />
+        </div>
       </div>
     </div>
   </div>
@@ -46,17 +56,19 @@
 import StatsCard from '@/components/StatsCard.vue';
 import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
+import createModule from "@/components/createModule.vue";
 
 export default {
   name: 'Home',
   components: {
     StatsCard,
     CircularProgress,
-    CreateTestCard
+    CreateTestCard,
+    createModule
   },
   data() {
     return {
-      tests: [],
+      tests: [], showCreateModule: false,
       statsCards: [
         {
           title: 'Lernzeit diese Woche',

@@ -196,6 +196,13 @@ button.primary {
         background-color: #FFD1B2;
     }
 
+button.primary.popup-btn {
+    background-image: url('../images/plus-icon.svg');
+    background-size: 27%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 button.number-plus {
     width: 40px;
     height: 40px;
