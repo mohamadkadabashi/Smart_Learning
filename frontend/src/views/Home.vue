@@ -40,6 +40,9 @@
 	      	<div style="position: absolute; right: 3rem;">
 	        	<CircularProgress value="65" />
 	      	</div>
+            <div>
+                <CreateTestCard />
+            </div>
         </div>
     </div>
 </template>
@@ -47,12 +50,14 @@
 <script>
     import StatsCard from '@/components/StatsCard.vue';
     import CircularProgress from '@/components/CircularProgress.vue';
+    import CreateTestCard from '@/components/CreateTestCard.vue';
 
     export default {
         name: 'Home',
         components: {
             StatsCard,
-            CircularProgress
+            CircularProgress,
+            CreateTestCard
         },
         data() {
             return {
