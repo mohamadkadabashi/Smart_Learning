@@ -196,13 +196,6 @@ button.primary {
         background-color: #FFD1B2;
     }
 
-button.primary.popup-btn {
-    background-image: url('../images/plus-icon.svg');
-    background-size: 27%;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
 button.number-plus {
     width: 40px;
     height: 40px;
@@ -240,19 +233,12 @@ button.number-minus:not(:disabled):hover {
 }
 
 button.close-btn {
-    background-image: url('../images/close-icon.svg');
     border: none;
-    background-size: 70%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: #ffffff;
-    width: 30px;
-    height: 30px;
-    transition: background-size 0.2s ease;
+    background-color: transparent;
 }
 
 button.close-btn:not(:disabled):hover {
-    background-size: 100%;
+    transform: scale(1.2);
 }
 
 /* Dropdowns */

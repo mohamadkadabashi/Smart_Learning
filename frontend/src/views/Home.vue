@@ -1,7 +1,9 @@
 <template>
   <div>
     <!-- Button for create module popup -->
-    <button class="primary popup-btn" @click="showCreateModule = true"></button>
+    <button class="primary" @click="showCreateModule = true">
+      <PlusIcon role="img" alt="Modul erstellen"/>
+    </button>
     <createModule v-if="showCreateModule" @close="showCreateModule = false"/>
 
     <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
@@ -57,6 +59,7 @@ import StatsCard from '@/components/StatsCard.vue';
 import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
 import createModule from "@/components/createModule.vue";
+import PlusIcon from "../../public/assets/images/plus-icon.svg";
 
 export default {
   name: 'Home',
@@ -64,7 +67,8 @@ export default {
     StatsCard,
     CircularProgress,
     CreateTestCard,
-    createModule
+    createModule,
+    PlusIcon
   },
   data() {
     return {

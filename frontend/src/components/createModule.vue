@@ -2,7 +2,9 @@
   <div class="modal-overlay">
     <div class="modal-container">
 
-      <button class="close-btn" @click="$emit('close')"></button>
+      <button class="close-btn" @click="$emit('close')">
+        <CloseIcon role="img" alt="Schließen"/>
+      </button>
 
       <h2 class="heading">Neues Modul erstellen</h2>
 
@@ -20,8 +22,13 @@
 </template>
 
 <script>
+import CloseIcon from "../../public/assets/images/close-icon.svg";
+
 export default {
   name: "createModule",
+  components: {
+    CloseIcon
+  },
   data() {
     return {
       modulename: ""
@@ -36,7 +43,6 @@ export default {
 }
  .modal-overlay {
    position: fixed;
-
    background: rgba(217, 217, 217, 0.5);
    display: flex;
    align-items: center;
