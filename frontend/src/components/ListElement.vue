@@ -1,19 +1,20 @@
 <template>
   <div class="list-item">
 
-    <!-- Name of module, clickable -->
-    <button class="module-name" @click="$emit('open', moduleName)">
-      {{ moduleName }}
-    </button>
+    <div class="text-block">
+      <button class="module-name" @click="$emit('open', moduleName)" v-if="showModuleButton">
+        {{ moduleName }}
+      </button>
 
-    <!-- optional progress text for list element on home page -->
-    <div class="progress-wrapper" v-if="showProgressText">
-      <span class="progress-text">
-        {{ completed }}/{{ total }} Tests
-      </span>
+      <label class="test-name" v-if="showTestName">
+        {{ testName }}
+      </label>
+
+      <p class="text-area" v-if="showText">
+        {{ textarea }}
+      </p>
     </div>
 
-    <!-- progressbar -->
     <div class="progress-wrapper">
       <div class="progress-bar">
         <div class="progress-fill"
@@ -22,9 +23,14 @@
       </div>
     </div>
 
-    <!-- button for test lists element on module pages -->
-    <button v-if="showButton" class="primary" @click="$emit('open', action)">
-      {{ action }}
+    <div class="progress-wrapper" v-if="showProgressText">
+      <span class="progress-text">
+        {{ completed }}/{{ total }} Tests
+      </span>
+    </div>
+
+    <button v-if="showButton" class="primary" @click="$emit('open')">
+      {{ buttonText }}
     </button>
 
   </div>
@@ -37,7 +43,19 @@ export default {
   props: {
     moduleName: {
       type: String,
-      required: true,
+      required: true
+    },
+    showModuleButton: {
+      type: Boolean,
+      default: false
+    },
+    testName: {
+      type: String,
+      default: ""
+    },
+    showTestName: {
+      type: Boolean,
+      default: false
     },
     showProgressText: {
       type: Boolean,
@@ -47,6 +65,10 @@ export default {
       type: Boolean,
       default: false
     },
+    buttonText: {
+      type: String,
+      default: "Starten"
+    },
     completed: {
       type: Number,
       default: 0
@@ -54,6 +76,14 @@ export default {
     total: {
       type: Number,
       default: 1
+    },
+    showText: {
+      type: Boolean,
+      default: false
+    },
+    textarea: {
+      type: String,
+      default: ""
     }
   },
 
@@ -66,21 +96,29 @@ export default {
 </script>
 
 <style scoped>
-.list-item {
+.text-block {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 62px;
-  max-width: 1100px;
-  padding: 12px 20px;
-  background: #f3f3f3;
-  border-radius: 14px;
-  margin: 20px;
+  flex-direction: column;
+  gap: 4px;
 }
 
-/* Modulname klickbar */
+.list-item {
+  display: grid;
+  grid-template-columns: 220px 1fr auto auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  max-width: 1100px;
+  min-height: 62px;
+  padding: 20px;
+  background: #f3f3f3;
+  border-radius: 14px;
+  margin: 20px auto;
+}
+
 .module-name {
+  text-align: left;
   font-family: "Open Sans";
   font-size: 20px;
   font-weight: 600;
@@ -90,16 +128,14 @@ export default {
   text-decoration: underline;
 }
 
-/* Fortschrittsbereich */
-.progress-wrapper {
-  width: 50%;
-  font-family: "Open Sans";
-  font-size: 18px;
-  font-weight: 400;
-  padding: 20px;
+.test-name {
+  font-style: normal;
 }
 
-/* Balken */
+.progress-wrapper {
+  width: 100%;
+}
+
 .progress-bar {
   width: 100%;
   height: 12px;
@@ -112,5 +148,15 @@ export default {
   height: 100%;
   background: #dd7a34;
   transition: width .3s ease;
+}
+
+.text-area {
+  font-family: "Open Sans";
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.primary {
+  white-space: nowrap;
 }
 </style>
