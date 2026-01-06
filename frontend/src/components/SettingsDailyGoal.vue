@@ -61,16 +61,11 @@ export default {
 <style scoped>
 .card {
   width: 548px;
-  min-height: 310px;
+  min-height: 267px;
   background: #f3f3f3;
   border-radius: 30px;
   padding: 22px 20px;
   box-sizing: border-box;
-}
-
-h2 {
-  margin: 0 0 12px;
-  font-weight: 400;
 }
 
 .labels-row {
@@ -92,8 +87,6 @@ h2 {
 }
 
 .left-group input {
-  width: 150px;
-  height: 56px;
   text-align: center;
 }
 
@@ -143,10 +136,6 @@ h2 {
   .left-group {
     width: 100%;
     justify-content: space-between;
-  }
-
-  .left-group input {
-    width: 120px;
   }
 
   .switch {

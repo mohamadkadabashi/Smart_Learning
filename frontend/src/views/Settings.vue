@@ -41,17 +41,21 @@ export default {
 .settings-wrapper {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px 48px;
+  padding: 0 24px 4px;
 }
 
 .settings-grid {
-  margin-top: 84px;
+  margin-top: 26px;
   display: grid;
   grid-template-columns: repeat(2, 548px);
   column-gap: 33px;
-  row-gap: 48px;
+  row-gap: 20px;
   justify-content: center;
   align-items: start;
+}
+
+.settings-page {
+  overflow-x: hidden;
 }
 
 .goal-column {
