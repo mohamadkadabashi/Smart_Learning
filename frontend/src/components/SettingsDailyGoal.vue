@@ -2,57 +2,96 @@
   <div class="card">
     <h2>Tagesziel anpassen</h2>
 
-    <div class="labels-row">
-      <label>Tests bestehen pro Tag</label>
-      <label>Streak 🔥</label>
-    </div>
+    <div class="goal-grid">
+      <label class="label-left">
+        Tests bestehen pro Tag
+      </label>
 
-    <div class="controls-row">
-      <div class="left-group">
+      <label class="label-streak">
+        Streak 🔥
+      </label>
+
+      <div class="controls">
         <input
           type="number"
           min="1"
-          :value="goal"
-          @input="$emit('update:goal', toNumber($event.target.value))"
+          :value="localGoal"
+          @input="onInputGoal"
         />
 
         <button
           class="number-plus"
           type="button"
-          @click="$emit('update:goal', goal + 1)"
-        />
+          @click="onPlus"
+        ></button>
 
         <button
           class="number-minus"
           type="button"
-          @click="$emit('update:goal', Math.max(1, goal - 1))"
-        />
+          @click="onMinus"
+        ></button>
       </div>
 
-      <label class="switch">
-        <input
-          type="checkbox"
-          :checked="streak"
-          @change="$emit('update:streak', $event.target.checked)"
+      <div class="toggle">
+        <ToggleSwitch
+          :value="localStreak"
+          @input="onToggleStreak"
         />
-        <span class="slider"></span>
-      </label>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import ToggleSwitch from '@/components/ToggleSwitch.vue'
+
 export default {
   name: 'SettingsDailyGoal',
+
+  components: {
+    ToggleSwitch
+  },
+
   props: {
-    goal: { type: Number, default: 3 },
+    goal: { type: Number, default: 0 },
     streak: { type: Boolean, default: true }
   },
+
   emits: ['update:goal', 'update:streak'],
+
+  data() {
+    return {
+      localGoal: this.goal,
+      localStreak: this.streak
+    }
+  },
+
+  watch: {
+    goal(v) {
+      this.localGoal = v
+    },
+    streak(v) {
+      this.localStreak = v
+    }
+  },
+
   methods: {
-    toNumber(v) {
-      const n = Number(v)
-      return Number.isFinite(n) && n >= 1 ? n : 1
+    onInputGoal(e) {
+      const v = Number(e.target.value) || 0
+      this.localGoal = v
+      this.$emit('update:goal', v)
+    },
+    onPlus() {
+      this.localGoal++
+      this.$emit('update:goal', this.localGoal)
+    },
+    onMinus() {
+      this.localGoal = Math.max(0, this.localGoal - 1)
+      this.$emit('update:goal', this.localGoal)
+    },
+    onToggleStreak(v) {
+      this.localStreak = v
+      this.$emit('update:streak', v)
     }
   }
 }
@@ -61,103 +100,58 @@ export default {
 <style scoped>
 .card {
   width: 548px;
-  min-height: 267px;
+  min-height: 294px;
+  max-width: 100%;
   background: #f3f3f3;
   border-radius: 30px;
   padding: 22px 20px;
   box-sizing: border-box;
 }
 
-.labels-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
+.goal-grid {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  grid-template-areas:
+    "label-left   label-streak"
+    "controls     toggle";
+  column-gap: 16px;
+  row-gap: 6px;
+  align-items: center;
 }
 
-.controls-row {
+.label-left {
+  grid-area: label-left;
+}
+
+.label-streak {
+  grid-area: label-streak;
+  white-space: nowrap;
+}
+
+.controls {
+  grid-area: controls;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
-.left-group {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+.toggle {
+  grid-area: toggle;
 }
 
-.left-group input {
+.controls input {
   text-align: center;
 }
 
-.switch {
-  width: 66px;
-  height: 30px;
-  position: relative;
-}
-
-.switch input {
-  opacity: 0;
-}
-
-.slider {
-  position: absolute;
-  inset: 0;
-  background: var(--primary-color);
-  border-radius: 30px;
-}
-
-.slider::before {
-  content: "";
-  position: absolute;
-  width: 21px;
-  height: 20px;
-  background: #ffffff;
-  border-radius: 50%;
-  top: 5px;
-  left: 6px;
-  transition: transform 0.2s;
-}
-
-.switch input:checked + .slider::before {
-  transform: translateX(33px);
-}
 
 @media (max-width: 480px) {
-  .labels-row label:last-child {
-    display: none;
-  }
-
-  .controls-row {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .left-group {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .switch {
-    margin-left: auto;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-  }
-
-  .switch::before {
-    content: "Streak 🔥";
-    font-style: italic;
-    font-size: 24px;
-    white-space: nowrap;
-  }
-
-  .slider {
-    position: relative;
-    width: 66px;
-    height: 30px;
+  .goal-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "label-left"
+      "controls"
+      "label-streak"
+      "toggle";
+    row-gap: 8px;
   }
 }
 

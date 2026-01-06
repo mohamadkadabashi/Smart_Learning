@@ -51,7 +51,7 @@ export default {
 .settings-password-card {
   background: #f3f3f3;
   border-radius: 30px;
-  padding: 24px;
+  padding: 22px 20px;
   box-sizing: border-box;
 }
 
@@ -62,24 +62,10 @@ export default {
   margin-top: 12px;
 }
 
-.password-item {
-  width: 100%;
-  min-width: 0;
-}
-
-:deep(.password-field),
-:deep(.password-field .input-wrapper),
-:deep(.password-field input) {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
 .password-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 @media (max-width: 1200px) {
