@@ -2,21 +2,25 @@
   <div class="card">
     <h2>Persönliche Daten ändern</h2>
 
-    <label for="settings-username">Nutzername</label>
-    <input
-      id="settings-username"
-      type="text"
-      :value="username"
-      @input="$emit('update:username', $event.target.value)"
-    />
+    <div class="row">
+      <label for="settings-username">Nutzername</label>
+      <input
+        id="settings-username"
+        type="text"
+        :value="username"
+        @input="$emit('update:username', $event.target.value)"
+      />
+    </div>
 
-    <label for="settings-email">E-Mail-Adresse</label>
-    <input
-      id="settings-email"
-      type="email"
-      :value="email"
-      @input="$emit('update:email', $event.target.value)"
-    />
+    <div class="row">
+      <label for="settings-email">E-Mail-Adresse</label>
+      <input
+        id="settings-email"
+        type="email"
+        :value="email"
+        @input="$emit('update:email', $event.target.value)"
+      />
+    </div>
   </div>
 </template>
 
@@ -39,6 +43,17 @@ export default {
   border-radius: 30px;
   padding: 22px 20px;
   box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.row:last-child {
+  margin-bottom: 0;
 }
 
 @media (max-width: 1200px) {
