@@ -13,17 +13,9 @@
       <p class="secondary-text" v-if="showText">
         {{ textarea }}
       </p>
-
-      <div v-if="isWeiterlernen" class="progress-wrapper weiterlernen-progress">
-        <div class="progress-bar">
-          <div class="progress-fill"
-               :style="{ width: progressPercent + '%' }">
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div v-if="!isWeiterlernen" class="progress-wrapper weiterlernen-progress">
+    <div v-if="!isWeiterlernen" class="progress-wrapper">
       <div class="progress-bar">
         <div class="progress-fill"
              :style="{ width: progressPercent + '%' }">
@@ -31,7 +23,7 @@
       </div>
     </div>
 
-    <div class="progress-wrapper" v-if="showProgressText">
+    <div class="progress-wrapper" v-if="showProgressText && !isWeiterlernen">
       <span class="progress-text">
         {{ completed }}/{{ total }} Tests
       </span>
@@ -40,6 +32,17 @@
     <button v-if="showButton" class="primary" @click="$emit('open')">
       {{ buttonText }}
     </button>
+
+    <div v-if="isWeiterlernen" class="progress-wrapper weiterlernen-progress">
+      <div class="progress-bar">
+        <div class="progress-fill"
+             :style="{ width: progressPercent + '%' }">
+        </div>
+      </div>
+      <span class="progress-text">
+        {{ completed }}/{{ total }} Tests
+      </span>
+    </div>
 
   </div>
 </template>
@@ -108,18 +111,11 @@ export default {
 
 <style scoped>
 .weiterlernen-progress {
-  margin-top: 12px;
-  width: 100%;
+  grid-column: 1 / 3;
 }
 
 .weiterlernen-layout {
-  grid-template-columns: 1fr auto;
-  align-items: center;
-}
-
-.weiterlernen-progress .progress-bar {
-  display: flex;
-  width: 100%;
+  grid-template-columns: 220px 1fr auto;
 }
 
 .text-block {
@@ -173,5 +169,9 @@ export default {
 
 .primary {
   white-space: nowrap;
+}
+
+.progress-text {
+  font-size: 18px;
 }
 </style>

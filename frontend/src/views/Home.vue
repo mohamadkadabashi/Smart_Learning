@@ -51,6 +51,25 @@
         </div>
       </div>
     </div>
+
+    <div>
+      <ListElem
+          v-for="(module, index) in modules"
+          :key="index"
+          :moduleName="module.name"
+          :completed="module.completed"
+          :total="module.total"
+          :test-name="testsList[index]?.name"
+          :show-progress-text="true"
+          :show-button="true"
+          :button-text="Starten"
+          :show-test-name ="true"
+          :show-module-button="false"
+          :show-text="true"
+          :textarea="'Test'"
+      />
+    </div>
+
   </div>
 </template>
 
@@ -60,6 +79,7 @@ import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
 import createModule from "@/components/createModule.vue";
 import PlusIcon from "../../public/assets/images/plus-icon.svg";
+import ListElem from '@/components/ListElement.vue'
 
 export default {
   name: 'Home',
@@ -68,10 +88,21 @@ export default {
     CircularProgress,
     CreateTestCard,
     createModule,
-    PlusIcon
+    PlusIcon,
+    ListElem
   },
   data() {
     return {
+      modules: [
+        { name: "Medieninformatik", completed: 0, total: 0 },
+        { name: "Mathematik",        completed: 4, total: 8 },
+        { name: "Programmierung",    completed: 1, total: 6 }
+      ],
+      testsList: [
+        { name: "Weiterlernen" },
+        { name: "Mathe" },
+        { name: "Programmierung"}
+      ],
       tests: [], showCreateModule: false,
       statsCards: [
         {
