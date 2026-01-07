@@ -32,7 +32,7 @@ export default {
         { name: "Programmierung",    completed: 1, total: 6 }
       ],
       tests: [
-        { name: "Medieninformatik" },
+        { name: "Weiterlernen" },
         { name: "Mathe" },
         { name: "Programmierung"}
       ]

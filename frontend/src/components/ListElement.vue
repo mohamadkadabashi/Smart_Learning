@@ -1,21 +1,29 @@
 <template>
-  <div class="list-item">
+  <div class="list-item" :class="{ 'weiterlernen-layout': isWeiterlernen }">
 
     <div class="text-block">
       <button class="module-name" @click="$emit('open', moduleName)" v-if="showModuleButton">
         {{ moduleName }}
       </button>
 
-      <label class="test-name" v-if="showTestName">
+      <label class="primary-text" v-if="showTestName">
         {{ testName }}
       </label>
 
-      <p class="text-area" v-if="showText">
+      <p class="secondary-text" v-if="showText">
         {{ textarea }}
       </p>
+
+      <div v-if="isWeiterlernen" class="progress-wrapper weiterlernen-progress">
+        <div class="progress-bar">
+          <div class="progress-fill"
+               :style="{ width: progressPercent + '%' }">
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="progress-wrapper">
+    <div v-if="!isWeiterlernen" class="progress-wrapper weiterlernen-progress">
       <div class="progress-bar">
         <div class="progress-fill"
              :style="{ width: progressPercent + '%' }">
@@ -90,12 +98,30 @@ export default {
   computed: {
     progressPercent() {
       return Math.min(100, Math.round((this.completed / this.total) * 100));
+    },
+    isWeiterlernen() {
+      return this.testName === "Weiterlernen";
     }
   }
 }
 </script>
 
 <style scoped>
+.weiterlernen-progress {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.weiterlernen-layout {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.weiterlernen-progress .progress-bar {
+  display: flex;
+  width: 100%;
+}
+
 .text-block {
   display: flex;
   flex-direction: column;
@@ -128,10 +154,6 @@ export default {
   text-decoration: underline;
 }
 
-.test-name {
-  font-style: normal;
-}
-
 .progress-wrapper {
   width: 100%;
 }
@@ -148,12 +170,6 @@ export default {
   height: 100%;
   background: #dd7a34;
   transition: width .3s ease;
-}
-
-.text-area {
-  font-family: "Open Sans";
-  font-size: 15px;
-  margin-top: 4px;
 }
 
 .primary {
