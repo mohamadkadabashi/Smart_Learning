@@ -145,8 +145,7 @@ export default {
 
 .module-name {
   text-align: left;
-  font-family: "Open Sans";
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 600;
   background: none;
   border: none;

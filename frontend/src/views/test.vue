@@ -10,9 +10,9 @@
         :show-progress-text="true"
         :show-button="true"
         :button-text="Starten"
-        :show-test-name ="false"
+        :show-test-name ="true"
         :show-module-button="true"
-        :show-text="false"
+        :show-text="true"
         :textarea="'Test'"
     />
   </div>
