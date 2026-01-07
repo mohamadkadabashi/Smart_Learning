@@ -25,7 +25,7 @@
 
     <div v-if="showProgressText && !isWeiterlernen">
       <span class="progress-text">
-        {{ completed }}/{{ total }} Tests
+        {{ completed }}/{{ total }} {{ progressLabel }}
       </span>
     </div>
 
@@ -40,7 +40,7 @@
         </div>
       </div>
       <span class="progress-text">
-        {{ completed }}/{{ total }} Tests
+        {{ completed }}/{{ total }} {{ progressLabel }}
       </span>
     </div>
   </div>
@@ -104,6 +104,15 @@ export default {
     },
     isWeiterlernen() {
       return this.testName === "Weiterlernen";
+    },
+    progressLabel() {
+      if (this.showModuleButton) {
+        return "Tests"
+      }
+      if (this.showTestName || this.isWeiterlernen()) {
+        return "Fragen"
+      }
+      return ""
     }
   }
 }

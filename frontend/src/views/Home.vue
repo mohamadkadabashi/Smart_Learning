@@ -64,7 +64,7 @@
           :show-button="true"
           :button-text="Starten"
           :show-test-name ="true"
-          :show-module-button="true"
+          :show-module-button="false"
           :show-text="true"
           :textarea="'Test'"
       />
