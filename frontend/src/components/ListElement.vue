@@ -1,5 +1,5 @@
 <template>
-  <div class="list-item" :class="{ 'weiterlernen-layout': isWeiterlernen }">
+  <div class="list-item">
 
     <div class="text-block">
       <button class="module-name" @click="$emit('open', moduleName)" v-if="showModuleButton">
@@ -15,7 +15,7 @@
       </p>
     </div>
 
-    <div v-if="!isWeiterlernen" class="progress-wrapper">
+    <div v-if="!isWeiterlernen">
       <div class="progress-bar">
         <div class="progress-fill"
              :style="{ width: progressPercent + '%' }">
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="progress-wrapper" v-if="showProgressText && !isWeiterlernen">
+    <div v-if="showProgressText && !isWeiterlernen">
       <span class="progress-text">
         {{ completed }}/{{ total }} Tests
       </span>
@@ -33,7 +33,7 @@
       {{ buttonText }}
     </button>
 
-    <div v-if="isWeiterlernen" class="progress-wrapper weiterlernen-progress">
+    <div v-if="isWeiterlernen" class="weiterlernen-progress">
       <div class="progress-bar">
         <div class="progress-fill"
              :style="{ width: progressPercent + '%' }">
@@ -43,7 +43,6 @@
         {{ completed }}/{{ total }} Tests
       </span>
     </div>
-
   </div>
 </template>
 
@@ -100,6 +99,7 @@ export default {
 
   computed: {
     progressPercent() {
+      if (this.total === 0) return 0;
       return Math.min(100, Math.round((this.completed / this.total) * 100));
     },
     isWeiterlernen() {
@@ -111,11 +111,14 @@ export default {
 
 <style scoped>
 .weiterlernen-progress {
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.weiterlernen-layout {
-  grid-template-columns: 220px 1fr auto;
+.weiterlernen-progress .progress-bar {
+  flex: 1;
 }
 
 .text-block {
@@ -129,7 +132,6 @@ export default {
   grid-template-columns: 220px 1fr auto auto;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
   width: 100%;
   max-width: 1100px;
   min-height: 62px;
@@ -149,16 +151,13 @@ export default {
   text-decoration: underline;
 }
 
-.progress-wrapper {
-  width: 100%;
-}
-
 .progress-bar {
   width: 100%;
   height: 12px;
   background: #e8e8e8;
   border-radius: 20px;
   overflow: hidden;
+  margin-right: 24px;
 }
 
 .progress-fill {
@@ -169,9 +168,15 @@ export default {
 
 .primary {
   white-space: nowrap;
+  justify-self: end;
+  align-self: center;
+  width: auto;
+  margin-left: 24px;
 }
 
 .progress-text {
   font-size: 18px;
+  white-space: nowrap;
+  margin-left: 24px;
 }
 </style>
