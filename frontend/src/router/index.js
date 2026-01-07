@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Test from '../views/test.vue'
 import Login from '../views/LoginRegistrationView.vue'
+import Settings from '../views/Settings.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,15 @@ const routes = [
     meta: {
       title: 'SmartLearning',
       requiresAuth: false
+    }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
+    meta: {
+      title: 'Settings',
+      headerTitle: 'Einstellungen'
     }
   },
   {

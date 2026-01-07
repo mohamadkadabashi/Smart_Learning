@@ -231,7 +231,14 @@ button.number-minus:not(:disabled):hover {
     background-size: 90%;
     background-color: #cfcfcf;
 }
+button.close-btn {
+    border: none;
+    background-color: transparent;
+}
 
+button.close-btn:not(:disabled):hover {
+    transform: scale(1.2);
+}
 /* Dropdowns */
 select {
     appearance: none; /* remove standard arrow icon */
@@ -265,6 +272,23 @@ label {
     font-weight: 250;
     letter-spacing: 0px;
     margin-bottom: 6px;
+}
+
+.primary-text {
+    font-style: normal;
+    font-size: 24px;
+    font-weight: 250;
+    letter-spacing: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.secondary-text {
+    font-size: 20px;
+    font-weight: 200;
+    font-style: normal;
+    margin: 0px;
+    padding: 0px;
 }
 
 h1 {
