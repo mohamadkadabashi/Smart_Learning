@@ -1,8 +1,8 @@
 <template>
   <div>
     <!-- Button for create module popup -->
-    <button class="primary" @click="showCreateModule = true">
-      <PlusIcon role="img" alt="Modul erstellen"/>
+    <button class="primary create-btn" @click="showCreateModule = true">
+      <PlusIcon class="plus-icon" alt="Modul erstellen"/>
     </button>
     <createModule
       v-if="showCreateModule"

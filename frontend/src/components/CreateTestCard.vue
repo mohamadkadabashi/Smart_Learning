@@ -36,15 +36,4 @@
         margin-bottom: 16px;
     }
 
-    .create-btn {
-        max-width: 100px;
-    }
-
-        .create-btn:disabled .plus-icon path {
-            stroke: currentColor;
-        }
-
-    .plus-icon path {
-        stroke-width: 3;
-    }
 </style>
