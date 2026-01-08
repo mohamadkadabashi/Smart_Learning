@@ -103,7 +103,7 @@ export default {
       return Math.min(100, Math.round((this.completed / this.total) * 100));
     },
     isWeiterlernen() {
-      return this.testName === "Weiterlernen";
+      return this.textarea === "Weiterlernen";
     },
     progressLabel() {
       if (this.showModuleButton) {

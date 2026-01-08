@@ -63,10 +63,41 @@
           :show-progress-text="true"
           :show-button="true"
           :button-text="Starten"
+          :show-test-name ="false"
+          :show-module-button="true"
+          :show-text="false"
+      />
+    </div>
+    <div>
+      <ListElem
+          v-for="(module, index) in testsList"
+          :key="index"
+          :moduleName="module.name"
+          :completed="module.completed"
+          :total="module.total"
+          :test-name="testsList[index]?.name"
+          :show-progress-text="true"
+          :show-button="true"
+          :button-text="Starten"
           :show-test-name ="true"
           :show-module-button="false"
           :show-text="true"
-          :textarea="'Test'"
+          :textarea="'Weiterlernen'"
+      />
+    </div>
+   <div>
+      <ListElem
+          v-for="(module, index) in testsList"
+          :key="index"
+          :moduleName="module.name"
+          :completed="module.completed"
+          :total="module.total"
+          :test-name="testsList[index]?.name"
+          :show-progress-text="true"
+          :show-button="true"
+          :show-test-name ="true"
+          :show-module-button="false"
+          :show-text="false"
       />
     </div>
 
@@ -94,14 +125,11 @@ export default {
   data() {
     return {
       modules: [
-        { name: "Medieninformatik", completed: 0, total: 0 },
-        { name: "Mathematik",        completed: 4, total: 8 },
-        { name: "Programmierung",    completed: 1, total: 6 }
+        { name: "BDP", completed: 0, total: 0 }
       ],
       testsList: [
-        { name: "Weiterlernen" },
-        { name: "Mathe" },
-        { name: "Programmierung"}
+        { name: "TEST1", completed: 1, total: 2 },
+        { name: "TEST2", completed: 3, total: 3 }
       ],
       tests: [], showCreateModule: false,
       statsCards: [
