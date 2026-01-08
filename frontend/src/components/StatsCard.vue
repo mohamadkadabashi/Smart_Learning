@@ -13,7 +13,7 @@
             <div class="title">{{ value }}</div>
         </div>
 
-        <div v-showS="subtitle" class="subtitle" :class="subtitleClass">
+        <div v-show="subtitle" class="subtitle" :class="subtitleClass">
             {{ subtitle }}
         </div>
     </div>

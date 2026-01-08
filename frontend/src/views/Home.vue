@@ -48,7 +48,7 @@
           </div>
         </div>
         <div style="position: absolute; right: 3rem;">
-          <CircularProgress value="65" />
+          <CircularProgress :value="65" />
         </div>
         <div>
           <CreateTestCard />
