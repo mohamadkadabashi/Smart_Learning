@@ -51,7 +51,7 @@ export default {
 .settings-password-card {
   background: #f3f3f3;
   border-radius: 30px;
-  padding: 22px 20px;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -66,6 +66,7 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 @media (max-width: 1200px) {

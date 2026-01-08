@@ -45,7 +45,7 @@ export default {
 }
 
 .settings-grid {
-  margin-top: 26px;
+  margin: 10px;
   display: grid;
   grid-template-columns: repeat(2, 548px);
   column-gap: 33px;
