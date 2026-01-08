@@ -94,6 +94,7 @@ router.beforeEach((to, from, next) => {
   if (token && isTokenExpired(token)) {
     localStorage.removeItem("access_token");
     localStorage.removeItem("access_token_expires_at");
+    localStorage.removeItem("user_id");
   }
 
   const hasToken = !!localStorage.getItem("access_token");

@@ -11,27 +11,65 @@
       <div class="form-group">
         <div class="d-flex flex-column gap-3">
           <label class="name">Name des Moduls</label>
-          <input type="text" id="modulename" v-model="modulename" class="w-100" />
+          <input class="w-100"
+            type="text" 
+            id="modulename" 
+            v-model="modulename"
+            @keyup.enter="onCreate" />
         </div>
       </div>
+      <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
 
-      <button class="mt-5 primary" :disabled="!modulename">Modul erstellen</button>
-
+      <button class="mt-5 primary" :disabled="!modulename || loading" @click="onCreate">
+        {{ loading ? "Erstelle..." : "Modul erstellen" }}
+      </button>
+    
     </div>
   </div>
 </template>
 
 <script>
 import CloseIcon from "../../public/assets/images/close-icon.svg";
+import { createSubject } from "@/services/subject.js"
 
 export default {
   name: "createModule",
   components: {
     CloseIcon
   },
+  props: {
+    userId: {type: Number, required: true}
+  },
   data() {
     return {
-      modulename: ""
+      modulename: "",
+      loading: false,
+      errorMsg: ""
+    };
+  },
+  methods: {
+    async onCreate(){
+      if (!this.modulename || this.loading) return;
+
+      this.loading = true;
+      this.errorMsg = "";
+
+      try {
+        const created = await createSubject({
+          name: this.modulename,
+          user_id: this.userId
+        });
+
+        this.$emit("created", created);
+
+        this.$emit("close")
+      } catch(e){
+       if (e?.status === 409) this.errorMsg = "Du hast bereits ein Modul mit diesem Namen.";
+        else if (e?.status === 422) this.errorMsg = "User existiert nicht oder Eingaben sind ungültig.";
+        else this.errorMsg = e?.detail || "Unbekannter Fehler beim Erstellen.";
+      } finally {
+        this.loading = false;
+      }
     }
   }
 };

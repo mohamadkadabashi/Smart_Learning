@@ -16,6 +16,7 @@ api.interceptors.response.use(
   (err) => {
     if (err?.response?.status === 401) {
       localStorage.removeItem("access_token");
+      localStorage.removeItem("user_id");
       // redirect to login-page
       if (window.location.pathname !== "/login-or-register") {
         window.location.href = "/login-or-register";

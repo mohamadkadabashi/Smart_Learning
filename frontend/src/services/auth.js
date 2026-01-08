@@ -22,12 +22,16 @@ export async function login(identifier, password) {
     localStorage.setItem("access_token", response.data.access_token);
     localStorage.setItem("access_token_expires_at", expiresAt.toString());
 
+    const me = await api.get("/users/me")
+    localStorage.setItem("user_id", me.data.id);
+
     return response.data;
 }
 
 export function logout(){
     localStorage.removeItem("access_token");
     localStorage.removeItem("access_token_expires_at");
+    localStorage.removeItem("user_id");
     router.push({ name: 'Login/Registrierung' });
 }
 
@@ -46,3 +50,4 @@ export function isAuthenticated() {
 
     return true;
 }
+

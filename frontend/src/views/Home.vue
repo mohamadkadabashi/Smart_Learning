@@ -4,7 +4,11 @@
     <button class="primary" @click="showCreateModule = true">
       <PlusIcon role="img" alt="Modul erstellen"/>
     </button>
-    <createModule v-if="showCreateModule" @close="showCreateModule = false"/>
+    <createModule
+      v-if="showCreateModule"
+      :userId="user_id"
+      @close="showCreateModule = false"
+    />
 
     <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
       <div class="d-flex gap-3">
@@ -98,6 +102,9 @@ export default {
   },
   created() {
     this.tests = this.$testService.getTests()
+  },
+  mounted(){
+    this.user_id = localStorage.getItem("user_id");
   }
 }
 </script>
