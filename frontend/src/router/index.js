@@ -24,7 +24,8 @@ const routes = [
     component: Settings,
     meta: {
       title: 'Settings',
-      headerTitle: 'Einstellungen'
+      headerTitle: 'Einstellungen',
+      requiresAuth: true
     }
   },
   {

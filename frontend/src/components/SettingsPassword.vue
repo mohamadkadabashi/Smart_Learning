@@ -5,17 +5,11 @@
 
       <div class="password-grid">
         <div class="password-item">
-          <PasswordInput
-            label="Neues Passwort"
-            v-model="password"
-          />
+          <PasswordInput label="Neues Passwort" v-model="password" />
         </div>
 
         <div class="password-item">
-          <PasswordInput
-            label="Neues Passwort wiederholen"
-            v-model="repeatPassword"
-          />
+          <PasswordInput label="Neues Passwort wiederholen" v-model="repeatPassword" />
         </div>
       </div>
 
@@ -33,7 +27,7 @@
 
 <script>
 import PasswordInput from '@/components/PasswordInput.vue'
-import { updateUserPassword } from '../services/user';
+import { patchUser , getMe } from '../services/user';
 
 export default {
   name: 'SettingsPassword',
@@ -48,16 +42,21 @@ export default {
       userId: null,
     };
   },
-  mounted() {
-    this.userId = localStorage.getItem("user_id");
+  async mounted() {
+    try {
+      const me = await getMe();
+      this.userId = me.id;
+    } catch (e) {
+      this.error = e?.response?.data?.detail || "Konnte Benutzer nicht laden.";
+    }
   },
   methods: {
-        async onChangePassword() {
+    async onChangePassword() {
       this.error = "";
       this.success = "";
 
       if (!this.userId) {
-        this.error = "Kein Benutzer gefunden (Token enthält keine User-ID).";
+        this.error = "Kein Benutzer gefunden.";
         return;
       }
       if (this.password !== this.repeatPassword) {
@@ -71,7 +70,8 @@ export default {
 
       this.loading = true;
       try {
-        await updateUserPassword(this.userId, this.password);
+        await patchUser(this.userId, { password: this.password });
+        
         this.success = "Passwort wurde geändert.";
         this.password = "";
         this.repeatPassword = "";
@@ -80,7 +80,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    }
   }
 }
 </script>

@@ -28,6 +28,11 @@ export async function login(identifier, password) {
     return response.data;
 }
 
+export async function getMe() {
+  const { data } = await api.get("/users/me");
+  return data;
+}
+
 export function logout(){
     localStorage.removeItem("access_token");
     localStorage.removeItem("access_token_expires_at");
@@ -35,20 +40,10 @@ export function logout(){
     router.push({ name: 'Login/Registrierung' });
 }
 
-export async function updateUserPassword(userId, newPassword) {
-  const { data } = await api.patch(`/users/${userId}`, {
-    password: newPassword,
-  });
+export async function patchUser(userId, payload) {
+  const { data } = await api.patch(`/users/${userId}`, payload);
   return data;
 }
-
-export async function updateUserMail(userId, newMail){
-  const { data } = await api.patch(`/users/${userId}`, {
-    email: newMail,
-  });
-  return data;
-}
-
 
 export function isAuthenticated() {
     const token = localStorage.getItem("access_token");

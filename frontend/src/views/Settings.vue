@@ -2,21 +2,26 @@
   <div class="settings-page">
     <div class="settings-wrapper">
       <div class="settings-grid">
-        <SettingsPersonalData 
+
+        
+        <SettingsPersonalData
           :username="form.username"
-          @update:username="from.username = $event"
+          :email="form.email"
+          @update:username="form.username = $event"
           @update:email="form.email = $event"
         />
 
         <div class="goal-column">
-          <SettingsDailyGoal 
-            :goal="form.goal"
-            :streak="form.streak"
-            @update:goal="form.goal = $event"
-            @update:streak="form.streak = $event"
+          <SettingsDailyGoal
+            :goal="form.daily_goal"
+            :streak="form.streak_enabled"
+            @update:goal="form.daily_goal = $event"
+            @update:streak="form.streak_enabled = $event"
           />
         
           <div class="save-row">
+            <p v-if="error" class="text-danger mb-0">{{ error }}</p>
+            <p v-if="success" class="text-success mb-0">{{ success }}</p> 
             <button class="primary" :disabled="loading" @click="onSave">
               {{ loading ? "Speichere..." : "Speichern" }}
             </button>
@@ -35,7 +40,7 @@
 import SettingsPersonalData from '@/components/SettingsPersonalData.vue'
 import SettingsDailyGoal from '@/components/SettingsDailyGoal.vue'
 import SettingsPassword from '@/components/SettingsPassword.vue'
-import { updateUserMail } from '../services/user';
+import { patchUser, getMe } from '../services/user';
 
 export default {
   name: 'Settings',
@@ -44,41 +49,32 @@ export default {
     SettingsDailyGoal,
     SettingsPassword
   },
-  data() {
+ data() {
     return {
+      userId: null,
       loading: false,
       error: "",
       success: "",
-      userId: null,
-
-      // Originalwerte (damit du "dirty check" + reset machen kannst)
-      initial: {
-        username: "",
-        email: "",
-        goal: 0,
-        streak: true,
-      },
-
-      // Formwerte (werden durch die Childs geändert)
-      form: {
-        username: "",
-        email: "",
-        goal: 0,
-        streak: true,
-      },
+      initial: { username: "", email: "", daily_goal: 1, streak_enabled: true },
+      form:    { username: "", email: "", daily_goal: 1, streak_enabled: true },
     };
   },
-  mounted() {
 
-    this.userId = localStorage.getItem("user_id");
-    // TODO: hier initiale Werte laden (vom Backend oder aus Store)
-    // Beispiel:
-    // const me = await getMe();
-  },
-computed: {
-    isDirty() {
-      return JSON.stringify(this.form) !== JSON.stringify(this.initial);
-    },
+  async mounted() {
+    try {
+      const me = await getMe();
+      this.userId = me.id;
+
+      this.initial = {
+        username: me.username,
+        email: me.email,
+        daily_goal: me.daily_goal,
+        streak_enabled: me.streak_enabled,
+      };
+      this.form = { ...this.initial };
+    } catch (e) {
+      this.error = e?.response?.data?.detail || "Konnte User-Daten nicht laden.";
+    }
   },
 
   methods: {
@@ -91,49 +87,38 @@ computed: {
         return;
       }
 
-      if (this.form.email && !this.form.email.includes("@")) {
-        this.error = "Bitte eine gültige E-Mail eingeben.";
-        return;
-      }
-      if (this.form.goal < 0) {
-        this.error = "Goal darf nicht negativ sein.";
-        return;
-      }
+      const payload = {};
+      if (this.form.username !== this.initial.username) payload.username = this.form.username;
+      if (this.form.email !== this.initial.email) payload.email = this.form.email;
+      if (this.form.daily_goal !== this.initial.daily_goal) payload.daily_goal = this.form.daily_goal;
+      if (this.form.streak_enabled !== this.initial.streak_enabled) payload.streak_enabled = this.form.streak_enabled;
 
-      // Nichts geändert? Optional:
-      if (!this.isDirty) {
-        this.success = "Keine Änderungen zum Speichern.";
+      if (!Object.keys(payload).length) {
+        this.success = "Keine Änderungen.";
         return;
       }
 
       this.loading = true;
       try {
-        // 1) User Patch (username/email) nur senden, wenn sich was geändert hat
-        const userPatch = {};
-        if (this.form.username !== this.initial.username) userPatch.username = this.form.username;
-        if (this.form.email !== this.initial.email) userPatch.email = this.form.email;
+        const updated = await patchUser(this.userId, payload);
 
-        // // 2) Daily goal ggf. eigenes endpoint
-        // const goalChanged =
-        //   this.form.goal !== this.initial.goal || this.form.streak !== this.initial.streak;
+        // sync state
+        this.initial = {
+          username: updated.username,
+          email: updated.email,
+          daily_goal: updated.daily_goal,
+          streak_enabled: updated.streak_enabled,
+        };
+        this.form = { ...this.initial };
 
-        // // Calls parallel (wenn beide gebraucht)
-        const tasks = [];
-         if (Object.keys(userPatch).length) tasks.push(updateUserMail(this.userId, userPatch));
-        // if (goalChanged) tasks.push(updateDailyGoal({ goal: this.form.goal, streak: this.form.streak }));
-
-        await Promise.all(tasks);
-
-        // Erfolg: initial := form (damit isDirty wieder false ist)
-        this.initial = JSON.parse(JSON.stringify(this.form));
-        this.success = "Änderungen gespeichert.";
+        this.success = "Einstellungen gespeichert.";
       } catch (e) {
         this.error = e?.response?.data?.detail || "Fehler beim Speichern.";
       } finally {
         this.loading = false;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -167,6 +152,8 @@ computed: {
 .save-row {
   display: flex;
   justify-content: flex-end;
+  gap: 8px; 
+  align-items: center;  
 }
 
 .password-grid-item {

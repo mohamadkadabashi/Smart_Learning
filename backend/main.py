@@ -6,6 +6,8 @@ from database import create_db_and_tables
 from routers.users import router as users_router
 from routers.subjects import router as subject_router
 from routers.subject_tests import router as subject_tests_router
+from routers.learning_sessions import router as learning_sessions_router
+from routers.stats import router as stats_router
 
 origins = [
     "http://localhost",
@@ -39,6 +41,8 @@ app.add_middleware(
 app.include_router(users_router)
 app.include_router(subject_router)
 app.include_router(subject_tests_router)
+app.include_router(stats_router)
+app.include_router(learning_sessions_router)
 
 @app.get("/")
 def read_root():
