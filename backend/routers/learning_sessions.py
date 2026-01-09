@@ -2,9 +2,10 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 
-from backend.database import SessionDep
-from backend.dependencies.dependency import CurrentUser
-from backend.models.learn_session import LearningSession, LearningSessionRead, LearningSessionStart, LearningSessionStop
+from dependencies.dependency import CurrentUser
+from database import SessionDep
+
+from models.learn_session import LearningSession, LearningSessionRead, LearningSessionStart, LearningSessionStop
 
 router = APIRouter(prefix="/learning-sessions", tags=["learning-sessions"])
 

@@ -3,17 +3,18 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter
 from sqlmodel import func, select
 
-from backend.database import SessionDep
-from backend.dependencies.dependency import CurrentUser
-from backend.models.learn_session import LearningSession
-from backend.models.subject import StatsOverview, Subject, SubjectStats
-from backend.models.subject_tests import SubjectTest
-from backend.models.test_result import TestResult
-from backend.models.user import User
+from database import SessionDep
+from dependencies.dependency import CurrentUser
+from models.learn_session import LearningSession
+from models.subject import StatsOverview, Subject, SubjectStats
+from models.subject_tests import SubjectTest
+from models.test_result import TestResult
+from models.user import User
 
 router = APIRouter(prefix="/stats", tags=["stats"])
-BERLIN = ZoneInfo("Europe/Berlin")
 
+
+BERLIN = ZoneInfo("Europe/Berlin")
 
 def berlin_day_bounds_utc(now_utc: datetime):
     now_berlin = now_utc.astimezone(BERLIN)
