@@ -18,11 +18,14 @@
           />
         </div>
       </div>
+
+      <p v-if="error" class="text-danger">{{ error }}</p>
+      <p v-if="success" class="text-success">{{ success }}</p>
     </div>
 
     <div class="password-actions">
-      <button class="primary" type="button">
-        Passwort ändern
+      <button class="primary" type="button" :disabled="loading || !password" @click="onChangePassword">
+        {{ loading ? "..." : "Passwort ändern" }}
       </button>
     </div>
   </section>
@@ -30,6 +33,7 @@
 
 <script>
 import PasswordInput from '@/components/PasswordInput.vue'
+import { updateUserPassword } from '../services/user';
 
 export default {
   name: 'SettingsPassword',
@@ -37,8 +41,46 @@ export default {
   data() {
     return {
       password: '',
-      repeatPassword: ''
-    }
+      repeatPassword: '',
+      loading: false,
+      error: "",
+      success: "",
+      userId: null,
+    };
+  },
+  mounted() {
+    this.userId = localStorage.getItem("user_id");
+  },
+  methods: {
+        async onChangePassword() {
+      this.error = "";
+      this.success = "";
+
+      if (!this.userId) {
+        this.error = "Kein Benutzer gefunden (Token enthält keine User-ID).";
+        return;
+      }
+      if (this.password !== this.repeatPassword) {
+        this.error = "Passwörter stimmen nicht überein.";
+        return;
+      }
+      if (this.password.length < 8) {
+        this.error = "Passwort muss mindestens 8 Zeichen haben.";
+        return;
+      }
+
+      this.loading = true;
+      try {
+        await updateUserPassword(this.userId, this.password);
+        this.success = "Passwort wurde geändert.";
+        this.password = "";
+        this.repeatPassword = "";
+      } catch (e) {
+        this.error = e?.response?.data?.detail || "Fehler beim Ändern des Passworts.";
+      } finally {
+        this.loading = false;
+      }
+    },
   }
 }
 </script>

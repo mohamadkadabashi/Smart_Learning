@@ -113,6 +113,10 @@ def update_user(
         logger.warning(f"User with ID {user_id} not found for update")
         raise HTTPException(status_code=404, detail="User not found")
     
+    if current_user.id != user_id:
+        logger.error("not allowed")
+        raise HTTPException(status_code=403, detail="Not allowed")
+    
     if user_update.username is not None:
         username_exists = session.exec(select(User).where(User.username == user_update.username, User.id != user_id)).first()
         if username_exists:

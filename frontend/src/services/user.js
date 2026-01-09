@@ -35,6 +35,21 @@ export function logout(){
     router.push({ name: 'Login/Registrierung' });
 }
 
+export async function updateUserPassword(userId, newPassword) {
+  const { data } = await api.patch(`/users/${userId}`, {
+    password: newPassword,
+  });
+  return data;
+}
+
+export async function updateUserMail(userId, newMail){
+  const { data } = await api.patch(`/users/${userId}`, {
+    email: newMail,
+  });
+  return data;
+}
+
+
 export function isAuthenticated() {
     const token = localStorage.getItem("access_token");
     const expiresAt = localStorage.getItem("access_token_expires_at");

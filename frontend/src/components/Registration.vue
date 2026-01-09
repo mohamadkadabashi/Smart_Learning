@@ -30,7 +30,7 @@
 
 <script>
     import PasswordInput from '@/components/PasswordInput.vue';
-    import { register, login } from '../services/auth';
+    import { register, login } from '../services/user';
 
     export default {
         name: 'Registration',

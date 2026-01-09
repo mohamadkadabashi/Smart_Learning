@@ -35,7 +35,7 @@
     import UserIcon from '@/../public/assets/images/person-sharp.svg';
     import LoginIcon from '@/../public/assets/images/log-in.svg';
     import UserDropdown from '@/components/UserDropdown.vue';
-    import { isAuthenticated } from '@/services/auth.js';
+    import { isAuthenticated } from '@/services/user.js';
 
     const ROUTE_HOME = 'Home';
     const ROUTE_LOGIN = 'Login/Registrierung';

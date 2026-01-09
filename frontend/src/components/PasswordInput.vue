@@ -8,7 +8,6 @@
                 :type="inputType"
                 :value="value"
                 @input="$emit('input', $event.target.value)"
-                v-model="password"
                 class="w-100" />
 
             <button type="button"
@@ -48,17 +47,20 @@
         data() {
             return {
                 inputId: 'pw-' + Math.random().toString(36).substr(2, 9),
-                password: '',
                 showPassword: false
             }
         },
         computed: {
             inputType() {
-                if (this.showPassword) return 'text';
-                if (!this.value) return 'text';
-                return 'password';
+              return this.showPassword ? "text" : "password";
+            }
+        },
+        watch: {
+            value(v) {
+                if (!v) this.showPassword = false;
             }
         }
+
     };
 </script>
 
