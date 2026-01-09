@@ -24,3 +24,15 @@ class SubjectRead(SubjectBase):
 
 class SubjectUpdate(SQLModel):
     name: Annotated[Optional[str], StringConstraints(strip_whitespace=True, min_length=1)] = None
+
+class SubjectStats(SQLModel):
+    subject_id: int
+    subject_name: str
+    tests_done: int
+
+class StatsOverview(SQLModel):
+    tests_done_today: int
+    tests_remaining_today: int
+    pass_rate_week: float
+    study_time_week_seconds: int
+    current_streak_days: int

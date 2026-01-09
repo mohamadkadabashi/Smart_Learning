@@ -9,6 +9,9 @@ class UserBase(SQLModel):
         StringConstraints(strip_whitespace=True, min_length=1)] = Field(nullable=False, unique=True)
     email: EmailStr = Field(nullable=False, unique=True)
 
+    daily_goal: int = Field(default=1, ge=1, nullable=False)
+    streak_enabled: bool = Field(default=True, nullable=False)
+
 # User model extending the base with additional fields
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -38,6 +41,9 @@ class UserUpdate(SQLModel):
         Optional[str],
         StringConstraints(strip_whitespace=True, min_length=8)
     ] = None
+
+    daily_goal: Optional[int] = Field(default=None, ge=1)
+    streak_enabled: Optional[bool] = None
 
 
 class LoginInput(SQLModel):

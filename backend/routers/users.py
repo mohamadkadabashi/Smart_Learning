@@ -132,6 +132,13 @@ def update_user(
 
     if user_update.password is not None:
         user.password = hash_password(user_update.password)
+
+    if user_update.daily_goal is not None:
+        user.daily_goal = user_update.daily_goal
+
+    if user_update.streak_enabled is not None:
+        user.streak_enabled = user_update.streak_enabled
+
     
     session.add(user)
     session.commit()
