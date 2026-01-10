@@ -1,23 +1,25 @@
-from datetime import datetime
-from typing import Optional
-from pydantic import EmailStr
+from datetime import datetime, timezone
+from typing import Optional, Annotated
+from pydantic import EmailStr, StringConstraints
 from sqlmodel import SQLModel, Field
 
 # Base model for user with common fields
 class UserBase(SQLModel):
-    username: str = Field(nullable=False, unique=True)
-    email: EmailStr = Field(nullable=False, unique=True) # Email wird in DB als String gespeichert, aber mit EmailStr validiert
+    username: Annotated[str,
+        StringConstraints(strip_whitespace=True, min_length=1)] = Field(nullable=False, unique=True)
+    email: EmailStr = Field(nullable=False, unique=True)
 
 # User model extending the base with additional fields
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     password: str = Field(nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
-    updated_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at: datetime =Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 
 # Model for creating a new user
 class UserCreate(UserBase):
-    password: str = Field(nullable=False)
+    password: Annotated[str, 
+        StringConstraints(strip_whitespace=True, min_length=8)] = Field(nullable=False)
 
 # Model for reading user information
 class UserRead(UserBase):
@@ -27,9 +29,16 @@ class UserRead(UserBase):
 
 # Model for updating user information
 class UserUpdate(SQLModel):
-    username: Optional[str] = None
+    username: Annotated[
+        Optional[str],
+        StringConstraints(strip_whitespace=True, min_length=1)
+    ] = None
     email: Optional[EmailStr] = None
-    password: Optional[str] = None
+    password: Annotated[
+        Optional[str],
+        StringConstraints(strip_whitespace=True, min_length=8)
+    ] = None
+
 
 class LoginInput(SQLModel):
     identifier: str

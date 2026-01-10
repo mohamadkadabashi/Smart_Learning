@@ -1,14 +1,12 @@
 <template>
   <div>
-    <TopBar />
-
     <div class="container py-5 d-flex justify-content-center">
       <div class="w-100" style="max-width: 700px;">
 
         <!-- Test-Titel -->
-        <h1 class="text-center mb-4" style="padding-top: 50px;">
+        <h2 class="text-center mb-4" style="padding-top: 50px;">
           {{ test.title }}
-        </h1>
+        </h2>
 
         <!-- Progress-Bar -->
         <div class="d-flex justify-content-center gap-2 mb-4">
@@ -96,11 +94,11 @@
 <script>
 import Qti3Player from 'qti3-item-player'
 import 'qti3-item-player/dist/qti3Player.css'
-import TopBar from '@/components/TopBar.vue';
+import '@/../public/assets/css/styles.css'
 
 export default {
   name: 'Test',
-  components: { Qti3Player, TopBar },
+  components: { Qti3Player },
   data() {
     return {
       qti3player: null,
@@ -148,6 +146,8 @@ export default {
       };
 
       this.qti3player.loadItemFromXml(item.xml, config);
+      // KaTeX Rendern aufrufen
+      this.renderMath();
     },
 
     next() {
@@ -267,6 +267,23 @@ export default {
       : texts[0];
   },
 
+  // KaTeX Rendern
+renderMath() {
+      this.$nextTick(() => {
+        
+        if (window.renderMathInElement) {
+          window.renderMathInElement(this.$el, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    },
   },
   created() {
     //
@@ -282,9 +299,5 @@ export default {
   background-color: #f8f9fa;
   border-color: #dee2e6;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-::v-deep(.player-wrapper *) {
-  background-color: #f8f9fa;
-
 }
 </style>

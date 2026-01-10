@@ -1,16 +1,40 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Login from '../views/LoginRegistrationView.vue'
+import Settings from '../views/Settings.vue'
+import Test from '../views/test'
+import Start from '../views/Start.vue'
 
 Vue.use(VueRouter)
 
+//TODO: add "requiresAuth" for specific sites to handle expired tokens
 const routes = [
+  {
+    path: '/start',
+    name: 'Start',
+    component: Start,
+    meta: {
+      title: 'SmartLearning',
+      requiresAuth: false
+    }
+  },
   {
     path: '/',
     name: 'Home',
     component: Home,
     meta: {
-      title: 'Test Runner Home'
+      title: 'SmartLearning',
+      requiresAuth: false
+    }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
+    meta: {
+      title: 'Settings',
+      headerTitle: 'Einstellungen'
     }
   },
   {
@@ -21,7 +45,30 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "test" */ '../views/TestRunner.vue'),
     meta: {
-      title: 'Test Runner'
+      title: 'Test Runner',
+      headerTitle: 'Lernen',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/create',
+    name: 'Test erstellen',
+    component: Test,
+    props: true,
+    meta: {
+      title: 'Test erstellen',
+      headerTitle: 'Neuen Test anlegen',
+      // TODO: change it to true later
+      requiresAuth: false,
+
+    }
+  },
+  {
+    path: '/login-or-register',
+    name: 'Login/Registrierung',
+    component: Login,
+    meta: {
+      title: 'Login/Registrierung'
     }
   }
 ]
@@ -37,9 +84,36 @@ const router = new VueRouter({
   routes
 })
 
+// handling expired tokens
+function isTokenExpired(token) {
+  try {
+    const payloadPart = token.split(".")[1];
+    const payloadJson = atob(payloadPart.replace(/-/g, "+").replace(/_/g, "/"));
+    const payload = JSON.parse(payloadJson);
+
+    if (!payload.exp) return false; 
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp <= now;
+  } catch (e) {
+    return true;
+  }
+}
+
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || 'Test Runner Home'
-  next()
+  const token = localStorage.getItem("access_token");
+
+  if (token && isTokenExpired(token)) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("access_token_expires_at");
+  }
+
+  const hasToken = !!localStorage.getItem("access_token");
+
+  if (to.matched.some(r => r.meta.requiresAuth) && !hasToken) {
+    return next("/login-or-register");
+  }
+
+  next();
 });
 
 export default router
