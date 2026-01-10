@@ -54,50 +54,27 @@
 
     <div>
       <ListElem
-          v-for="(module, index) in modules"
-          :key="index"
-          :moduleName="module.name"
+          v-for="module in modules"
+          :key="'module-' + module.name"
+          :name="module.name"
           :completed="module.completed"
           :total="module.total"
-          :test-name="testsList[index]?.name"
-          :show-progress-text="true"
-          :show-button="true"
-          :button-text="Starten"
-          :show-test-name ="false"
-          :show-module-button="true"
-          :show-text="false"
+          :isSubject="module.isSubject"
+          :showButton="module.showButton"
+          :showProgressText="module.showProgressText"
+          buttonText="Übersicht"
       />
-    </div>
-    <div>
-      <ListElem
-          v-for="(module, index) in testsList"
-          :key="index"
-          :moduleName="module.name"
-          :completed="module.completed"
-          :total="module.total"
-          :test-name="testsList[index]?.name"
-          :show-progress-text="true"
-          :show-button="true"
-          :button-text="Starten"
-          :show-test-name ="true"
-          :show-module-button="false"
-          :show-text="true"
-          :textarea="'Weiterlernen'"
-      />
-    </div>
-   <div>
-      <ListElem
-          v-for="(module, index) in testsList"
-          :key="index"
-          :moduleName="module.name"
-          :completed="module.completed"
-          :total="module.total"
-          :test-name="testsList[index]?.name"
-          :show-progress-text="true"
-          :show-button="true"
-          :show-test-name ="true"
-          :show-module-button="false"
-          :show-text="false"
+
+        <ListElem
+          v-for="test in testdetails"
+          :key="'test-' + test.name"
+          :name="test.name"
+          :completed="test.completed"
+          :total="test.total"
+          :isSubject="test.isSubject"
+          :showButton="test.showButton"
+          :showProgressText="test.showProgressText"
+          buttonText="Starten"
       />
     </div>
 
@@ -125,13 +102,12 @@ export default {
   data() {
     return {
       modules: [
-        { name: "BDP", completed: 0, total: 0 }
+        { name: "BDP", completed: 4, total: 6, isSubject: true},
+        { name: "OOP", completed: 2, total: 4, isSubject: true}
       ],
-      testsList: [
-        { name: "TEST1", completed: 1, total: 2 },
-        { name: "TEST2", completed: 3, total: 3 }
+      testdetails: [
+        { name: "Test1", completed: 2, total: 4, isSubject: false},
       ],
-      tests: [], showCreateModule: false,
       statsCards: [
         {
           title: 'Lernzeit diese Woche',
@@ -154,6 +130,9 @@ export default {
         }
       ]
     }
+  },
+  mounted() {
+    console.log(this.tests, this.tests.length)
   },
   created() {
     this.tests = this.$testService.getTests()

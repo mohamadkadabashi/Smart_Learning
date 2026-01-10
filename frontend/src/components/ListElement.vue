@@ -1,79 +1,54 @@
 <template>
   <div class="list-item">
-
     <div class="text-block">
-      <button class="module-name" @click="$emit('open', moduleName)" v-if="showModuleButton">
-        {{ moduleName }}
+      <button
+        v-if="isSubject"
+        class="module-name"
+        @click="$emit('open', name)"
+      >
+        {{ name }}
       </button>
 
-      <label class="primary-text" v-if="showTestName">
-        {{ testName }}
-      </label>
-
-      <p class="secondary-text" v-if="showText">
-        {{ textarea }}
-      </p>
+      <label
+        v-else
+        class="module-name module-name--static"
+      >
+        {{ name }}
+    </label>
     </div>
 
-    <div v-if="!isWeiterlernen">
+    <div class="progress-wrapper">
       <div class="progress-bar">
-        <div class="progress-fill"
-             :style="{ width: progressPercent + '%' }">
-        </div>
+        <div
+          class="progress-fill"
+          :style="{ width: progressPercent + '%' }"
+        ></div>
       </div>
-    </div>
 
-    <div v-if="showProgressText && !isWeiterlernen">
       <span class="progress-text">
         {{ completed }}/{{ total }} {{ progressLabel }}
       </span>
     </div>
 
-    <button v-if="showButton" class="primary" @click="$emit('open')">
+    <button
+      class="primary"
+      @click="$emit('open', name)"
+    >
       {{ buttonText }}
     </button>
-
-    <div v-if="isWeiterlernen" class="weiterlernen-progress">
-      <div class="progress-bar">
-        <div class="progress-fill"
-             :style="{ width: progressPercent + '%' }">
-        </div>
-      </div>
-      <span class="progress-text">
-        {{ completed }}/{{ total }} {{ progressLabel }}
-      </span>
-    </div>
   </div>
 </template>
+
+
 
 <script>
 export default {
   name: "ListElement",
 
   props: {
-    moduleName: {
+    name: {
       type: String,
       required: true
-    },
-    showModuleButton: {
-      type: Boolean,
-      default: false
-    },
-    testName: {
-      type: String,
-      default: ""
-    },
-    showTestName: {
-      type: Boolean,
-      default: false
-    },
-    showProgressText: {
-      type: Boolean,
-      default: false
-    },
-    showButton: {
-      type: Boolean,
-      default: false
     },
     buttonText: {
       type: String,
@@ -87,13 +62,9 @@ export default {
       type: Number,
       default: 1
     },
-    showText: {
+    isSubject: {
       type: Boolean,
       default: false
-    },
-    textarea: {
-      type: String,
-      default: ""
     }
   },
 
@@ -102,14 +73,11 @@ export default {
       if (this.total === 0) return 0;
       return Math.min(100, Math.round((this.completed / this.total) * 100));
     },
-    isWeiterlernen() {
-      return this.textarea === "Weiterlernen";
-    },
     progressLabel() {
-      if (this.showModuleButton) {
+      if (this.isSubject) {
         return "Tests"
       }
-      if (this.showTestName || this.isWeiterlernen()) {
+      if (!this.isSubject) {
         return "Fragen"
       }
       return ""
@@ -119,28 +87,18 @@ export default {
 </script>
 
 <style scoped>
-.weiterlernen-progress {
-  grid-column: 1 / 4;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.weiterlernen-progress .progress-bar {
-  flex: 1;
-}
-
 .text-block {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .list-item {
   display: grid;
-  grid-template-columns: 220px 1fr auto auto;
+  grid-template-columns: 220px 1fr auto;
   align-items: center;
-  justify-content: space-between;
+  gap: 24px;
   width: 100%;
   max-width: 1100px;
   min-height: 62px;
@@ -158,21 +116,42 @@ export default {
   border: none;
   cursor: pointer;
   text-decoration: underline;
+  padding: 0;
+}
+
+.module-name--static {
+  text-decoration: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .progress-bar {
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   height: 12px;
   background: #e8e8e8;
   border-radius: 20px;
   overflow: hidden;
-  margin-right: 24px;
 }
 
 .progress-fill {
   height: 100%;
   background: #dd7a34;
   transition: width .3s ease;
+}
+
+.progress-text {
+  white-space: nowrap;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .primary {
@@ -183,9 +162,59 @@ export default {
   margin-left: 24px;
 }
 
-.progress-text {
-  font-size: 18px;
-  white-space: nowrap;
-  margin-left: 24px;
+@media (max-width: 900px) {
+  .list-item {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name button"
+      "progress progress";
+    row-gap: 12px;
+  }
+
+  .text-block {
+    grid-area: name;
+  }
+
+  .progress-wrapper {
+    grid-area: progress;
+    width: 100%;
+  }
+
+  .primary {
+    grid-area: button;
+    margin-left: 0;
+  }
+
+  .module-name {
+    font-size: 22px;
+  }
+
+  .progress-text {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .list-item {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "name"
+      "progress"
+      "button";
+  }
+
+  .primary {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .list-item {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .progress-bar {
+    height: 10px;
+  }
 }
 </style>
