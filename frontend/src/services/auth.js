@@ -46,3 +46,8 @@ export function isAuthenticated() {
 
     return true;
 }
+
+export async function getCurrentUser() { // user info for homepage
+  const response = await api.get("/users/me");
+  return response.data;
+}

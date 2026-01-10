@@ -4,11 +4,21 @@ import Home from '../views/Home.vue'
 import Login from '../views/LoginRegistrationView.vue'
 import Settings from '../views/Settings.vue'
 import Test from '../views/test'
+import Start from '../views/Start.vue'
 
 Vue.use(VueRouter)
 
 //TODO: add "requiresAuth" for specific sites to handle expired tokens
 const routes = [
+  {
+    path: '/start',
+    name: 'Start',
+    component: Start,
+    meta: {
+      title: 'SmartLearning',
+      requiresAuth: false
+    }
+  },
   {
     path: '/',
     name: 'Home',
