@@ -2,7 +2,7 @@ token_header = {"Content-Type": "application/x-www-form-urlencoded"}
 
 def test_read_subjectTests(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -83,7 +83,7 @@ def test_read_subjectTests(client):
 
 def test_read_subjectTests_bySubject(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -160,7 +160,7 @@ def test_read_subjectTests_bySubject(client):
 
 def test_read_subjectTests_bySubject_noexistent_subject_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -184,7 +184,7 @@ def test_read_subjectTests_bySubject_noexistent_subject_id(client):
 
 def test_read_subject(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -237,7 +237,7 @@ def test_read_subject(client):
 
 def test_read_subjectTest_noexistent_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -261,7 +261,7 @@ def test_read_subjectTest_noexistent_id(client):
 
 def test_update_subjectTest(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -309,7 +309,7 @@ def test_update_subjectTest(client):
 
 def test_update_subjectTest_noexistent_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -336,7 +336,7 @@ def test_update_subjectTest_noexistent_id(client):
 
 def test_update_subjectTest_name_subeject_id_combo_already_exists(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -389,7 +389,7 @@ def test_update_subjectTest_name_subeject_id_combo_already_exists(client):
 
 def test_delete_subjectTest(client):
     # create user for subject
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -433,7 +433,7 @@ def test_delete_subjectTest(client):
 
 def test_delete_subjectTest_noexistent_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"

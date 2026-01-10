@@ -67,7 +67,7 @@ def test_create_subject_no_user_id(client):
     # same case as none existing user id
 
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -236,7 +236,7 @@ def test_read_subjects_byUser(client):
 
 def test_read_subjects_byUser_noexistent_user_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -301,7 +301,7 @@ def test_read_subject(client):
 
 def test_read_subject_noexistent_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -363,7 +363,7 @@ def test_update_subject(client):
 
 def test_update_subject_noexistent_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
@@ -465,7 +465,7 @@ def test_delete_subject(client):
 
 def test_delete_subject_noexistent_id(client):
     # create user for login
-    r1 = client.post("/users/", json={
+    r1 = client.post("/users/register", json={
         "username": "alice",
         "email": "alice@example.com",
         "password": "password123"
