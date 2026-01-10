@@ -12,8 +12,17 @@
 
     <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
       <div class="d-flex gap-3">
-        <StatsCard v-for="(card, index) in statsCards" :key="index" :title="card.title" :value="card.value"
-          :subtitle="card.subtitle" :subtitleClass="card.subtitleClass" :iconSrc="card.iconSrc" />
+        <StatsCard
+        v-for="(card, index) in statsCards"
+        :key="index"
+        :title="card.title"
+        :value="card.value"
+        :subtitle="card.subtitle"
+        :subtitleClass="card.subtitleClass"
+        :iconSrc="card.iconSrc"
+      />
+      
+      <p v-if="error" class="text-danger mt-2 mb-0">{{ error }}</p>
       </div>
     </div>
 
@@ -64,6 +73,7 @@ import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
 import createModule from "@/components/createModule.vue";
 import PlusIcon from "../../public/assets/images/plus-icon.svg";
+import {formatSecondsToHM, formatPercentFromRatio, calcPercentChange} from "../../src/utils/calc_stats"
 
 export default {
   name: 'Home',
@@ -77,36 +87,77 @@ export default {
   data() {
     return {
       tests: [], showCreateModule: false,
-      statsCards: [
-        {
-          title: 'Lernzeit diese Woche',
-          value: '2h 34min',
-          subtitle: '+15% zur Vorwoche',
-          subtitleClass: 'subtitle-positive',
-          iconSrc: '/assets/images/clock.svg'
-        },
-        {
-          title: 'Erfolgsquote',
-          value: '82%',
-          subtitle: 'Durchschnitliche Erfolgsquote',
-          iconSrc: '/assets/images/checked-circle.svg'
-        },
-        {
-          title: 'Tests bestanden',
-          value: '3/5 Tests',
-          subtitle: '27 u. 4 Prüfungen',
-          iconSrc: '/assets/images/document-text-sharp.svg'
-        }
-      ]
+      statsCards: [],
+      loading: false,
+      error: "",
     }
+  },
+  async mounted() {
+    await this.loadStats();
   },
   created() {
     this.tests = this.$testService.getTests()
   },
   mounted(){
     this.user_id = localStorage.getItem("user_id");
-  }
-}
+  },
+  methods: {
+    async loadStats() {
+      this.loading = true;
+      this.error = "";
+
+      try {
+        const ov = await getStatsOverview();
+
+        // Lernzeit + Vorwoche %
+        const change = calcPercentChange(
+          ov.study_time_week_seconds,
+          ov.study_time_prev_week_seconds
+        );
+
+        const studySubtitle =
+          change === null
+            ? "Keine Daten zur Vorwoche"
+            : `${change >= 0 ? "+" : ""}${change}% zur Vorwoche`;
+
+        const studySubtitleClass =
+          change === null ? "" : (change >= 0 ? "subtitle-positive" : "subtitle-negative");
+
+        // Erfolgsquote (pass_rate_week ist 0..1)
+        const successRateValue = formatPercentFromRatio(ov.pass_rate_week);
+
+        // Tests bestanden
+        const testsValue = `${ov.tests_passed_week}/${ov.tests_total_week} Tests`;
+
+        this.statsCards = [
+          {
+            title: "Lernzeit diese Woche",
+            value: formatSecondsToHM(ov.study_time_week_seconds),
+            subtitle: studySubtitle,
+            subtitleClass: studySubtitleClass,
+            iconSrc: "/assets/images/clock.svg",
+          },
+          {
+            title: "Erfolgsquote",
+            value: successRateValue,
+            subtitle: "Durchschnittliche Erfolgsquote",
+            iconSrc: "/assets/images/checked-circle.svg",
+          },
+          {
+            title: "Tests bestanden",
+            value: testsValue,
+            subtitle: "Diese Woche",
+            iconSrc: "/assets/images/document-text-sharp.svg",
+          },
+        ];
+      } catch (e) {
+        this.error = e?.response?.data?.detail || "Statistiken konnten nicht geladen werden.";
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
