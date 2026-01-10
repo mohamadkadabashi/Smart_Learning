@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional, Annotated
 from pydantic import EmailStr, StringConstraints
-from sqlmodel import SQLModel, Field
+from sqlmodel import Column, DateTime, SQLModel, Field
 
 # Base model for user with common fields
 class UserBase(SQLModel):
@@ -16,9 +16,17 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     password: str = Field(nullable=False)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
-    updated_at: datetime =Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    
+    created_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(timezone.utc),
+    )
 
+    updated_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(timezone.utc),
+    )
+    
 # Model for creating a new user
 class UserCreate(UserBase):
     password: Annotated[str, 

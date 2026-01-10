@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Optional
-from sqlmodel import SQLModel, Field
+from sqlmodel import Column, DateTime, SQLModel, Field
 
 
 class LearningSession(SQLModel, table=True):
@@ -9,11 +9,14 @@ class LearningSession(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id", index=True, nullable=False)
 
     started_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False),
         default_factory=lambda: datetime.now(timezone.utc),
-        index=True,
-        nullable=False
     )
-    ended_at: Optional[datetime] = Field(default=None, index=True)
+
+    ended_at: Optional[datetime] = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=True),
+        default=None
+    )
 
     # optional (wenn du später Auswertungen pro Fach willst)
     subject_id: Optional[int] = Field(default=None, foreign_key="subject.id", index=True)

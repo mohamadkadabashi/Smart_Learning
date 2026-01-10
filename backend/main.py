@@ -2,7 +2,11 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from database import create_db_and_tables
+
+from sqlmodel import Session
+
+from db.seed_data import seed_database
+from db.database import create_db_and_tables, engine
 from routers.users import router as users_router
 from routers.subjects import router as subject_router
 from routers.subject_tests import router as subject_tests_router
@@ -18,15 +22,11 @@ origins = [
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     if os.getenv("TESTING") != "1":
-        create_db_and_tables() 
-        print("Application has started")
-
-    yield  # Application runs here
-
-    # Shutdown (optional)
-    print("Application shutting down")
+        create_db_and_tables()
+        with Session(engine) as session:
+            seed_database(session)
+    yield
 
 app = FastAPI(lifespan=lifespan, title="SmartLearning Backend", description="Backend API for SmartLearning Application")
 

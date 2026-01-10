@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 
-from database import SessionDep
+from db.database import SessionDep
 from models.user import User, UserCreate, UserRead, UserUpdate
 from config.auth import (
     hash_password,

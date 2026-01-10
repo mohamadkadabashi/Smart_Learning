@@ -3,7 +3,7 @@ from sqlmodel import SQLModel, create_engine, Session
 from fastapi.testclient import TestClient
 
 from main import app
-from database import get_session
+from db.database import get_session
 
 # Configure a separate database for testing
 TEST_DATABASE_URL = "sqlite:///tests/db/test.db"

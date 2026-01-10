@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Literal, Optional
-from sqlmodel import SQLModel, Field
+from sqlmodel import Column, DateTime, SQLModel, Field
 from enum import Enum
 
 class AttemptStatus(str, Enum):
@@ -18,10 +18,21 @@ class TestAttempt(SQLModel, table=True):
 
     status: AttemptStatus = Field(default=AttemptStatus.in_progress, index=True, nullable=False)
 
-    # Timing
-    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True, nullable=False)
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
-    finished_at: Optional[datetime] = Field(default=None, index=True)
+    # Timing (timestamptz in Postgres)
+    started_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False, index=True),
+        default_factory=lambda: datetime.now(timezone.utc),
+    )
+
+    updated_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(timezone.utc),
+    )
+
+    finished_at: Optional[datetime] = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=True, index=True),
+        default=None,
+    )
 
     correct_answered: Optional[int] = Field(default=None, ge=0)
     total_questions: Optional[int] = Field(default=None, ge=1)

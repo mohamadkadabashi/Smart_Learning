@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
-from database import SessionDep
+from db.database import SessionDep
 from dependencies.dependency import CurrentUser
 from models.subject_tests import SubjectTest
 from models.test_attempt import AttemptFinish, AttemptProgressUpdate, AttemptRead, AttemptStart, AttemptStatus, TestAttempt

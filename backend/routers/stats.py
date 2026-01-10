@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import func, select
 
-from database import SessionDep
+from db.database import SessionDep
 from dependencies.dependency import CurrentUser
-from models.learn_session import LearningSession
-from models.subject import StatsOverview, Subject, SubjectStats
+from models.learning_session import LearningSession
+from models.subject import Subject, SubjectStats
 from models.subject_tests import SubjectTest
-from models.test_attempt import AttemptStatus, TestAttempt
+from models.test_attempt import AttemptStatus, TestAttempt, StatsOverview
 from models.user import User
 
 router = APIRouter(prefix="/stats", tags=["stats"])
@@ -68,6 +68,7 @@ def overview(session: SessionDep, current_user: CurrentUser):
         .where(TestAttempt.user_id == current_user.id)
         .where(TestAttempt.finished_at.is_not(None))
         .where(TestAttempt.finished_at >= week_start_utc)
+        .where(TestAttempt.finished_at < now)
         .where(TestAttempt.status.in_(["passed", "failed"]))
     ).first() or 0
 
@@ -76,9 +77,11 @@ def overview(session: SessionDep, current_user: CurrentUser):
         .where(TestAttempt.user_id == current_user.id)
         .where(TestAttempt.finished_at.is_not(None))
         .where(TestAttempt.finished_at >= week_start_utc)
+        .where(TestAttempt.finished_at < now)
         .where(TestAttempt.status == "passed")
     ).first() or 0
 
+    # if only user pass the test with passed of the total tests in the week.
     pass_rate_week = (float(tests_passed_week) / float(tests_total_week)) if tests_total_week else 0.0
 
     # ---------- Study time this week + prev week ----------

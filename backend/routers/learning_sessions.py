@@ -3,9 +3,9 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 
 from dependencies.dependency import CurrentUser
-from database import SessionDep
+from db.database import SessionDep
 
-from models.learn_session import LearningSession, LearningSessionRead, LearningSessionStart, LearningSessionStop
+from models.learning_session import LearningSession, LearningSessionRead, LearningSessionStart, LearningSessionStop
 
 router = APIRouter(prefix="/learning-sessions", tags=["learning-sessions"])
 

@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import select
-from database import SessionDep
+from db.database import SessionDep
 from config.logger_config import logger
 from models.subject import Subject, SubjectCreate, SubjectRead, SubjectUpdate
 from models.user import User

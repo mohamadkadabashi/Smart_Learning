@@ -73,7 +73,14 @@ import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
 import createModule from "@/components/createModule.vue";
 import PlusIcon from "../../public/assets/images/plus-icon.svg";
-import {formatSecondsToHM, formatPercentFromRatio, calcPercentChange} from "../../src/utils/calc_stats"
+
+import { getMe } from "/src/services/user";            
+import { getStatsOverview } from "/src/services/stats";
+
+import { 
+  formatSecondsToHM,
+  formatPercentFromRatio, 
+  calcPercentChange } from "../../src/utils/calc_stats";
 
 export default {
   name: 'Home',
@@ -86,74 +93,91 @@ export default {
   },
   data() {
     return {
-      tests: [], showCreateModule: false,
+      user_id: null,         
+      tests: [],
+      showCreateModule: false,
       statsCards: [],
       loading: false,
       error: "",
-    }
-  },
-  async mounted() {
-    await this.loadStats();
+    };
   },
   created() {
-    this.tests = this.$testService.getTests()
+    this.tests = this.$testService.getTests();
   },
-  mounted(){
-    this.user_id = localStorage.getItem("user_id");
-  },
-  methods: {
-    async loadStats() {
+  async mounted() {
       this.loading = true;
       this.error = "";
 
       try {
-        const ov = await getStatsOverview();
+        const me = await getMe();
+        this.user_id = me?.id ?? null;
 
-        // Lernzeit + Vorwoche %
-        const change = calcPercentChange(
-          ov.study_time_week_seconds,
-          ov.study_time_prev_week_seconds
-        );
-
-        const studySubtitle =
-          change === null
-            ? "Keine Daten zur Vorwoche"
-            : `${change >= 0 ? "+" : ""}${change}% zur Vorwoche`;
-
-        const studySubtitleClass =
-          change === null ? "" : (change >= 0 ? "subtitle-positive" : "subtitle-negative");
-
-        // Erfolgsquote (pass_rate_week ist 0..1)
-        const successRateValue = formatPercentFromRatio(ov.pass_rate_week);
-
-        // Tests bestanden
-        const testsValue = `${ov.tests_passed_week}/${ov.tests_total_week} Tests`;
-
-        this.statsCards = [
-          {
-            title: "Lernzeit diese Woche",
-            value: formatSecondsToHM(ov.study_time_week_seconds),
-            subtitle: studySubtitle,
-            subtitleClass: studySubtitleClass,
-            iconSrc: "/assets/images/clock.svg",
-          },
-          {
-            title: "Erfolgsquote",
-            value: successRateValue,
-            subtitle: "Durchschnittliche Erfolgsquote",
-            iconSrc: "/assets/images/checked-circle.svg",
-          },
-          {
-            title: "Tests bestanden",
-            value: testsValue,
-            subtitle: "Diese Woche",
-            iconSrc: "/assets/images/document-text-sharp.svg",
-          },
-        ];
+        if (this.user_id) {
+          await this.loadStats();
+          console.log("user_id: " + this.user_id)
+        } else {
+          this.error = "User nicht authentifiziert.";
+        }
       } catch (e) {
-        this.error = e?.response?.data?.detail || "Statistiken konnten nicht geladen werden.";
+        this.error =
+          e?.response?.data?.detail ||
+          "User oder Statistiken konnten nicht geladen werden.";
       } finally {
         this.loading = false;
+      }
+  },
+  methods: {
+    async loadStats() {
+      try{
+
+ 
+      const ov = await getStatsOverview();
+        console.log("OVERVIEW", ov);
+
+      const change = calcPercentChange(
+        ov.study_time_week_seconds,
+        ov.study_time_prev_week_seconds
+      );
+
+      const studySubtitle =
+        change === null
+          ? "Keine Daten zur Vorwoche"
+          : `${change >= 0 ? "+" : ""}${change}% zur Vorwoche`;
+
+      const studySubtitleClass =
+        change === null ? "" : (change >= 0 ? "subtitle-positive" : "subtitle-negative");
+
+      const successRateValue = formatPercentFromRatio(ov.pass_rate_week);
+      const testsValue = `${ov.tests_passed_week}/${ov.tests_total_week} Tests`;
+
+      this.statsCards = [
+        {
+          title: "Lernzeit diese Woche",
+          value: formatSecondsToHM(ov.study_time_week_seconds),
+          subtitle: studySubtitle,
+          subtitleClass: studySubtitleClass,
+          iconSrc: "/assets/images/clock.svg",
+        },
+        {
+          title: "Erfolgsquote",
+          value: successRateValue,
+          subtitle: "Durchschnittliche Erfolgsquote",
+          subtitleClass: "",
+          iconSrc: "/assets/images/checked-circle.svg",
+        },
+        {
+          title: "Tests bestanden",
+          value: testsValue,
+          subtitle: "Diese Woche",
+          subtitleClass: "",
+          iconSrc: "/assets/images/document-text-sharp.svg",
+        },
+      ];
+      } catch (e) {
+        console.error("getStatsOverview failed:", e);
+        console.error("status:", e?.response?.status);
+        console.error("data:", e?.response?.data);
+        throw e; // wichtig, damit mounted catch es auch sieht
       }
     },
   },
