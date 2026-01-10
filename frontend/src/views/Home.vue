@@ -51,6 +51,33 @@
         </div>
       </div>
     </div>
+
+    <div>
+      <ListElem
+          v-for="module in modules"
+          :key="'module-' + module.name"
+          :name="module.name"
+          :completed="module.completed"
+          :total="module.total"
+          :isSubject="module.isSubject"
+          :showButton="module.showButton"
+          :showProgressText="module.showProgressText"
+          buttonText="Übersicht"
+      />
+
+        <ListElem
+          v-for="test in testdetails"
+          :key="'test-' + test.name"
+          :name="test.name"
+          :completed="test.completed"
+          :total="test.total"
+          :isSubject="test.isSubject"
+          :showButton="test.showButton"
+          :showProgressText="test.showProgressText"
+          buttonText="Starten"
+      />
+    </div>
+
   </div>
 </template>
 
@@ -60,6 +87,7 @@ import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
 import createModule from "@/components/createModule.vue";
 import PlusIcon from "../../public/assets/images/plus-icon.svg";
+import ListElem from '@/components/ListElement.vue'
 
 export default {
   name: 'Home',
@@ -68,11 +96,18 @@ export default {
     CircularProgress,
     CreateTestCard,
     createModule,
-    PlusIcon
+    PlusIcon,
+    ListElem
   },
   data() {
     return {
-      tests: [], showCreateModule: false,
+      modules: [
+        { name: "BDP", completed: 4, total: 6, isSubject: true},
+        { name: "OOP", completed: 2, total: 4, isSubject: true}
+      ],
+      testdetails: [
+        { name: "Test1", completed: 2, total: 4, isSubject: false},
+      ],
       statsCards: [
         {
           title: 'Lernzeit diese Woche',
@@ -95,6 +130,9 @@ export default {
         }
       ]
     }
+  },
+  mounted() {
+    console.log(this.tests, this.tests.length)
   },
   created() {
     this.tests = this.$testService.getTests()
