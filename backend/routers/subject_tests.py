@@ -77,7 +77,6 @@ async def create_subjectTest(
     except Exception as e:
         # if Trigger failed then:
         db_subjectTest.status = SubjectTestStatus.FAILED
-        db_subjectTest.error_message = f"Failed to trigger n8n: {e}"
         session.add(db_subjectTest)
         session.commit()
         raise HTTPException(status_code=502, detail="Failed to trigger n8n")
