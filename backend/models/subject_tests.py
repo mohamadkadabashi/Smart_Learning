@@ -27,7 +27,6 @@ class SubjectTest(SubjectTestBase, table=True):
     # Async-Tracking
     status: SubjectTestStatus = Field(default=SubjectTestStatus.PENDING, nullable=False, index=True)
     job_id: Optional[str] = Field(default=None, index=True)     # correlation/execution id
-    error_message: Optional[str] = Field(default=None)
 
     finished_at: Optional[datetime] = Field(default=None)
 
@@ -52,7 +51,6 @@ class SubjectTestRead(SubjectTestBase):
 
     status: SubjectTestStatus
     job_id: Optional[str]
-    error_message: Optional[str]
     finished_at: Optional[datetime]
 
     created_at: datetime
