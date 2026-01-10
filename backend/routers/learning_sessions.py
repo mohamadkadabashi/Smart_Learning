@@ -41,20 +41,12 @@ def stop_session(session_id: int, payload: LearningSessionStop, session: Session
     if ls.ended_at is not None:
         raise HTTPException(status_code=409, detail="Session already stopped")
 
-    ls.ended_at = payload.ended_at or datetime.now(timezone.utc)
-    if ls.ended_at <= ls.started_at:
+    end = payload.ended_at or datetime.now(timezone.utc)
+    if end <= ls.started_at:
         raise HTTPException(status_code=400, detail="ended_at must be after started_at")
 
+    ls.ended_at = end
     session.add(ls)
     session.commit()
     session.refresh(ls)
     return ls
-
-
-@router.get("/active", response_model=LearningSessionRead | None)
-def get_active_session(session: SessionDep, current_user: CurrentUser):
-    return session.exec(
-        select(LearningSession)
-        .where(LearningSession.user_id == current_user.id)
-        .where(LearningSession.ended_at.is_(None))
-    ).first()
