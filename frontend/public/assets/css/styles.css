@@ -92,14 +92,15 @@ input[type="number"] {
 
 /* Single/Multiple Choice */
 [role=checkbox] {
-    padding: .25rem .25rem .25rem 4rem;
-    border: var(--choice-control-border-width) solid transparent;
+  padding: .75rem 2rem;
+  border: var(--choice-control-border-width) solid transparent;
 }
 
 [role=radio] {
-    border: var(--choice-control-border-width) solid transparent;
-    border-radius: var(--choice-control-border-radius);
-    background-color: var(--choice-control-radio-bg);
+  border: var(--choice-control-border-width) solid transparent;
+  border-radius: var(--choice-control-border-radius);
+  background-color: var(--choice-control-radio-bg);
+  padding: .75rem 2rem;
 }
 
     [role=checkbox][aria-checked=true],
@@ -147,6 +148,38 @@ input[type="number"] {
         background-image: url('../images/checkbox-checked.svg') !important;
         border: none;
     }
+
+[role=group] > li, [role=radiogroup] > li {
+  margin: .5rem 0;
+}
+
+[role=checkbox]:after, [role=checkbox]:before, [role=radio]:after, [role=radio]:before {
+  top: 1.6rem;
+}
+
+.qti-choice-label {
+  display: none;
+}
+
+.qti-choice-description {
+  margin: 0 2rem;
+  width: auto;
+}
+
+.qti-simple-choice.choice-correct {
+  background-color: #d4edda;
+  border-left: 6px solid #28a745;
+}
+
+.qti-simple-choice.choice-wrong {
+  background-color: #f8d7da;
+  border-left: 6px solid #dc3545;
+}
+
+.qti-simple-choice.choice-missed {
+  background-color: #fff3cd;
+  border-left: 6px solid #ffc107;
+}
 
 /* Buttons */
 button {
@@ -299,7 +332,7 @@ h1 {
 
 h2 {
     font-size: 28px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* Cards */
@@ -313,3 +346,19 @@ h2 {
     .small-card .title {
         font-weight: 500;
     }
+
+/* QTI item player */
+.qti-item-body p,
+.qti-item-body .qti-prompt {
+  font-style: italic;
+  margin-bottom: 3rem;
+}
+
+.qti-item-body .qti-text-entry-interaction input {
+  width: 100%;
+}
+
+.qti-assessment-item {
+  font-size: 24px;
+  font-weight: 400;
+}

@@ -1,91 +1,76 @@
 <template>
-  <div>
+  <div v-if="test" class="d-flex">
     <div class="container py-5 d-flex justify-content-center">
-      <div class="w-100" style="max-width: 700px;">
+      <div class="w-75 position-relative">
 
-        <!-- Test-Titel -->
-        <h2 class="text-center mb-4" style="padding-top: 50px;">
-          {{ test.title }}
-        </h2>
-
-        <!-- Progress-Bar -->
-        <div class="d-flex justify-content-center gap-2 mb-4">
-          <button
-            v-for="(item, i) in testItems"
-            :key="item.guid"
-            class="btn rounded-circle"
-            :class="{
-              'btn-primary':         !isReviewMode && i === currentIndex,
-              'btn-outline-secondary': !isReviewMode && i !== currentIndex,
-              'btn-success':         isReviewMode && isCorrect(i),
-              'btn-danger':          isReviewMode && !isCorrect(i)
-            }"
-            style="width: 40px; height: 40px;"
-            @click="goTo(i)"
-          >
-            {{ i + 1 }}
-          </button>
-        </div>
-
-        <!-- Karte mit Player + Navigation / Review-Info -->
-        <div class="card mb-5 p-4 border rounded item-player-card">
-
-          <!-- Frage-Titel aus XML -->
-          <h2 class="text-center text-uppercase mb-3">
-            {{ getTitleFromXml(currentItem.xml) }}
-          </h2>
-
-          <!-- QTI3 Player -->
-          <div class="player-wrapper mb-4">
-            <Qti3Player
-              ref="qti3player"
-              @notifyQti3PlayerReady="onPlayerReady"
-              @notifyQti3SuspendAttemptCompleted="onItemSaved"
-              @notifyQti3EndAttemptCompleted="onItemSaved"
-              @notifyQti3ScoreAttemptCompleted="onItemSaved"
-            />
+        <!-- test information -->
+        <div class="d-flex justify-content-between">
+          <div>
+            <h2>{{ test.title }}</h2>
+            <p class="primary-text">
+              {{ getTitleFromXml(currentItem.xml) }}
+            </p>
           </div>
 
-          <!-- Im Review-Modus: Richtige Antwort anzeigen -->
-          <div v-if="isReviewMode" class="text-center mb-3">
-            <strong>Correct Answer:</strong>
+          <p class="secondary-text my-3">
+            {{ currentIndex }} von {{ testItems.length }} abgeschlossen
+          </p>
+        </div>
+
+        <!-- QTI3 player -->
+        <div class="my-5 player-wrapper">
+          <Qti3Player ref="qti3player"
+                      @notifyQti3PlayerReady="onPlayerReady"
+                      @notifyQti3SuspendAttemptCompleted="onItemSaved"
+                      @notifyQti3EndAttemptCompleted="onItemSaved"
+                      @notifyQti3ScoreAttemptCompleted="onItemSaved" />
+        </div>
+
+        <!-- correct answer -->
+        <div v-if="isReviewMode && isTextEntry" class="my-4">
+          <label class="primary-text">
+            <span class="fw-normal">Richtige Antwort:</span>
             <span :class="{'text-success': isCorrect(currentIndex), 'text-danger': !isCorrect(currentIndex)}">
               {{ getCorrectAnswer(currentItem.guid) }}
             </span>
-          </div>
-
-          <!-- Navigation nur im normalen Modus -->
-          <div v-if="!isReviewMode" class="d-flex justify-content-center gap-3 mt-2">
-            <button class="btn btn-secondary" @click="prev" :disabled="currentIndex === 0">
-              Previous
-            </button>
-            <button
-              v-if="currentIndex < testItems.length - 1"
-              class="btn btn-primary"
-              @click="next"
-              :disabled="!qti3player"
-            >
-              Next
-            </button>
-            <button
-              v-else
-              class="btn btn-danger"
-              @click="submitTest"
-              :disabled="!qti3player"
-            >
-              Submit
-            </button>
-          </div>
-
+          </label>
         </div>
 
-        <!-- Zurück-Button im Review-Modus -->
-        <div v-if="isReviewMode" class="text-center">
-          <router-link :to="{ name: 'Home' }" class="btn btn-primary">
-            Zurück zur Startseite
-          </router-link>
-        </div>
+        <!-- navigation -->
+        <div class="nav-btn-container position-absolute w-100">
+          <div class="d-flex gap-3 mt-2 justify-content-between">
+            <div class="d-flex gap-2">
+              <button class="primary"
+                      @click="prev"
+                      :disabled="!qti3player || currentIndex === 0">
+                Zurück
+              </button>
 
+              <button v-if="currentIndex < testItems.length - 1"
+                      class="primary"
+                      @click="next"
+                      :disabled="!qti3player">
+                Weiter
+              </button>
+              <button v-else-if="!isReviewMode"
+                      class="primary"
+                      @click="submitTest"
+                      :disabled="!qti3player">
+                Überprüfen
+              </button>
+              <button v-else
+                      class="primary"
+                      @click="navigateToHome">
+                Zur Startseite
+              </button>
+
+            </div>
+
+            <button class="secondary">
+              Fortschritt speichern
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -117,6 +102,9 @@ export default {
     },
     currentState() {
       return this.itemStates.get(this.currentItem.guid) || null;
+    },
+    isTextEntry() {
+      return this.getItemType() === 'textEntry';
     }
   },
   methods: {
@@ -128,7 +116,7 @@ export default {
     },
     onPlayerReady(player) {
       this.qti3player = player;
-      this.playerReady   = true;
+      this.playerReady = true;
       this.tryLoadItem();
     },
     tryLoadItem() {
@@ -177,19 +165,14 @@ export default {
           this.loadCurrentItem();
           break;
         case 'end':
-          console.log('--- All Item States kurz vor Review-Modus: ---');
-          console.log(JSON.stringify(Object.fromEntries(this.itemStates), null, 2));
-          // Wechsel in den Review-Modus
           this.isReviewMode = true;
           this.currentIndex = 0;
           this.loadCurrentItem();
+          if (this.isReviewMode && this.getItemType() === 'choice') {
+            this.colorizeChoices();
+          }
           break;
       }
-    },
-
-    goTo(i) {
-      this.currentIndex = i;
-      this.loadCurrentItem();
     },
 
     // Prüft, ob Antwort richtig war
@@ -284,6 +267,61 @@ renderMath() {
         }
       });
     },
+
+    getItemType() {
+      if (!this.currentItem?.xml) return null;
+
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(this.currentItem.xml, 'text/xml');
+
+      if (xmlDoc.querySelector('qti-text-entry-interaction')) return 'textEntry';
+      if (xmlDoc.querySelector('qti-choice-interaction')) return 'choice';
+
+      return 'unknown';
+    },
+
+    navigateToHome() {
+      this.$router.push({ name: 'Home' });
+    },
+
+    colorizeChoices() {
+      const guid = this.currentItem.guid;
+      const state = this.itemStates.get(guid);
+      if (!state) return;
+
+      const respVar = state.responseVariables.find(v => v.identifier === 'RESPONSE');
+      if (!respVar) return;
+
+      const correctIds = Array.isArray(respVar.correctResponse)
+        ? respVar.correctResponse
+        : [respVar.correctResponse];
+
+      const givenIds = Array.isArray(respVar.value)
+        ? respVar.value
+        : respVar.value != null ? [respVar.value] : [];
+
+      this.$nextTick(() => {
+        const choices = this.$refs.qti3player.$el.querySelectorAll('qti-simple-choice');
+
+        choices.forEach(choice => {
+          const id = choice.getAttribute('identifier');
+          if (!id) return;
+
+          choice.classList.remove('choice-correct', 'choice-wrong', 'choice-missed');
+
+          if (correctIds.includes(id) && givenIds.includes(id)) {
+            choice.classList.add('choice-correct');   // richtig gewählt
+          } else if (!correctIds.includes(id) && givenIds.includes(id)) {
+            choice.classList.add('choice-wrong');     // falsch gewählt
+          } else if (correctIds.includes(id) && !givenIds.includes(id)) {
+            choice.classList.add('choice-missed');    // richtig, aber nicht gewählt
+          }
+        });
+        console.log('Choices colorized:', choices.length);
+      });
+
+    }
+
   },
   created() {
     //
@@ -295,9 +333,8 @@ renderMath() {
 </script>
 
 <style scoped>
-.item-player-card {
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+.nav-btn-container {
+  bottom: 0;
+  margin: 1rem 0;
 }
 </style>
