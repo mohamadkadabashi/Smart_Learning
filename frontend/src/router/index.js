@@ -11,15 +11,6 @@ Vue.use(VueRouter)
 //TODO: add "requiresAuth" for specific sites to handle expired tokens
 const routes = [
   {
-    path: '/start',
-    name: 'Start',
-    component: Start,
-    meta: {
-      title: 'SmartLearning',
-      requiresAuth: false
-    }
-  },
-  {
     path: '/',
     name: 'Home',
     component: Home,

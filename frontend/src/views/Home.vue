@@ -1,174 +1,208 @@
 <template>
-  <div>
-    <!-- Button for create module popup -->
-    <button class="primary" @click="showCreateModule = true">
-      <PlusIcon role="img" alt="Modul erstellen"/>
-    </button>
-    <createModule v-if="showCreateModule" @close="showCreateModule = false"/>
+  <div class="container-fluid py-4 px-4">
 
-    <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
-      <div class="d-flex gap-3">
-        <StatsCard v-for="(card, index) in statsCards" :key="index" :title="card.title" :value="card.value"
-          :subtitle="card.subtitle" :subtitleClass="card.subtitleClass" :iconSrc="card.iconSrc" />
+    <createModule v-if="showCreateModule" @close="showCreateModule = false" />
+
+    <div class="row align-items-center mb-5">
+      <div class="col-md-9">
+        <h1>Hallo {{ userData.name }}, 🔥 {{ userData.streak }}</h1>
+        <p v-if="isLoggedIn" class="secondary-text mt-2">Du hast heute {{ userData.openExercises }} Übungen offen.</p>
+        <p v-else class="secondary-text mt-2">Bitte melde dich an.</p>
+      </div>
+      <div class="col-md-3 d-flex justify-content-end">
+        <CircularProgress :value="userData.dailyGoalPercent" />
       </div>
     </div>
 
-    <div class="card w-100">
-      <div
-        class="main-content container-fluid py-5 d-flex justify-content-center">
-        <div class="card w-100" style="max-width: 60vw;">
-          <div class="card-header">
-            Tests
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table mb-0">
-                <thead>
-                  <tr>
-                    <th>Test</th>
-                    <th class="text-end">Questions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="test in tests" :key="test.id">
-                    <td>
-                      <router-link :to="{ name: 'Test', params: { id: test.id } }">
-                        {{ test.title }}
-                      </router-link>
-                    </td>
-                    <td class="text-end">{{ test.items.length }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+    <div class="row mb-4">
+      <div class="col-md-4" v-for="(card, index) in statsCards" :key="index">
+        <div class="small-card h-100 w-100 d-flex">
+          <StatsCard :title="card.title" :value="card.value" :subtitle="card.subtitle"
+            :subtitleClass="card.subtitleClass" :iconSrc="card.iconSrc" />
         </div>
-        <div style="position: absolute; right: 3rem;">
-          <CircularProgress value="65" />
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <ContinueElement :subtitle="lastTest.title" :progress="lastTest.progress" @continue="startLearning" />
+      </div>
+    </div>
+
+    <div class="row mb-5">
+
+      <div class="col-lg">
+        <div class="d-flex align-items-center mb-3 gap-3" style="height: 40px;">
+          <h2 class="fst-italic mb-0">Deine Module</h2>
+          <button class="primary d-flex align-items-center justify-content-center"
+            style="width: 30px; height: 30px; padding: 0; min-width: auto; min-height: auto;"
+            @click="showCreateModule = true">
+            <img src="/assets/images/plus-icon.svg" alt="+" style="width: 15px; filter: brightness(0);" />
+          </button>
         </div>
-        <div>
+
+        <div class="module-scroll-container">
+          <ListElement v-for="modul in moduleList" :key="modul.id" :name="modul.title" :completed="modul.completed"
+            :total="modul.total" :isSubject="true" @open="openModule" />
+        </div>
+      </div>
+
+      <div class="col-lg-auto">
+        <div class="mt-5 pt-2">
           <CreateTestCard />
         </div>
       </div>
     </div>
-
-    <div>
-      <ListElem
-          v-for="module in modules"
-          :key="'module-' + module.name"
-          :name="module.name"
-          :completed="module.completed"
-          :total="module.total"
-          :isSubject="module.isSubject"
-          :showButton="module.showButton"
-          :showProgressText="module.showProgressText"
-          buttonText="Übersicht"
-      />
-
-        <ListElem
-          v-for="test in testdetails"
-          :key="'test-' + test.name"
-          :name="test.name"
-          :completed="test.completed"
-          :total="test.total"
-          :isSubject="test.isSubject"
-          :showButton="test.showButton"
-          :showProgressText="test.showProgressText"
-          buttonText="Starten"
-      />
+    <!-- Tests Table -->
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Test</th>
+              <th class="text-end">Questions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="test in tests" :key="test.id">
+              <td>
+                <router-link :to="{ name: 'Test', params: { id: test.id } }">
+                  {{ test.title }}
+                </router-link>
+              </td>
+              <td class="text-end">{{ test.items.length }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-
+    <!-- Tests Table -->
   </div>
 </template>
 
 <script>
 import StatsCard from '@/components/StatsCard.vue';
 import CircularProgress from '@/components/CircularProgress.vue';
-import CreateTestCard from '@/components/CreateTestCard.vue';
 import createModule from "@/components/createModule.vue";
-import PlusIcon from "../../public/assets/images/plus-icon.svg";
-import ListElem from '@/components/ListElement.vue'
+import ListElement from "@/components/ListElement.vue";
+import ContinueElement from '@/components/ContinueElement.vue';
+import CreateTestCard from '@/components/CreateTestCard.vue';
+import { getCurrentUser, isAuthenticated } from '@/services/auth.js';
 
 export default {
-  name: 'Home',
+  name: 'Start',
   components: {
     StatsCard,
     CircularProgress,
-    CreateTestCard,
     createModule,
-    PlusIcon,
-    ListElem
+    ListElement,
+    ContinueElement,
+    CreateTestCard
   },
   data() {
     return {
-      modules: [
-        { name: "BDP", completed: 4, total: 6, isSubject: true},
-        { name: "OOP", completed: 2, total: 4, isSubject: true}
-      ],
-      testdetails: [
-        { name: "Test1", completed: 2, total: 4, isSubject: false},
-      ],
-      statsCards: [
+      showCreateModule: false,
+      isLoggedIn: false,
+
+      // ---------------------------------------------------------
+      // MOCK DATA
+      // ---------------------------------------------------------
+      userData: {
+        name: "Gast",
+        streak: 0,
+        openExercises: 2,
+        dailyGoalPercent: 65,
+        successRate: 82,
+        learningMinutesCurrent: 154,
+        learningMinutesLast: 134
+      },
+
+      lastTest: {
+        title: "Test 3 - Webentwicklung Grundlagen",
+        progress: 50
+      },
+
+      moduleList: [
+        { id: 1, title: "Medieninformatik", completed: 4, total: 10 },
+        { id: 2, title: "Datenbanken", completed: 7, total: 10 },
+        { id: 3, title: "Mathe", completed: 1, total: 8 },
+        { id: 4, title: "Programmieren I", completed: 19, total: 20 },
+        { id: 5, title: "Software Engineering", completed: 1, total: 4 }
+      ]
+    }
+  },
+  computed: {
+    statsCards() {
+      const h = Math.floor(this.userData.learningMinutesCurrent / 60);
+      const m = this.userData.learningMinutesCurrent % 60;
+
+      return [
         {
           title: 'Lernzeit diese Woche',
-          value: '2h 34min',
+          value: `${h}h ${m}min`,
           subtitle: '+15% zur Vorwoche',
-          subtitleClass: 'subtitle-positive',
+          subtitleClass: 'text-success',
           iconSrc: '/assets/images/clock.svg'
         },
         {
           title: 'Erfolgsquote',
-          value: '82%',
-          subtitle: 'Durchschnitliche Erfolgsquote',
+          value: this.userData.successRate + '%',
+          subtitle: 'Hohe Quote',
+          subtitleClass: 'text-success',
           iconSrc: '/assets/images/checked-circle.svg'
         },
         {
           title: 'Tests bestanden',
           value: '3/5 Tests',
-          subtitle: '27 u. 4 Prüfungen',
+          subtitle: 'Diese Woche',
           iconSrc: '/assets/images/document-text-sharp.svg'
         }
-      ]
+      ];
+    }
+  },
+  methods: {
+    async loadUsername() {
+      // check if logged in ?
+      if (isAuthenticated()) {
+        try {
+          // yes - take username
+          const user = await getCurrentUser();
+          this.userData.name = user.username;
+          this.isLoggedIn = true;
+        } catch (error) {
+          console.error("Error while loading Username:", error);
+          this.userData.name = "Gast";
+          this.isLoggedIn = false;
+        }
+      } else {
+        // no - use "Gast"
+        this.userData.name = "Gast";
+        this.isLoggedIn = false;
+      }
+    },
+    startLearning() {
+      console.log("clicked continue learning");
+      // code to start learning session
+    },
+    openModule(moduleName) {
+      console.log("Modul öffnen:", moduleName);
+      // code to open module
     }
   },
   mounted() {
     console.log(this.tests, this.tests.length)
   },
   created() {
-    this.tests = this.$testService.getTests()
+    this.tests = this.$testService.getTests();
+    this.loadUsername();
   }
 }
 </script>
 
 <style scoped>
-.card {
-  border-radius: 0.5rem;
-}
-
-.card-header {
-  font-size: 1.25rem;
-  font-weight: 600;
-  background-color: #f8f9fa;
-}
-
-.table td,
-.table th {
-  vertical-align: middle;
-  padding: 1rem 1.5rem;
-}
-
-.table a,
-.router-link a {
-  color: #007bff;
-  text-decoration: none !important;
-}
-
-.table a:hover,
-.router-link a:hover {
-  text-decoration: none !important;
-}
-
-.main-content .card {
-  max-width: 50vw !important;
+.module-scroll-container {
+  max-height: 130px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 </style>
