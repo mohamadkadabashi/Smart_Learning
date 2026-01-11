@@ -2,8 +2,10 @@
   <div class="page">
 
     <p class="module-info">
-      {{ name }}
+      {{ name }} Test - wieder entfernen
     </p>
+    <EditIcon class="EditIcon" alt="Modul bearbeiten"/>
+    <TrashIcon class="TrashIcon-black" alt="Modul löschen"/>
 
     <section class="tests-container">
 
@@ -50,9 +52,10 @@
 <script>
 import ListElem from '@/components/ListElement';
 import TrashIcon from "../../public/assets/images/trash-icon.svg";
+import EditIcon from "../../public/assets/images/edit-icon.svg";
 
 export default {
-  components: { ListElem, TrashIcon },
+  components: { ListElem, TrashIcon, EditIcon },
   data() {
     return {
       testdetails: [
@@ -123,5 +126,14 @@ export default {
 
 .TrashIcon:hover{
   opacity: 0.7;
+}
+
+.TrashIcon-black path {
+  fill: black;
+  cursor: pointer;
+}
+
+.EditIcon {
+  cursor: pointer;
 }
 </style>
