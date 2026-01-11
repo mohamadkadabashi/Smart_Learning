@@ -5,6 +5,7 @@ import Dashboard from '../views/Home.vue'
 import Test from '../views/test.vue'
 import Login from '../views/LoginRegistrationView.vue'
 import Settings from '../views/Settings.vue'
+import Testlist from "@/views/Testlist";
 
 Vue.use(VueRouter)
 
@@ -68,7 +69,17 @@ const routes = [
       guestOnly: true
     }
   },
-
+  {
+    path: '/testlist',
+    name: 'TestListe',
+    component: Testlist,
+    props: true,
+    meta: {
+      title: 'Test Liste',
+      headerTitle: 'Testübersicht',
+      requiresAuth: false // später leicht änderbar
+    }
+  },
   { path: '*', redirect: '/' }
 ]
 
