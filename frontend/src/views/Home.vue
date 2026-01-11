@@ -64,6 +64,33 @@
         </div>
       </div>
     </div>
+
+    <div>
+      <ListElem
+          v-for="module in modules"
+          :key="'module-' + module.name"
+          :name="module.name"
+          :completed="module.completed"
+          :total="module.total"
+          :isSubject="module.isSubject"
+          :showButton="module.showButton"
+          :showProgressText="module.showProgressText"
+          buttonText="Übersicht"
+      />
+
+        <ListElem
+          v-for="test in testdetails"
+          :key="'test-' + test.name"
+          :name="test.name"
+          :completed="test.completed"
+          :total="test.total"
+          :isSubject="test.isSubject"
+          :showButton="test.showButton"
+          :showProgressText="test.showProgressText"
+          buttonText="Starten"
+      />
+    </div>
+
   </div>
 </template>
 
@@ -73,6 +100,7 @@ import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
 import createModule from "@/components/createModule.vue";
 import PlusIcon from "../../public/assets/images/plus-icon.svg";
+import ListElem from '@/components/ListElement.vue'
 
 import { getMe } from "/src/services/user";            
 import { getStatsOverview } from "/src/services/stats";
@@ -89,7 +117,8 @@ export default {
     CircularProgress,
     CreateTestCard,
     createModule,
-    PlusIcon
+    PlusIcon,
+    ListElem
   },
   data() {
     return {

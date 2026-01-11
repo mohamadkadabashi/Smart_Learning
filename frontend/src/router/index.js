@@ -5,6 +5,7 @@ import Dashboard from '../views/Home.vue'
 import Test from '../views/test.vue'
 import Login from '../views/LoginRegistrationView.vue'
 import Settings from '../views/Settings.vue'
+import Test from '../views/test'
 
 Vue.use(VueRouter)
 
@@ -52,6 +53,7 @@ const routes = [
     path: '/create',
     name: 'TestErstellen',
     component: Test,
+    props: true,
     meta: {
       title: 'Test erstellen',
       headerTitle: 'Neuen Test anlegen',
