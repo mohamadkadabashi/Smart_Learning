@@ -3,7 +3,6 @@
             class="switch"
             :disabled="disabled"
             :aria-pressed="value"
-            :aria-label="title"
             @click="onToggle">
         <span class="knob" :class="{ on: value }"></span>
     </button>
@@ -14,10 +13,6 @@
         props: {
             value: {
                 type: Boolean,
-                required: true
-            },
-            title: {
-                type: String,
                 required: true
             },
             disabled: {

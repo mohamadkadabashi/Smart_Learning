@@ -5,24 +5,21 @@
 
       <div class="password-grid">
         <div class="password-item">
-          <PasswordInput
-            label="Neues Passwort"
-            v-model="password"
-          />
+          <PasswordInput label="Neues Passwort" v-model="password" />
         </div>
 
         <div class="password-item">
-          <PasswordInput
-            label="Neues Passwort wiederholen"
-            v-model="repeatPassword"
-          />
+          <PasswordInput label="Neues Passwort wiederholen" v-model="repeatPassword" />
         </div>
       </div>
+
+      <p v-if="error" class="text-danger">{{ error }}</p>
+      <p v-if="success" class="text-success">{{ success }}</p>
     </div>
 
     <div class="password-actions">
-      <button class="primary" type="button">
-        Passwort ändern
+      <button class="primary" type="button" :disabled="loading || !password" @click="onChangePassword">
+        {{ loading ? "..." : "Passwort ändern" }}
       </button>
     </div>
   </section>
@@ -30,6 +27,7 @@
 
 <script>
 import PasswordInput from '@/components/PasswordInput.vue'
+import { patchUser , getMe } from '../services/user';
 
 export default {
   name: 'SettingsPassword',
@@ -37,7 +35,51 @@ export default {
   data() {
     return {
       password: '',
-      repeatPassword: ''
+      repeatPassword: '',
+      loading: false,
+      error: "",
+      success: "",
+      userId: null,
+    };
+  },
+  async mounted() {
+    try {
+      const me = await getMe();
+      this.userId = me.id;
+    } catch (e) {
+      this.error = e?.response?.data?.detail || "Konnte Benutzer nicht laden.";
+    }
+  },
+  methods: {
+    async onChangePassword() {
+      this.error = "";
+      this.success = "";
+
+      if (!this.userId) {
+        this.error = "Kein Benutzer gefunden.";
+        return;
+      }
+      if (this.password !== this.repeatPassword) {
+        this.error = "Passwörter stimmen nicht überein.";
+        return;
+      }
+      if (this.password.length < 8) {
+        this.error = "Passwort muss mindestens 8 Zeichen haben.";
+        return;
+      }
+
+      this.loading = true;
+      try {
+        await patchUser(this.userId, { password: this.password });
+        
+        this.success = "Passwort wurde geändert.";
+        this.password = "";
+        this.repeatPassword = "";
+      } catch (e) {
+        this.error = e?.response?.data?.detail || "Fehler beim Ändern des Passworts.";
+      } finally {
+        this.loading = false;
+      }
     }
   }
 }
@@ -51,7 +93,7 @@ export default {
 .settings-password-card {
   background: #f3f3f3;
   border-radius: 30px;
-  padding: 22px 20px;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -66,6 +108,7 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 @media (max-width: 1200px) {

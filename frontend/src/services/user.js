@@ -25,10 +25,21 @@ export async function login(identifier, password) {
     return response.data;
 }
 
+export async function getMe() {
+  const { data } = await api.get("/users/me");
+  return data;
+}
+
 export function logout(){
     localStorage.removeItem("access_token");
     localStorage.removeItem("access_token_expires_at");
+    localStorage.removeItem("user_id");
     router.push({ name: 'Login/Registrierung' });
+}
+
+export async function patchUser(userId, payload) {
+  const { data } = await api.patch(`/users/${userId}`, payload);
+  return data;
 }
 
 export function isAuthenticated() {
@@ -46,3 +57,4 @@ export function isAuthenticated() {
 
     return true;
 }
+

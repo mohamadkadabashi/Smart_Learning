@@ -31,65 +31,68 @@
 
 
 <script>
-    import HomeIcon from '@/../public/assets/images/home.svg';
-    import UserIcon from '@/../public/assets/images/person-sharp.svg';
-    import LoginIcon from '@/../public/assets/images/log-in.svg';
-    import UserDropdown from '@/components/UserDropdown.vue';
-    import { isAuthenticated } from '@/services/auth.js';
+import HomeIcon from '@/../public/assets/images/home.svg'
+import UserIcon from '@/../public/assets/images/person-sharp.svg'
+import LoginIcon from '@/../public/assets/images/log-in.svg'
+import UserDropdown from '@/components/UserDropdown.vue'
+import { isAuthenticated } from '@/services/user.js'
 
-    const ROUTE_HOME = 'Home';
-    const ROUTE_LOGIN = 'Login/Registrierung';
+const ROUTE_DASHBOARD = 'Dashboard'
+const ROUTE_LOGIN = 'Login'
 
-    export default {
-        name: 'TopBar',
-        data() {
-            return {
-                showUserDropdown: false
-            };
-        },
-        computed: {
-            headerTitle() {
-                return this.$route.meta.headerTitle || 'SmartLearning'
-            },
-            isHomeRoute() {
-                return this.$route.name === ROUTE_HOME;
-            },
-            isLoginRoute() {
-                return this.$route.name === ROUTE_LOGIN;
-            },
-            showHomeIcon() {
-                return !this.isHomeRoute;
-            },
-            showUserIcon() {
-                return !this.isLoginRoute && isAuthenticated();
-            },
-            showLoginIcon() {
-                return this.isHomeRoute && !isAuthenticated();
-            }
-        },
-        methods: {
-            navigateToHome() {
-                this.$router.push({ name: ROUTE_HOME });
-            },
-            navigateToLogin() {
-                this.$router.push({ name: ROUTE_LOGIN });
-            },
-            toggleDropdown() {
-                this.showUserDropdown = !this.showUserDropdown;
-            }
-        },
-        components: {
-            HomeIcon,
-            UserIcon,
-            LoginIcon,
-            UserDropdown
-        },
-        watch: {
-            $route() {
-                this.showUserDropdown = false
-            }
-        }
+export default {
+  name: 'TopBar',
+  data() {
+    return {
+      showUserDropdown: false
     };
+  },
+  computed: {
+    headerTitle() {
+      return this.$route.meta.headerTitle || 'SmartLearning'
+    },
+    isAuthenticated() {
+      return isAuthenticated()
+    },
+    isDashboard() {
+      return this.$route.name === ROUTE_DASHBOARD
+    },
+    isGuestOnlyRoute() {
+      return this.$route.matched.some(r => r.meta.guestOnly)
+    },
+    showHomeIcon() {
+      return !this.isDashboard && this.isAuthenticated
+    },
+    showUserIcon() {
+      return this.isAuthenticated && !this.isGuestOnlyRoute
+    },
+    showLoginIcon() {
+      return !this.isAuthenticated && this.isGuestOnlyRoute
+    }
+  },
+  methods: {
+    navigateToHome() {
+      this.$router.push({ name: ROUTE_DASHBOARD })
+    },
+    navigateToLogin() {
+      this.$router.push({ name: ROUTE_LOGIN })
+    },
+    toggleDropdown() {
+      this.showUserDropdown = !this.showUserDropdown
+    }
+  },
+  watch: {
+    $route() {
+      this.showUserDropdown = false
+    }
+  },
+  components: {
+    HomeIcon,
+    UserIcon,
+    LoginIcon,
+    UserDropdown
+  }
+}
 </script>
 
 
