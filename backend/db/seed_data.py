@@ -18,27 +18,36 @@ def seed_database(session: Session) -> None:
 
     now = datetime.now(timezone.utc)
 
+       # Seed nur wenn user_id = 1 NICHT existiert
+    if session.get(User, 1) is not None:
+        return
+
     # --------------------
-    # 1) USER
+    # 1) USER (id = 1)
     # --------------------
     demo_username = "demo_user"
     demo_email = "demo@example.com"
-    demo_password_plain = "demo12345"  # >= 8 chars
+    demo_password_plain = "demo12345"
 
-    user = session.exec(select(User).where(User.username == demo_username)).first()
-    if not user:
-        user = User(
-            username=demo_username,
-            email=demo_email,
-            password=hash_password(demo_password_plain),
-            daily_goal=3,
-            streak_enabled=True,
-            created_at=now,
-            updated_at=now,
-        )
-        session.add(user)
-        session.commit()
-        session.refresh(user)
+    # if user with username/email exists but not with id = 1 
+    # then don't seed
+    existing_by_name = session.exec(select(User).where(User.username == demo_username)).first()
+    if existing_by_name is not None:
+        return
+
+    user = User(
+        id=1,
+        username=demo_username,
+        email=demo_email,
+        password=hash_password(demo_password_plain),
+        daily_goal=3,
+        streak_enabled=True,
+        created_at=now,
+        updated_at=now,
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
 
     # --------------------
     # 2) GUARD: already seeded?
