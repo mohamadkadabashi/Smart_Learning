@@ -50,14 +50,6 @@ def seed_database(session: Session) -> None:
     session.refresh(user)
 
     # --------------------
-    # 2) GUARD: already seeded?
-    # (if user already has subjects, we assume seed ran)
-    # --------------------
-    already_seeded = session.exec(select(Subject.id).where(Subject.user_id == user.id)).first()
-    if already_seeded:
-        return
-
-    # --------------------
     # 3) SUBJECTS
     # --------------------
     subj_math = Subject(
@@ -78,11 +70,6 @@ def seed_database(session: Session) -> None:
     session.refresh(subj_math)
     session.refresh(subj_physics)
 
-    # --------------------
-    # 4) SUBJECT TESTS
-    # (NOTE: make SubjectTest timestamps timezone-aware;
-    #  update your model if you still use datetime.utcnow)
-    # --------------------
     st1 = SubjectTest(
         subject_id=subj_math.id,
         test="<xml>Mathe Test 1</xml>",
