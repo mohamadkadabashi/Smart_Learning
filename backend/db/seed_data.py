@@ -18,7 +18,7 @@ def seed_database(session: Session) -> None:
 
     now = datetime.now(timezone.utc)
 
-       # Seed nur wenn user_id = 1 NICHT existiert
+   # Seed when user.id = 1 doesn't exist
     if session.get(User, 1) is not None:
         return
 
