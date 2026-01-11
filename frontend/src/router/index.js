@@ -13,15 +13,6 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/start',
-    name: 'Start',
-    component: Start,
-    meta: {
-      title: 'SmartLearning',
-      requiresAuth: false
-    }
-  },
-  {
     path: '/',
     name: 'Landing',
     component: Landing,
