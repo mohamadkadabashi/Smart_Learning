@@ -20,7 +20,6 @@ def session_fixture():
     # Create the database and the tables
     SQLModel.metadata.drop_all(test_engine)
     SQLModel.metadata.create_all(test_engine)
-
     with Session(test_engine) as session:
         yield session
 

@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from models.user import User
 from models.subject import Subject
 from models.subject_tests import SubjectTest
-from models.test_attempt import TestAttempt, AttemptStatus
+from models.attempt_tests import TestAttempt, AttemptStatus
 from models.learning_session import LearningSession
 from config.auth import hash_password
 

@@ -4,8 +4,7 @@ from sqlmodel import select
 from db.database import SessionDep
 from dependencies.dependency import CurrentUser
 from models.subject_tests import SubjectTest
-from models.test_attempt import AttemptFinish, AttemptProgressUpdate, AttemptRead, AttemptStart, AttemptStatus, TestAttempt
-
+from models.attempt_tests import AttemptFinish, AttemptProgressUpdate, AttemptRead, AttemptStart, AttemptStatus, TestAttempt
 
 router = APIRouter(prefix="/attempts", tags=["attempts"])
 

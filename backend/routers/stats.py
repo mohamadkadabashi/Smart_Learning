@@ -8,7 +8,7 @@ from dependencies.dependency import CurrentUser
 from models.learning_session import LearningSession
 from models.subject import Subject, SubjectStats
 from models.subject_tests import SubjectTest
-from models.test_attempt import AttemptStatus, TestAttempt, StatsOverview
+from models.attempt_tests import AttemptStatus, TestAttempt, StatsOverview
 from models.user import User
 
 router = APIRouter(prefix="/stats", tags=["stats"])
@@ -56,7 +56,7 @@ def overview(session: SessionDep, current_user: CurrentUser):
         .where(TestAttempt.finished_at.is_not(None))
         .where(TestAttempt.finished_at >= day_start_utc)
         .where(TestAttempt.finished_at < day_end_utc)
-        .where(TestAttempt.status.in_(["passed", "failed"]))
+        .where(TestAttempt.status.in_([ AttemptStatus.passed, AttemptStatus.failed ]))
     ).first() or 0
 
     daily_goal = int(user.daily_goal or 1)
@@ -69,7 +69,7 @@ def overview(session: SessionDep, current_user: CurrentUser):
         .where(TestAttempt.finished_at.is_not(None))
         .where(TestAttempt.finished_at >= week_start_utc)
         .where(TestAttempt.finished_at < now)
-        .where(TestAttempt.status.in_(["passed", "failed"]))
+        .where(TestAttempt.status.in_([ AttemptStatus.passed, AttemptStatus.failed]))
     ).first() or 0
 
     tests_passed_week = session.exec(
@@ -78,7 +78,7 @@ def overview(session: SessionDep, current_user: CurrentUser):
         .where(TestAttempt.finished_at.is_not(None))
         .where(TestAttempt.finished_at >= week_start_utc)
         .where(TestAttempt.finished_at < now)
-        .where(TestAttempt.status == "passed")
+        .where(TestAttempt.status == AttemptStatus.passed)
     ).first() or 0
 
     # if only user pass the test with passed of the total tests in the week.
