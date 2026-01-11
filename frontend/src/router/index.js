@@ -7,7 +7,6 @@ import Login from '../views/LoginRegistrationView.vue'
 import Settings from '../views/Settings.vue'
 import Testlist from "@/views/Testlist";
 import Test from '../views/test'
-import Start from '../views/Start.vue'
 
 Vue.use(VueRouter)
 
