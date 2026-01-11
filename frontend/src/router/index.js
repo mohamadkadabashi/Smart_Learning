@@ -5,7 +5,6 @@ import Dashboard from '../views/Home.vue'
 import Test from '../views/test.vue'
 import Login from '../views/LoginRegistrationView.vue'
 import Settings from '../views/Settings.vue'
-import Test from '../views/test'
 
 Vue.use(VueRouter)
 
