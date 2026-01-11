@@ -22,9 +22,6 @@ export async function login(identifier, password) {
     localStorage.setItem("access_token", response.data.access_token);
     localStorage.setItem("access_token_expires_at", expiresAt.toString());
 
-    const me = await api.get("/users/me")
-    localStorage.setItem("user_id", me.data.id);
-
     return response.data;
 }
 
