@@ -1,28 +1,30 @@
 <template>
   <div class="page">
 
-    <p class="module-info">
-      {{ name }} Test - wieder entfernen
-    </p>
-    <EditIcon class="EditIcon" alt="Modul bearbeiten"/>
-    <TrashIcon class="TrashIcon-black" alt="Modul löschen"/>
-
+    <div class="module-header">
+      <h2 class="module-info">
+        {{ moduleName }}
+      </h2>
+      <div class="module-actions">
+        <EditIcon class="EditIcon" alt="Modul bearbeiten"/>
+        <TrashIcon class="TrashIcon-black" alt="Modul löschen"/>
+      </div>
+    </div>
     <section class="tests-container">
-
       <div class="tests-section">
         <h3>Aktive Tests</h3>
         <div class="scroll-area">
-          <div class="list-row" v-for="test in testdetails" :key="'test-' + test.name">
-            <ListElem
-                :name="test.name"
-                :completed="test.completed"
-                :total="test.total"
-                :isSubject="test.isSubject"
-                :showButton="test.showButton"
-                :showProgressText="test.showProgressText"
-                buttonText="Starten"
-            />
-            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(index)"/>
+          <div class="list-row" v-for="(test) in activeTests" :key="'active-' + test.name">
+              <ListElem
+                  :name="test.name"
+                  :completed="test.completed"
+                  :total="test.total"
+                  :isSubject="test.isSubject"
+                  :showButton="test.showButton"
+                  :showProgressText="test.showProgressText"
+                  buttonText="Starten"
+              />
+            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)"/>
           </div>
         </div>
       </div>
@@ -30,17 +32,17 @@
       <div class="tests-section">
         <h3>Abgeschlossene Tests</h3>
         <div class="scroll-area">
-          <div class="list-row" v-for="test in testdetails" :key="'test-' + test.name">
-            <ListElem
-                :name="test.name"
-                :completed="test.completed"
-                :total="test.total"
-                :isSubject="test.isSubject"
-                :showButton="test.showButton"
-                :showProgressText="test.showProgressText"
-                buttonText="Wiederholen"
-            />
-            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(index)"/>
+          <div class="list-row" v-for="(test) in completedTests" :key="'done-' + test.name">
+              <ListElem
+                  :name="test.name"
+                  :completed="test.completed"
+                  :total="test.total"
+                  :isSubject="test.isSubject"
+                  :showButton="test.showButton"
+                  :showProgressText="test.showProgressText"
+                  buttonText="Wiederholen"
+              />
+            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)"/>
           </div>
         </div>
       </div>
@@ -62,14 +64,30 @@ export default {
         {name: "Test1", completed: 2, total: 4, isSubject: false},
         {name: "Test2", completed: 2, total: 4, isSubject: false},
         {name: "Test3", completed: 2, total: 4, isSubject: false},
-        {name: "Test4", completed: 2, total: 4, isSubject: false},
-        {name: "Test5", completed: 2, total: 4, isSubject: false},
-      ]
+        {name: "Test4", completed: 4, total: 4, isSubject: false},
+        {name: "Test5", completed: 4, total: 4, isSubject: false},
+        {name: "Test6", completed: 4, total: 4, isSubject: false},
+      ],
+      moduleName: "Medieninformatik"
     }
   },
   methods: {
-    removeTest(index) {
-      this.testdetails.splice(index, 1)
+    removeTest(name) {
+      this.testdetails = this.testdetails.filter(
+          t => t.name !== name
+      )
+    }
+  },
+  computed: {
+    activeTests() {
+      return this.testdetails.filter(
+          test => test.completed < test.total
+      )
+    },
+    completedTests() {
+      return this.testdetails.filter(
+          test => test.completed === test.total
+      )
     }
   }
 }
@@ -79,12 +97,14 @@ export default {
 .list-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .page {
   display: flex;
   flex-direction: column;
+  padding-left: 100px;
+  padding-right: 100px;
 }
 
 .module-info {
@@ -133,7 +153,36 @@ export default {
   cursor: pointer;
 }
 
+.TrashIcon-black path:hover {
+  fill: #afafaf;
+}
+
 .EditIcon {
   cursor: pointer;
 }
+
+.EditIcon path:hover {
+  fill: #afafaf;
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  padding-top: 30px;
+}
+
+.module-info {
+  margin: 0;
+  font-weight: 600;
+}
+
+.module-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.list-content {
+  flex: 1;
+}
+
 </style>
