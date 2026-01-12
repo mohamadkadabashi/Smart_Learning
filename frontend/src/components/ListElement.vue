@@ -105,8 +105,9 @@ export default {
   padding: 20px;
   background: #f3f3f3;
   border-radius: 14px;
-  margin: 20px auto;
+  margin: 20px;
 }
+
 
 .module-name {
   text-align: left;
