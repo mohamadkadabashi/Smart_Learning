@@ -16,11 +16,12 @@ router = APIRouter(prefix="/subjecttests", tags=["subjecttests"])
 # OAuth2 Scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/login")
 
-@router.post("/", response_model=SubjectTestRead, status_code=202)
+@router.post("/{questionTyp_select}", response_model=SubjectTestRead, status_code=202)
 async def create_subjectTest(
     subjectTest_create: SubjectTestCreate,
     session: SessionDep,
     current_user: CurrentUser,
+    questionTyp_select: SubjectTestQuestionType,
     token: Annotated[str, Depends(oauth2_scheme)],
 ):
     if subjectTest_create.question_count <= 0:
@@ -35,7 +36,7 @@ async def create_subjectTest(
     db_subjectTest = SubjectTest(
         name=subjectTest_create.name,
         test="",  # empty
-        question_type=subjectTest_create.question_type,
+        question_type=questionTyp_select,
         question_count=subjectTest_create.question_count,
         subject_id=subjectTest_create.subject_id,
         status=SubjectTestStatus.PENDING,
@@ -53,7 +54,7 @@ async def create_subjectTest(
 
     data = {
         "Thema": subject.name,
-        "Fragentyp": subjectTest_create.question_type,
+        "Fragentyp": questionTyp_select.value,
         "question_count": str(subjectTest_create.question_count),
         "job_id": job_id,
         "callback_url": callback_url,
@@ -120,7 +121,7 @@ async def n8n_subjecttest_callback(
     return
 
 # Testfunktion, um Daten für andere API Anfragen einzufügen
-@router.post("/TEST", response_model = SubjectTestRead, status_code=201)
+@router.post("/TEST/{questionTyp_select}", response_model = SubjectTestRead, status_code=201)
 def PLACEHOLDERTESTcreate_subjectTest(
     subjectTest_create: SubjectTestCreate,
     session: SessionDep,

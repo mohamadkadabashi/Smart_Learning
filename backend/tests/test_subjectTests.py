@@ -36,16 +36,16 @@ def test_read_subjectTests(client):
     assert r3.status_code == 201
 
     # create subjectTests
-    r4 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.SINGLE_CHOICE.value
+    r4 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
-    r5 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.MULTIPLE_CHOICE.value
+    r5 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Joins",
         "subject_id": 2,
-        "question_type": SubjectTestQuestionType.MULTIPLE_CHOICE,
         "question_count": 42
     })
 
@@ -112,16 +112,16 @@ def test_read_subjectTests_bySubject(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r4 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.SINGLE_CHOICE.value
+    r4 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
-    r5 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.MULTIPLE_CHOICE.value
+    r5 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Joins",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.MULTIPLE_CHOICE,
         "question_count": 42
     })
 
@@ -213,10 +213,10 @@ def test_read_subject(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.SINGLE_CHOICE.value
+    r3 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
 
@@ -290,10 +290,10 @@ def test_update_subjectTest(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.SINGLE_CHOICE.value
+    r3 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
 
@@ -365,16 +365,16 @@ def test_update_subjectTest_name_subeject_id_combo_already_exists(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.SINGLE_CHOICE.value
+    r3 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
-    r4 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.MULTIPLE_CHOICE.value
+    r4 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Joins",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.MULTIPLE_CHOICE,
         "question_count": 42
     })
 
@@ -418,10 +418,10 @@ def test_delete_subjectTest(client):
     assert r2.status_code == 201
 
     # create subjectTests
-    r3 = client.post("/subjecttests/TEST", headers=headers, json={
+    questionTyp_select = SubjectTestQuestionType.SINGLE_CHOICE.value
+    r3 = client.post(f"/subjecttests/TEST/{questionTyp_select}", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
 
