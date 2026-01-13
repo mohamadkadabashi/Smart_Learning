@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, HTTPException, Depends
 from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus
 from models.subject import Subject
-from database import SessionDep
+from db.database import SessionDep
 from typing import List, Annotated
 from sqlmodel import select
 from config.logger_config import logger

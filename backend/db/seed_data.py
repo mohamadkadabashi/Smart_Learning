@@ -72,22 +72,28 @@ def seed_database(session: Session) -> None:
 
     st1 = SubjectTest(
         subject_id=subj_math.id,
+        name = "Mathe Test 1",
         test="<xml>Mathe Test 1</xml>",
         question_type="multiple_choice",
+        question_count = 3,
         created_at=now,
         updated_at=now,
     )
     st2 = SubjectTest(
         subject_id=subj_math.id,
+        name = "Mathe Test 2",
         test="<xml>Mathe Test 2</xml>",
         question_type="multiple_choice",
+        question_count = 2,
         created_at=now,
         updated_at=now,
     )
     st3 = SubjectTest(
         subject_id=subj_physics.id,
+        name = "Physik Test 1",
         test="<xml>Physik Test 1</xml>",
         question_type="single_choice",
+        question_count = 1,
         created_at=now,
         updated_at=now,
     )
