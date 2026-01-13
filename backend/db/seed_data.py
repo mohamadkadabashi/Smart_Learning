@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 
 from models.user import User
 from models.subject import Subject
-from models.subject_tests import SubjectTest
+from models.subject_tests import SubjectTest, SubjectTestQuestionType
 from models.attempt_tests import TestAttempt, AttemptStatus
 from models.learning_session import LearningSession
 from config.auth import hash_password
@@ -74,7 +74,7 @@ def seed_database(session: Session) -> None:
         subject_id=subj_math.id,
         name = "Mathe Test 1",
         test="<xml>Mathe Test 1</xml>",
-        question_type="multiple_choice",
+        question_type=SubjectTestQuestionType.MULTIPLE_CHOICE,
         question_count = 3,
         created_at=now,
         updated_at=now,
@@ -83,7 +83,7 @@ def seed_database(session: Session) -> None:
         subject_id=subj_math.id,
         name = "Mathe Test 2",
         test="<xml>Mathe Test 2</xml>",
-        question_type="multiple_choice",
+        question_type=SubjectTestQuestionType.MULTIPLE_CHOICE,
         question_count = 2,
         created_at=now,
         updated_at=now,
@@ -92,7 +92,7 @@ def seed_database(session: Session) -> None:
         subject_id=subj_physics.id,
         name = "Physik Test 1",
         test="<xml>Physik Test 1</xml>",
-        question_type="single_choice",
+        question_type=SubjectTestQuestionType.SINGLE_CHOICE,
         question_count = 1,
         created_at=now,
         updated_at=now,

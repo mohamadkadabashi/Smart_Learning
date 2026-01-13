@@ -1,3 +1,5 @@
+from models.subject_tests import SubjectTestQuestionType
+
 token_header = {"Content-Type": "application/x-www-form-urlencoded"}
 
 def test_read_subjectTests(client):
@@ -37,13 +39,13 @@ def test_read_subjectTests(client):
     r4 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": "Single-Choice",
+        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
     r5 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Joins",
         "subject_id": 2,
-        "question_type": "Multiple-Choice",
+        "question_type": SubjectTestQuestionType.MULTIPLE_CHOICE,
         "question_count": 42
     })
 
@@ -68,8 +70,8 @@ def test_read_subjectTests(client):
     assert 2 in subject_ids
 
     question_types = [u["question_type"] for u in data]
-    assert "Single-Choice" in question_types
-    assert "Multiple-Choice" in question_types
+    assert SubjectTestQuestionType.SINGLE_CHOICE in question_types
+    assert SubjectTestQuestionType.MULTIPLE_CHOICE in question_types
 
     question_counts = [u["question_count"] for u in data]
     assert 8 in question_counts
@@ -113,13 +115,13 @@ def test_read_subjectTests_bySubject(client):
     r4 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": "Single-Choice",
+        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
     r5 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Joins",
         "subject_id": 1,
-        "question_type": "Multiple-Choice",
+        "question_type": SubjectTestQuestionType.MULTIPLE_CHOICE,
         "question_count": 42
     })
 
@@ -145,8 +147,8 @@ def test_read_subjectTests_bySubject(client):
     assert 1 in subject_ids
 
     question_types = [u["question_type"] for u in data]
-    assert "Single-Choice" in question_types
-    assert "Multiple-Choice" in question_types
+    assert SubjectTestQuestionType.SINGLE_CHOICE in question_types
+    assert SubjectTestQuestionType.MULTIPLE_CHOICE in question_types
 
     question_counts = [u["question_count"] for u in data]
     assert 8 in question_counts
@@ -214,7 +216,7 @@ def test_read_subject(client):
     r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": "Single-Choice",
+        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
 
@@ -229,7 +231,7 @@ def test_read_subject(client):
     subjectTest = response.json()
     assert subjectTest["id"] == subjectTest_id
     assert subjectTest["name"] == "Aggregatsfunktionen"
-    assert subjectTest["question_type"] == "Single-Choice"
+    assert subjectTest["question_type"] == SubjectTestQuestionType.SINGLE_CHOICE
     assert subjectTest["question_count"] == 8
     assert subjectTest["subject_id"] == r2.json()["id"]
     assert "created_at" in subjectTest
@@ -291,7 +293,7 @@ def test_update_subjectTest(client):
     r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": "Single-Choice",
+        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
 
@@ -366,13 +368,13 @@ def test_update_subjectTest_name_subeject_id_combo_already_exists(client):
     r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": "Single-Choice",
+        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
     r4 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Joins",
         "subject_id": 1,
-        "question_type": "Multiple-Choice",
+        "question_type": SubjectTestQuestionType.MULTIPLE_CHOICE,
         "question_count": 42
     })
 
@@ -419,7 +421,7 @@ def test_delete_subjectTest(client):
     r3 = client.post("/subjecttests/TEST", headers=headers, json={
         "name": "Aggregatsfunktionen",
         "subject_id": 1,
-        "question_type": "Single-Choice",
+        "question_type": SubjectTestQuestionType.SINGLE_CHOICE,
         "question_count": 8
     })
 

@@ -11,6 +11,11 @@ class SubjectTestStatus(str, Enum):
     DONE = "DONE"
     FAILED = "FAILED"
 
+class SubjectTestQuestionType(str, Enum):
+    SINGLE_CHOICE  = "Single Choice"
+    MULTIPLE_CHOICE = "Multiple Choice"
+    GAP_TEXT = "Gap Text"
+
 class SubjectTestBase(SQLModel):
     name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)] = Field(nullable=False)
 
@@ -20,7 +25,7 @@ class SubjectTest(SubjectTestBase, table=True):
     test: Optional[str] = Field(default=None)  # XML TEXT
 
     # Request-metadata
-    question_type: Optional[str] = Field(default=None)
+    question_type: SubjectTestQuestionType = Field(default=SubjectTestQuestionType.SINGLE_CHOICE, nullable=False)
     question_count: int = Field(nullable=False)
     subject_id: int = Field(foreign_key="subject.id", nullable=False)
 
@@ -39,13 +44,13 @@ class SubjectTest(SubjectTestBase, table=True):
 
 class SubjectTestCreate(SubjectTestBase):
     subject_id: int = Field(default=None, foreign_key="subject.id")
-    question_type: str = Field(default=None)
+    #question_type: SubjectTestQuestionType = Field(default=SubjectTestQuestionType.SINGLE_CHOICE)
     question_count: int = Field(default=None)
 
 class SubjectTestRead(SubjectTestBase):
     id: int
     test: Optional[str]
-    question_type: Optional[str]
+    question_type: SubjectTestQuestionType
     question_count: int
     subject_id: int
 
