@@ -6,11 +6,11 @@
         <CloseIcon role="img" alt="Schließen"/>
       </button>
 
-      <h2 class="heading">Neues Modul erstellen</h2>
+      <h2 class="heading">{{ heading }}</h2>
 
       <div class="form-group">
         <div class="d-flex flex-column gap-3">
-          <label class="name">Name des Moduls</label>
+          <label class="name">{{ label }}</label>
           <input class="w-100"
             type="text" 
             id="modulename" 
@@ -21,7 +21,7 @@
       <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
 
       <button class="mt-5 primary" :disabled="!modulename || loading" @click="onCreate">
-        {{ loading ? "Erstelle..." : "Modul erstellen" }}
+        {{ loading ? loadingText : submitText }}
       </button>
     
     </div>
@@ -38,7 +38,11 @@ export default {
     CloseIcon
   },
   props: {
-    userId: {type: Number, required: true}
+    userId: {type: Number, required: true},
+    heading: {type: String, default: "Neues Modul erstellen"},
+    label: {type: String, default: "Name des Moduls"},
+    loadingText: {type: String, default: "Laden"},
+    submitText: {type: String, default: "Modul erstellen"}
   },
   data() {
     return {
@@ -51,6 +55,12 @@ export default {
     async onCreate(){
       if (!this.modulename || this.loading) return;
 
+      if (!this.userId) {
+        this.$emit("submit", this.modulename);
+        this.$emit("close");
+        return;
+      }
+
       this.loading = true;
       this.errorMsg = "";
 
@@ -61,6 +71,7 @@ export default {
         });
 
         this.$emit("created", created);
+        this.$emit("submit", this.modulename)
 
         this.$emit("close")
       } catch(e){
