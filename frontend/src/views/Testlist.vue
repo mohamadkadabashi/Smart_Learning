@@ -6,9 +6,24 @@
         {{ moduleName }}
       </h2>
       <div class="module-actions">
-        <EditIcon class="EditIcon" alt="Modul bearbeiten"/>
-        <TrashIcon class="TrashIcon-black" alt="Modul löschen"/>
+        <EditIcon class="EditIcon" alt="Modul bearbeiten" @click="showCreateModule = true"/>
+        <TrashIcon class="TrashIcon-black" alt="Modul löschen" @click="showDeletePopup = true"/>
       </div>
+      <createModule
+          v-if="showCreateModule"
+          :userId="user_id"
+          heading="Modulname bearbeiten"
+          label="Neuer Modulname"
+          submit-text="Speichern"
+          @submit="updateModuleName"
+          @close="showCreateModule = false"
+      />
+      <DeletePopup
+          v-if="showDeletePopup"
+          :user-id="user_id"
+          heading="Modul wirklich löschen?"
+          @close="showDeletePopup = false"
+      />
     </div>
     <section class="tests-container">
       <div class="tests-section">
@@ -55,11 +70,15 @@
 import ListElem from '@/components/ListElement';
 import TrashIcon from "../../public/assets/images/trash-icon.svg";
 import EditIcon from "../../public/assets/images/edit-icon.svg";
+import CreateModule from "@/components/createModule";
+import DeletePopup from "@/components/deletePopup";
 
 export default {
-  components: { ListElem, TrashIcon, EditIcon },
+  components: { ListElem, TrashIcon, EditIcon, CreateModule, DeletePopup },
   data() {
     return {
+      showCreateModule: false,
+      showDeletePopup: false,
       testdetails: [
         {name: "Test1", completed: 2, total: 4, isSubject: false},
         {name: "Test2", completed: 2, total: 4, isSubject: false},
@@ -76,6 +95,9 @@ export default {
       this.testdetails = this.testdetails.filter(
           t => t.name !== name
       )
+    },
+    updateModuleName(newName) {
+      this.moduleName = newName
     }
   },
   computed: {
@@ -180,9 +202,4 @@ export default {
   display: flex;
   gap: 12px;
 }
-
-.list-content {
-  flex: 1;
-}
-
 </style>
