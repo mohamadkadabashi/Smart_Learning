@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, HTTPException, Depends
-from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus
+from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus, SubjectTestQuestionType
 from models.subject import Subject
 from db.database import SessionDep
 from typing import List, Annotated
@@ -124,12 +124,13 @@ async def n8n_subjecttest_callback(
 def PLACEHOLDERTESTcreate_subjectTest(
     subjectTest_create: SubjectTestCreate,
     session: SessionDep,
+    questionTyp_select: SubjectTestQuestionType,
     current_user: CurrentUser
 ):
     db_subjectTest = SubjectTest(
         name = subjectTest_create.name,
         test = "test.xml",
-        question_type = subjectTest_create.question_type,
+        question_type = questionTyp_select,
         question_count = subjectTest_create.question_count,
         subject_id = subjectTest_create.subject_id
     )
