@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 import jwt 
 from jwt import InvalidTokenError
 
-from database import SessionDep
+from db.database import SessionDep
 from models.user import User
 from config.auth import SECRET_KEY, ALGORITHM, oauth2_scheme
 

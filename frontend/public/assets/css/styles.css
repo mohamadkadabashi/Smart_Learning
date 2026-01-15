@@ -357,6 +357,18 @@ h2 {
         font-weight: 500;
     }
 
+ .create-btn {
+        max-width: 100px;
+    }
+
+        .create-btn:disabled .plus-icon path {
+            stroke: currentColor;
+        }
+
+    .plus-icon path {
+        stroke-width: 3;
+    }
+    
 /* QTI item player */
 .qti-item-body p,
 .qti-item-body .qti-prompt {

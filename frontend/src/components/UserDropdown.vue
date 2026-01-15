@@ -1,6 +1,6 @@
 ﻿<template>
     <div class="dropdown">
-        <button class="dropdown-btn" aria-label="Zu den Nutzereinstellungen" disabled>
+        <button class="dropdown-btn" aria-label="Zu den Nutzereinstellungen" @click="goToSettings">
             <SettingsIcon /> 
             <span>Einstellungen</span>
         </button>
@@ -31,7 +31,7 @@
     import LogOutIcon from '@/../public/assets/images/log-out.svg';
     import HelpIcon from '@/../public/assets/images/help.svg';
     import ToggleSwitch from '@/components/ToggleSwitch.vue';
-    import { logout } from '@/services/auth.js';
+    import { logout } from '@/services/user.js';
 
     export default {
         name: 'UserDropdown',
@@ -46,6 +46,9 @@
             },
             logout() {
                 logout();
+            },
+            goToSettings(){
+                this.$router.push({ path: "/settings"})
             }
         },
         components: {

@@ -21,7 +21,7 @@
 
 <script>
     import PasswordInput from '@/components/PasswordInput.vue';
-    import { login } from "@/services/auth";
+    import { login } from "@/services/user.js";
 
     export default {
         name: 'Login',

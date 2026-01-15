@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 
-from database import SessionDep
+from db.database import SessionDep
 from models.user import User, UserCreate, UserRead, UserUpdate
 from config.auth import (
     hash_password,
@@ -113,6 +113,10 @@ def update_user(
         logger.warning(f"User with ID {user_id} not found for update")
         raise HTTPException(status_code=404, detail="User not found")
     
+    if current_user.id != user_id:
+        logger.error("not allowed")
+        raise HTTPException(status_code=403, detail="Not allowed")
+    
     if user_update.username is not None:
         username_exists = session.exec(select(User).where(User.username == user_update.username, User.id != user_id)).first()
         if username_exists:
@@ -128,6 +132,13 @@ def update_user(
 
     if user_update.password is not None:
         user.password = hash_password(user_update.password)
+
+    if user_update.daily_goal is not None:
+        user.daily_goal = user_update.daily_goal
+
+    if user_update.streak_enabled is not None:
+        user.streak_enabled = user_update.streak_enabled
+
     
     session.add(user)
     session.commit()
