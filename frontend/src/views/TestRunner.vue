@@ -1,7 +1,7 @@
 <template>
   <div v-if="test" class="d-flex">
-    <div class="container py-5 d-flex justify-content-center">
-      <div class="w-75 position-relative">
+    <div class="container w-75 d-flex flex-column" style="min-height: 90vh">
+      <div style="flex: 1">
 
         <!-- test information -->
         <div class="d-flex justify-content-between">
@@ -12,8 +12,11 @@
             </p>
           </div>
 
-          <p class="secondary-text my-3">
+          <p v-if="!isReviewMode" class="secondary-text my-3">
             {{ currentIndex }} von {{ testItems.length }} abgeschlossen
+          </p>
+          <p v-else class="secondary-text my-3">
+            {{ currentIndex + 1 }} / {{ testItems.length }}
           </p>
         </div>
 
@@ -27,48 +30,49 @@
         </div>
 
         <!-- correct answer -->
-        <div v-if="isReviewMode && isTextEntry" class="my-4">
+        <div v-if="isReviewMode && isTextEntry && !isCorrect(currentIndex)" class="my-4">
           <label class="primary-text">
             <span class="fw-normal">Richtige Antwort:</span>
-            <span :class="{'text-success': isCorrect(currentIndex), 'text-danger': !isCorrect(currentIndex)}">
+            <span class="text-danger">
               {{ getCorrectAnswer(currentItem.guid) }}
             </span>
           </label>
         </div>
-
-        <!-- navigation -->
-        <div class="nav-btn-container position-absolute w-100">
-          <div class="d-flex gap-3 mt-2 justify-content-between">
-            <div class="d-flex gap-2">
-              <button class="primary"
-                      @click="prev"
-                      :disabled="!qti3player || currentIndex === 0">
-                Zurück
-              </button>
-
-              <button v-if="currentIndex < testItems.length - 1"
-                      class="primary"
-                      @click="next"
-                      :disabled="!qti3player">
-                Weiter
-              </button>
-              <button v-else-if="!isReviewMode"
-                      class="primary"
-                      @click="submitTest"
-                      :disabled="!qti3player">
-                Überprüfen
-              </button>
-              <button v-else
-                      class="primary"
-                      @click="navigateToHome">
-                Zur Startseite
-              </button>
-
-            </div>
-
-            <button class="secondary">
-              Fortschritt speichern
+      </div>
+      <!-- navigation -->
+      <div class="nav-btn-container w-100">
+        <div class="d-flex gap-3 my-2 justify-content-between">
+          <div class="d-flex gap-2">
+            <button class="primary"
+                    @click="prev"
+                    :disabled="!qti3player || currentIndex === 0">
+              Zurück
             </button>
+
+            <button v-if="currentIndex < testItems.length - 1"
+                    class="primary"
+                    @click="next"
+                    :disabled="!qti3player">
+              Weiter
+            </button>
+            <button v-else-if="!isReviewMode"
+                    class="primary"
+                    @click="submitTest"
+                    :disabled="!qti3player">
+              Überprüfen
+            </button>
+            <button v-else
+                    class="primary"
+                    @click="navigateToHome">
+              Zur Startseite
+            </button>
+
+          </div>
+
+          <div>
+	          <button class="secondary">
+		          Fortschritt speichern
+	          </button>
           </div>
         </div>
       </div>
@@ -134,6 +138,8 @@ export default {
       };
 
       this.qti3player.loadItemFromXml(item.xml, config);
+
+      this.colorizeAnswers();
       // KaTeX Rendern aufrufen
       this.renderMath();
     },
@@ -168,9 +174,6 @@ export default {
           this.isReviewMode = true;
           this.currentIndex = 0;
           this.loadCurrentItem();
-          if (this.isReviewMode && this.getItemType() === 'choice') {
-            this.colorizeChoices();
-          }
           break;
       }
     },
@@ -284,44 +287,58 @@ renderMath() {
       this.$router.push({ name: 'Home' });
     },
 
-    colorizeChoices() {
-      const guid = this.currentItem.guid;
-      const state = this.itemStates.get(guid);
-      if (!state) return;
-
-      const respVar = state.responseVariables.find(v => v.identifier === 'RESPONSE');
-      if (!respVar) return;
-
-      const correctIds = Array.isArray(respVar.correctResponse)
-        ? respVar.correctResponse
-        : [respVar.correctResponse];
-
-      const givenIds = Array.isArray(respVar.value)
-        ? respVar.value
-        : respVar.value != null ? [respVar.value] : [];
+    colorizeAnswers() {
+      if (!this.isReviewMode) return;
 
       this.$nextTick(() => {
-        const choices = this.$refs.qti3player.$el.querySelectorAll('qti-simple-choice');
+        const state = this.itemStates.get(this.currentItem.guid);
+        if (!state) return;
 
+        const rv = state.responseVariables.find(v => v.identifier === 'RESPONSE');
+        if (!rv) return;
+
+        const correct = Array.isArray(rv.correctResponse)
+          ? rv.correctResponse
+          : [rv.correctResponse];
+
+        const actual = Array.isArray(rv.value)
+          ? rv.value
+          : [rv.value];
+
+        if (this.isTextEntry) {
+          const input = this.$el.querySelector('.text-entry-default-label');
+          if (!input) return;
+
+          input.classList.remove('choice-correct', 'choice-wrong');
+          input.classList.add(
+            this.isCorrect(this.currentIndex)
+              ? 'choice-correct'
+              : 'choice-wrong'
+          );
+          console.log("text");
+          return;
+        }
+
+        const choices = this.$el.querySelectorAll('[data-identifier]');
         choices.forEach(choice => {
-          const id = choice.getAttribute('identifier');
-          if (!id) return;
+          const id = choice.getAttribute('data-identifier');
 
           choice.classList.remove('choice-correct', 'choice-wrong', 'choice-missed');
 
-          if (correctIds.includes(id) && givenIds.includes(id)) {
-            choice.classList.add('choice-correct');   // richtig gewählt
-          } else if (!correctIds.includes(id) && givenIds.includes(id)) {
-            choice.classList.add('choice-wrong');     // falsch gewählt
-          } else if (correctIds.includes(id) && !givenIds.includes(id)) {
-            choice.classList.add('choice-missed');    // richtig, aber nicht gewählt
+          if (correct.includes(id)) {
+            choice.classList.add('choice-correct');
+          }
+
+          if (actual.includes(id) && !correct.includes(id)) {
+            choice.classList.add('choice-wrong');
+          }
+
+          if (!actual.includes(id) && correct.includes(id)) {
+            choice.classList.add('choice-missed');
           }
         });
-        console.log('Choices colorized:', choices.length);
       });
-
     }
-
   },
   created() {
     //
@@ -333,8 +350,14 @@ renderMath() {
 </script>
 
 <style scoped>
-.nav-btn-container {
-  bottom: 0;
-  margin: 1rem 0;
+.container {
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+}
+
+@media (max-width: 550px) {
+  .nav-btn-container > div {
+    flex-direction: column;
+  }
 }
 </style>

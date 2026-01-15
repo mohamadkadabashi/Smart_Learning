@@ -1,50 +1,59 @@
-:root, 
+:root,
 body,
-.qti3-player-container, 
+.qti3-player-container,
 .qti3-player-container-fluid {
-    --primary-color: #F08844;
-    --secondary-color: #AFAFAF;
-    --text-entry-focus-bg: #EC660C37;
-    --choice-control-radio-bg: #D6D6D6;
-    --choice-control-checked-bg: #F9B78B;
-    --choice-control-focus-border-color: #000000;
-    --choice-control-checkbox-bg: #D9D9D9;
-    --choice-control-checkbox-border-color: #000000;
-    --text-entry-border-width: 2px;
-    --text-entry-border-radius: 50px;
-    --choice-control-border-width: 2px;
-    --choice-control-border-radius: 30px;
-    --choice-control-checkbox-border-width: 1px;
-    --button-focus-border-width: 2px;
-    --button-focus-border-color: #000000;
-    font-family: "Open Sans";
+  --primary-color: #F08844;
+  --secondary-color: #AFAFAF;
+  --success-color-bg: #83BE63;
+  --success-color-border: #359600;
+  --error-color-bg: #FF7C7C;
+  --error-color-border: #D90202;
+  --text-entry-focus-bg: #EC660C37;
+  --choice-control-radio-bg: #D6D6D6;
+  --choice-control-checked-bg: #F9B78B;
+  --choice-control-focus-border-color: #000000;
+  --choice-control-checkbox-bg: #D9D9D9;
+  --choice-control-checkbox-border-color: #000000;
+  --text-entry-border-width: 2px;
+  --text-entry-border-radius: 50px;
+  --choice-control-border-width: 2px;
+  --choice-control-border-radius: 30px;
+  --choice-control-checkbox-border-width: 1px;
+  --button-focus-border-width: 2px;
+  --button-focus-border-color: #000000;
+  font-family: "Open Sans";
 }
 
 /* Text Entry */
-input {
-    height: 3rem;
-    min-width: 30vw;
+input,
+input.text-entry-default,
+.text-entry-default-label {
+  height: 3rem;
+  min-width: 30vw;
 }
 
-input, input.text-entry-default {
+input, 
+input.text-entry-default, 
+.text-entry-default-label,
+.text-entry-default-label {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);
     padding: .2rem .4rem;
+    width: 100%;
+    display: flex;
 }
 
-    input:focus,
-    input:focus-visible,
-    input.text-entry-default:focus,
-    input.text-entry-default:focus-visible {
-        outline: none;
-        background-color: var(--text-entry-focus-bg);
-        border: var(--text-entry-border-width) solid var(--primary-color);
-        box-shadow: none;
-    }
-
-input.text-entry-default {
-    height: 2.5rem;
-}
+  input:focus,
+  input:focus-visible,
+  input.text-entry-default:focus,
+  input.text-entry-default:focus-visible,
+  .text-entry-default-label:focus,
+  .text-entry-default-label:focus-visible {
+    outline: none;
+    background-color: var(--text-entry-focus-bg);
+    border: var(--text-entry-border-width) solid var(--primary-color);
+    box-shadow: none;
+  }
 
 /* File Upload */
 input[type=file] {
@@ -166,19 +175,20 @@ input[type="number"] {
   width: auto;
 }
 
-.qti-simple-choice.choice-correct {
-  background-color: #d4edda;
-  border-left: 6px solid #28a745;
+.choice-correct {
+  background-color: var(--success-color-bg) !important;
+  border-color: var(--success-color-border) !important;
 }
 
-.qti-simple-choice.choice-wrong {
-  background-color: #f8d7da;
-  border-left: 6px solid #dc3545;
+.choice-wrong {
+  background-color: var(--error-color-bg) !important;
+  border-color: var(--error-color-border) !important;
 }
 
-.qti-simple-choice.choice-missed {
-  background-color: #fff3cd;
-  border-left: 6px solid #ffc107;
+.choice-missed {
+  background-color: var(--success-color-bg) !important;
+  border: var(--choice-control-border-width) solid var(--success-color-border) !important;
+  border-radius: var(--choice-control-border-radius) !important;
 }
 
 /* Buttons */
@@ -352,13 +362,32 @@ h2 {
 .qti-item-body .qti-prompt {
   font-style: italic;
   margin-bottom: 3rem;
+  gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-.qti-item-body .qti-text-entry-interaction input {
+.qti-text-entry-interaction {
+  flex: 1 1;
+  min-width: 8rem;
+}
+
+.qti-text-entry-interaction input {
   width: 100%;
+}
+
+p > .qti-text-entry-interaction input,
+.qti-text-entry-interaction > .text-entry-default-label {
+  min-width: unset;
+  align-items: center;
 }
 
 .qti-assessment-item {
   font-size: 24px;
   font-weight: 400;
+}
+
+.qti-hidden {
+  display: none !important
 }
