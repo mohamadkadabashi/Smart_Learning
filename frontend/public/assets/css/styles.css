@@ -34,7 +34,6 @@ input.text-entry-default,
 
 input, 
 input.text-entry-default, 
-.text-entry-default-label,
 .text-entry-default-label {
     border: var(--text-entry-border-width) solid var(--primary-color);
     border-radius: var(--text-entry-border-radius);

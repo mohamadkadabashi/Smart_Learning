@@ -201,8 +201,12 @@ export default {
       return correct.every(id => actual.includes(id));
     }
 
+    if (!actual) {
+      return false;
+    }
+
     // Single Choice: einfacher Vergleich
-    return actual === correct;
+    return actual.toLowerCase() === correct.toLowerCase();
   },
 
     getTitleFromXml(xmlString) {
@@ -291,6 +295,21 @@ renderMath() {
       if (!this.isReviewMode) return;
 
       this.$nextTick(() => {
+        // text entry
+        if (this.isTextEntry) {
+          const input = this.$el.querySelector('.text-entry-default-label');
+          if (!input) return;
+
+          input.classList.remove('choice-correct', 'choice-wrong');
+          input.classList.add(
+            this.isCorrect(this.currentIndex)
+              ? 'choice-correct'
+              : 'choice-wrong'
+          );
+          return;
+        }
+
+        // single/multiple choice
         const state = this.itemStates.get(this.currentItem.guid);
         if (!state) return;
 
@@ -304,20 +323,6 @@ renderMath() {
         const actual = Array.isArray(rv.value)
           ? rv.value
           : [rv.value];
-
-        if (this.isTextEntry) {
-          const input = this.$el.querySelector('.text-entry-default-label');
-          if (!input) return;
-
-          input.classList.remove('choice-correct', 'choice-wrong');
-          input.classList.add(
-            this.isCorrect(this.currentIndex)
-              ? 'choice-correct'
-              : 'choice-wrong'
-          );
-          console.log("text");
-          return;
-        }
 
         const choices = this.$el.querySelectorAll('[data-identifier]');
         choices.forEach(choice => {
