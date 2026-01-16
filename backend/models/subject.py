@@ -1,7 +1,10 @@
 from datetime import datetime, timezone
-from typing import Optional, Annotated
-from pydantic import StringConstraints
-from sqlmodel import Column, DateTime, SQLModel, Field
+from typing import List, Optional, Annotated, TYPE_CHECKING
+from pydantic import BaseModel, StringConstraints
+from sqlmodel import Column, DateTime, Relationship, SQLModel, Field
+
+if TYPE_CHECKING:
+    from models.subject_tests import SubjectTest
 
 # Model for subjects
 class SubjectBase(SQLModel):
@@ -19,6 +22,12 @@ class Subject(SubjectBase, table=True):
         sa_column=Column(DateTime(timezone=True), nullable=False),
         default_factory=lambda: datetime.now(timezone.utc),
     )
+
+    tests: List["SubjectTest"] = Relationship(
+        back_populates="subject",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
+    
 class SubjectCreate(SubjectBase):
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
@@ -35,3 +44,9 @@ class SubjectStats(SQLModel):
     subject_id: int
     subject_name: str
     tests_done: int
+
+class SubjectProgressRead(BaseModel):
+    id: int
+    name: str
+    total_tests: int
+    passed_tests: int
