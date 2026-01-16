@@ -70,7 +70,7 @@ const routes = [
     }
   },
   {
-    path: '/testlist',
+    path: '/test-overview',
     name: 'TestListe',
     component: Testlist,
     props: true,

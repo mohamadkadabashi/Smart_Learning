@@ -4,7 +4,7 @@
     <button class="primary create-btn" @click="showCreateModule = true">
       <PlusIcon class="plus-icon" alt="Modul erstellen"/>
     </button>
-    <createModule
+    <ActionsSubject
       v-if="showCreateModule"
       :userId="user_id"
       @close="showCreateModule = false"
@@ -98,7 +98,7 @@
 import StatsCard from '@/components/StatsCard.vue';
 import CircularProgress from '@/components/CircularProgress.vue';
 import CreateTestCard from '@/components/CreateTestCard.vue';
-import createModule from "@/components/createModule.vue";
+import ActionsSubject from "@/components/ActionsSubject.vue";
 import PlusIcon from "../../public/assets/images/plus-icon.svg";
 import ListElem from '@/components/ListElement.vue'
 
@@ -116,7 +116,7 @@ export default {
     StatsCard,
     CircularProgress,
     CreateTestCard,
-    createModule,
+    ActionsSubject,
     PlusIcon,
     ListElem
   },

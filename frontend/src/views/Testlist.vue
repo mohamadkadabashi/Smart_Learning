@@ -9,7 +9,7 @@
         <EditIcon class="EditIcon" alt="Modul bearbeiten" @click="showCreateModule = true"/>
         <TrashIcon class="TrashIcon-black" alt="Modul löschen" @click="showDeletePopup = true"/>
       </div>
-      <createModule
+      <ActionsSubject
           v-if="showCreateModule"
           :userId="user_id"
           heading="Modulname bearbeiten"
@@ -70,11 +70,11 @@
 import ListElem from '@/components/ListElement';
 import TrashIcon from "../../public/assets/images/trash-icon.svg";
 import EditIcon from "../../public/assets/images/edit-icon.svg";
-import CreateModule from "@/components/createModule";
+import ActionsSubject from "@/components/ActionsSubject";
 import DeletePopup from "@/components/deletePopup";
 
 export default {
-  components: { ListElem, TrashIcon, EditIcon, CreateModule, DeletePopup },
+  components: { ListElem, TrashIcon, EditIcon, ActionsSubject, DeletePopup },
   data() {
     return {
       showCreateModule: false,
@@ -202,4 +202,49 @@ export default {
   display: flex;
   gap: 12px;
 }
+
+@media (max-width: 900px) {
+  .page {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .module-info {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  
+    padding-right: 8px;
+  }
+
+  .module-actions {
+    flex-shrink: 0;          
+  }
+
+  /* list stays in a row, but doesn't overflow */
+  .list-row {
+    gap: 12px;
+    min-width: 0;
+  }
+}
+
+/* ultra-small phones */
+@media (max-width: 380px) {
+  .page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .list-row {
+    gap: 10px;
+  }
+}
+
 </style>
