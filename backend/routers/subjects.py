@@ -1,9 +1,12 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
-from sqlmodel import select
+from sqlmodel import case, func, select
+from models.attempt_tests import AttemptStatus, TestAttempt
+from models.subject_tests import SubjectTest
+from dependencies.dependency import CurrentUser
 from db.database import SessionDep
 from config.logger_config import logger
-from models.subject import Subject, SubjectCreate, SubjectRead, SubjectUpdate
+from models.subject import Subject, SubjectCreate, SubjectProgressRead, SubjectRead, SubjectUpdate
 from models.user import User
 from dependencies.dependency import CurrentUser
 
@@ -45,6 +48,46 @@ def read_subjects(
 ):
     subjects = session.exec(select(Subject)).all()
     return subjects
+
+@router.get("/mySubjects", response_model=list[SubjectProgressRead])
+def read_my_subject(
+    session: SessionDep,
+    current_user: CurrentUser
+):
+    stmt = (
+        select(
+            Subject.id,
+            Subject.name,
+            func.count(func.distinct(SubjectTest.id)).label("total_tests"),
+            func.sum(
+                case(
+                    (AttemptStatus.passed == True, 1),
+                    else_=0
+                )
+            ).label("passed_tests")
+        )
+        .join(SubjectTest, SubjectTest.subject_id == Subject.id)
+        .outerjoin(
+            TestAttempt,
+            (TestAttempt.subject_test_id == SubjectTest.id)
+            & (TestAttempt.user_id == current_user.id)
+        )
+        .where(Subject.user_id == current_user.id)
+        .group_by(Subject.id)
+    )
+
+    rows = session.exec(stmt).all()
+
+    return [
+        SubjectProgressRead(
+            id=row.id,
+            name=row.name,
+            total_tests=row.total_tests,
+            passed_tests=row.passed_tests,
+        )
+        for row in rows
+    ]
+
 
 @router.get("/byUser/{user_id}", response_model=List[SubjectRead])
 def read_subjects_of_user(
@@ -105,10 +148,10 @@ def delete_subject(
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
-        logger.warning(f"Subject {subject_id} does not exist, so no delete")
         raise HTTPException(status_code=404, detail="Subject not found")
-    
+    if subject.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
     session.delete(subject)
     session.commit()
-    logger.info(f"Subject {subject_id} has been deleted")
     return None
