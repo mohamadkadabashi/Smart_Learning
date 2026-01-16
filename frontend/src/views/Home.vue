@@ -2,33 +2,21 @@
   <div>
     <!-- Button for create module popup -->
     <button class="primary create-btn" @click="showCreateModule = true">
-      <PlusIcon class="plus-icon" alt="Modul erstellen"/>
+      <PlusIcon class="plus-icon" alt="Modul erstellen" />
     </button>
-    <ActionsSubject
-      v-if="showCreateModule"
-      :userId="user_id"
-      @close="showCreateModule = false"
-    />
+    <ActionsSubject v-if="showCreateModule" :userId="user_id" @close="showCreateModule = false" />
 
     <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
       <div class="d-flex gap-3">
-        <StatsCard
-        v-for="(card, index) in statsCards"
-        :key="index"
-        :title="card.title"
-        :value="card.value"
-        :subtitle="card.subtitle"
-        :subtitleClass="card.subtitleClass"
-        :iconSrc="card.iconSrc"
-      />
-      
-      <p v-if="error" class="text-danger mt-2 mb-0">{{ error }}</p>
+        <StatsCard v-for="(card, index) in statsCards" :key="index" :title="card.title" :value="card.value"
+          :subtitle="card.subtitle" :subtitleClass="card.subtitleClass" :iconSrc="card.iconSrc" />
+
+        <p v-if="error" class="text-danger mt-2 mb-0">{{ error }}</p>
       </div>
     </div>
 
     <div class="card w-100">
-      <div
-        class="main-content container-fluid py-5 d-flex justify-content-center">
+      <div class="main-content container-fluid py-5 d-flex justify-content-center">
         <div class="card w-100" style="max-width: 60vw;">
           <div class="card-header">
             Tests
@@ -66,28 +54,10 @@
     </div>
 
     <div>
-      <ListElem
-          v-for="module in modules"
-          :key="'module-' + module.name"
-          :name="module.name"
-          :completed="module.completed"
-          :total="module.total"
-          :isSubject="module.isSubject"
-          :showButton="module.showButton"
-          :showProgressText="module.showProgressText"
-          buttonText="Übersicht"
-      />
-
-        <ListElem
-          v-for="test in testdetails"
-          :key="'test-' + test.name"
-          :name="test.name"
-          :completed="test.completed"
-          :total="test.total"
-          :isSubject="test.isSubject"
-          :showButton="test.showButton"
-          :showProgressText="test.showProgressText"
-          buttonText="Starten"
+      <ListElem v-for="subject in subjects" :key="'module-' + subject.id" :name="subject.name"
+        :completed="subject.completed" :total="subject.total" :isSubject="subject.isSubject"
+        :showButton="subject.showButton" :showProgressText="subject.showProgressText" buttonText="Übersicht" 
+        @click.native="goToSubject(subject.id)"
       />
     </div>
 
@@ -102,13 +72,15 @@ import ActionsSubject from "@/components/ActionsSubject.vue";
 import PlusIcon from "../../public/assets/images/plus-icon.svg";
 import ListElem from '@/components/ListElement.vue'
 
-import { getMe } from "/src/services/user";            
+import { getMe } from "/src/services/user";
 import { getStatsOverview } from "/src/services/stats";
+import { getSubjects } from "@/services/subject";
 
-import { 
+import {
   formatSecondsToHM,
-  formatPercentFromRatio, 
-  calcPercentChange } from "../../src/utils/calc_stats";
+  formatPercentFromRatio,
+  calcPercentChange
+} from "../../src/utils/calc_stats";
 
 export default {
   name: 'Home',
@@ -122,8 +94,8 @@ export default {
   },
   data() {
     return {
-      user_id: null,         
-      tests: [],
+      user_id: null,
+      subjects: [],
       showCreateModule: false,
       statsCards: [],
       loading: false,
@@ -134,74 +106,75 @@ export default {
     this.tests = this.$testService.getTests();
   },
   async mounted() {
-      this.loading = true;
-      this.error = "";
+    this.loading = true;
+    this.error = "";
 
-      try {
-        const me = await getMe();
-        this.user_id = me?.id ?? null;
+    try {
+      const me = await getMe();
+      this.user_id = me?.id ?? null;
 
-        if (this.user_id) {
-          await this.loadStats();
-          console.log("user_id: " + this.user_id)
-        } else {
-          this.error = "User nicht authentifiziert.";
-        }
-      } catch (e) {
-        this.error =
-          e?.response?.data?.detail ||
-          "User oder Statistiken konnten nicht geladen werden.";
-      } finally {
-        this.loading = false;
+      if (this.user_id) {
+        await this.loadStats();
+        await this.fetchSubjects();
+        console.log("user_id: " + this.user_id)
+      } else {
+        this.error = "User nicht authentifiziert.";
       }
+    } catch (e) {
+      this.error =
+        e?.response?.data?.detail ||
+        "User oder Statistiken konnten nicht geladen werden.";
+    } finally {
+      this.loading = false;
+    }
   },
   methods: {
     async loadStats() {
-      try{
+      try {
 
- 
-      const ov = await getStatsOverview();
+
+        const ov = await getStatsOverview();
         console.log("OVERVIEW", ov);
 
-      const change = calcPercentChange(
-        ov.study_time_week_seconds,
-        ov.study_time_prev_week_seconds
-      );
+        const change = calcPercentChange(
+          ov.study_time_week_seconds,
+          ov.study_time_prev_week_seconds
+        );
 
-      const studySubtitle =
-        change === null
-          ? "Keine Daten zur Vorwoche"
-          : `${change >= 0 ? "+" : ""}${change}% zur Vorwoche`;
+        const studySubtitle =
+          change === null
+            ? "Keine Daten zur Vorwoche"
+            : `${change >= 0 ? "+" : ""}${change}% zur Vorwoche`;
 
-      const studySubtitleClass =
-        change === null ? "" : (change >= 0 ? "subtitle-positive" : "subtitle-negative");
+        const studySubtitleClass =
+          change === null ? "" : (change >= 0 ? "subtitle-positive" : "subtitle-negative");
 
-      const successRateValue = formatPercentFromRatio(ov.pass_rate_week);
-      const testsValue = `${ov.tests_passed_week}/${ov.tests_total_week} Tests`;
+        const successRateValue = formatPercentFromRatio(ov.pass_rate_week);
+        const testsValue = `${ov.tests_passed_week}/${ov.tests_total_week} Tests`;
 
-      this.statsCards = [
-        {
-          title: "Lernzeit diese Woche",
-          value: formatSecondsToHM(ov.study_time_week_seconds),
-          subtitle: studySubtitle,
-          subtitleClass: studySubtitleClass,
-          iconSrc: "/assets/images/clock.svg",
-        },
-        {
-          title: "Erfolgsquote",
-          value: successRateValue,
-          subtitle: "Durchschnittliche Erfolgsquote",
-          subtitleClass: "",
-          iconSrc: "/assets/images/checked-circle.svg",
-        },
-        {
-          title: "Tests bestanden",
-          value: testsValue,
-          subtitle: "Diese Woche",
-          subtitleClass: "",
-          iconSrc: "/assets/images/document-text-sharp.svg",
-        },
-      ];
+        this.statsCards = [
+          {
+            title: "Lernzeit diese Woche",
+            value: formatSecondsToHM(ov.study_time_week_seconds),
+            subtitle: studySubtitle,
+            subtitleClass: studySubtitleClass,
+            iconSrc: "/assets/images/clock.svg",
+          },
+          {
+            title: "Erfolgsquote",
+            value: successRateValue,
+            subtitle: "Durchschnittliche Erfolgsquote",
+            subtitleClass: "",
+            iconSrc: "/assets/images/checked-circle.svg",
+          },
+          {
+            title: "Tests bestanden",
+            value: testsValue,
+            subtitle: "Diese Woche",
+            subtitleClass: "",
+            iconSrc: "/assets/images/document-text-sharp.svg",
+          },
+        ];
       } catch (e) {
         console.error("getStatsOverview failed:", e);
         console.error("status:", e?.response?.status);
@@ -209,6 +182,30 @@ export default {
         throw e; // wichtig, damit mounted catch es auch sieht
       }
     },
+    async fetchSubjects() {
+      try {
+        const subjects = await getSubjects();
+        console.log("SUBJECTS", subjects);
+
+        this.subjects = subjects.map(s => ({
+          id: s.id,
+          name: s.name,
+          completed: s.passed_tests ?? 0,
+          total: s.total_tests ?? 0,
+          isSubject: true,
+          showButton: true,
+          showProgressText: true,
+        }));
+      } catch (e) {
+        console.error("getSubjects failed:", e);
+      }
+    },
+    goToSubject(subjectId) {
+      this.$router.push({
+        name: "TestListe",
+        params: { subject_id: subjectId }
+      });
+    }
   },
 };
 </script>

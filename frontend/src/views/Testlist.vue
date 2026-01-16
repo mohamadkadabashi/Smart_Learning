@@ -6,40 +6,23 @@
         {{ moduleName }}
       </h2>
       <div class="module-actions">
-        <EditIcon class="EditIcon" alt="Modul bearbeiten" @click="showCreateModule = true"/>
-        <TrashIcon class="TrashIcon-black" alt="Modul löschen" @click="showDeletePopup = true"/>
+        <EditIcon class="EditIcon" alt="Modul bearbeiten" @click="showCreateModule = true" />
+        <TrashIcon class="TrashIcon-black" alt="Modul löschen" @click="showDeletePopup = true" />
       </div>
-      <ActionsSubject
-          v-if="showCreateModule"
-          :userId="user_id"
-          heading="Modulname bearbeiten"
-          label="Neuer Modulname"
-          submit-text="Speichern"
-          @submit="updateModuleName"
-          @close="showCreateModule = false"
-      />
-      <DeletePopup
-          v-if="showDeletePopup"
-          :user-id="user_id"
-          heading="Modul wirklich löschen?"
-          @close="showDeletePopup = false"
-      />
+      <ActionsSubject v-if="showCreateModule" :userId="user_id" heading="Modulname bearbeiten" label="Neuer Modulname"
+        submit-text="Speichern" :error="error" :loading="loading" @submit="updateModuleName"
+        @close="showCreateModule = false" />
+      <DeletePopup v-if="showDeletePopup" heading="Modul wirklich löschen?" :error-msg="deleteError"
+        :loading="deleteLoading" @close="showDeletePopup = false" @confirm="onDeleteSubject" />
     </div>
     <section class="tests-container">
       <div class="tests-section">
         <h3>Aktive Tests</h3>
         <div class="scroll-area">
           <div class="list-row" v-for="(test) in activeTests" :key="'active-' + test.name">
-              <ListElem
-                  :name="test.name"
-                  :completed="test.completed"
-                  :total="test.total"
-                  :isSubject="test.isSubject"
-                  :showButton="test.showButton"
-                  :showProgressText="test.showProgressText"
-                  buttonText="Starten"
-              />
-            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)"/>
+            <ListElem :name="test.name" :completed="test.completed" :total="test.total" :isSubject="test.isSubject"
+              :showButton="test.showButton" :showProgressText="test.showProgressText" buttonText="Starten" />
+            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)" />
           </div>
         </div>
       </div>
@@ -48,16 +31,9 @@
         <h3>Abgeschlossene Tests</h3>
         <div class="scroll-area">
           <div class="list-row" v-for="(test) in completedTests" :key="'done-' + test.name">
-              <ListElem
-                  :name="test.name"
-                  :completed="test.completed"
-                  :total="test.total"
-                  :isSubject="test.isSubject"
-                  :showButton="test.showButton"
-                  :showProgressText="test.showProgressText"
-                  buttonText="Wiederholen"
-              />
-            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)"/>
+            <ListElem :name="test.name" :completed="test.completed" :total="test.total" :isSubject="test.isSubject"
+              :showButton="test.showButton" :showProgressText="test.showProgressText" buttonText="Wiederholen" />
+            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)" />
           </div>
         </div>
       </div>
@@ -72,43 +48,97 @@ import TrashIcon from "../../public/assets/images/trash-icon.svg";
 import EditIcon from "../../public/assets/images/edit-icon.svg";
 import ActionsSubject from "@/components/ActionsSubject";
 import DeletePopup from "@/components/DeletePopup";
+import { getSubjectById, updateSubject, deleteSubject } from "@/services/subject";
+
 
 export default {
   components: { ListElem, TrashIcon, EditIcon, ActionsSubject, DeletePopup },
-  data() {
-    return {
-      showCreateModule: false,
-      showDeletePopup: false,
-      testdetails: [
-        {name: "Test1", completed: 2, total: 4, isSubject: false},
-        {name: "Test2", completed: 2, total: 4, isSubject: false},
-        {name: "Test3", completed: 2, total: 4, isSubject: false},
-        {name: "Test4", completed: 4, total: 4, isSubject: false},
-        {name: "Test5", completed: 4, total: 4, isSubject: false},
-        {name: "Test6", completed: 4, total: 4, isSubject: false},
-      ],
-      moduleName: "Medieninformatik"
+  props: {
+    subject_id: {
+      type: [Number, String],
+      required: true
     }
   },
+  data() {
+    return {
+      moduleName: "",
+      loading: false,
+      error: "",
+      success: "",
+      showCreateModule: false,
+      showDeletePopup: false,
+      deleteLoading: false,
+      deleteError: "",
+      testdetails: [
+        { name: "Test1", completed: 2, total: 4, isSubject: false },
+        { name: "Test2", completed: 2, total: 4, isSubject: false },
+        { name: "Test3", completed: 2, total: 4, isSubject: false },
+        { name: "Test4", completed: 4, total: 4, isSubject: false },
+        { name: "Test5", completed: 4, total: 4, isSubject: false },
+        { name: "Test6", completed: 4, total: 4, isSubject: false },
+      ],
+    }
+  },
+  async mounted() {
+    const subject = await getSubjectById(this.subject_id);
+    this.moduleName = subject.name;
+  },
   methods: {
-    removeTest(name) {
-      this.testdetails = this.testdetails.filter(
-          t => t.name !== name
-      )
+    async onDeleteSubject() {
+      this.deleteError = "";
+      this.deleteLoading = true;
+
+      try {
+        await deleteSubject(Number(this.subject_id)); // subject_id aus props/route
+        this.showDeletePopup = false;
+
+        // redirect dashboard/home
+        this.$router.push({ name: "Dashboard" }); // <- Route name anpassen!
+      } catch (e) {
+        const status = e?.response?.status;
+        const detail = e?.response?.data?.detail;
+
+        if (status === 403) this.deleteError = detail || "Keine Berechtigung.";
+        else if (status === 404) this.deleteError = detail || "Modul nicht gefunden.";
+        else this.deleteError = detail || "Löschen fehlgeschlagen.";
+      } finally {
+        this.deleteLoading = false;
+      }
     },
-    updateModuleName(newName) {
-      this.moduleName = newName
+    async updateModuleName(newName) {
+      this.error = "";
+      this.success = "";
+      this.loading = true;
+
+      try {
+        const updated = await updateSubject(this.subject_id, { name: newName });
+
+        // update UI immediately
+        this.moduleName = updated.name;
+        this.success = "Modulname wurde gespeichert.";
+        this.showCreateModule = false;
+      } catch (e) {
+        const status = e?.response?.status;
+        const detail = e?.response?.data?.detail;
+
+        if (status === 409) this.error = detail || "Dieses Modul existiert bereits.";
+        else if (status === 404) this.error = detail || "Modul nicht gefunden.";
+        else if (status === 422) this.error = detail || "Ungültige Eingabe.";
+        else this.error = detail || "Update fehlgeschlagen.";
+      } finally {
+        this.loading = false;
+      }
     }
   },
   computed: {
     activeTests() {
       return this.testdetails.filter(
-          test => test.completed < test.total
+        test => test.completed < test.total
       )
     },
     completedTests() {
       return this.testdetails.filter(
-          test => test.completed === test.total
+        test => test.completed === test.total
       )
     }
   }
@@ -166,7 +196,7 @@ export default {
   flex-shrink: 0;
 }
 
-.TrashIcon:hover{
+.TrashIcon:hover {
   opacity: 0.7;
 }
 
@@ -220,12 +250,12 @@ export default {
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;  
+    text-overflow: ellipsis;
     padding-right: 8px;
   }
 
   .module-actions {
-    flex-shrink: 0;          
+    flex-shrink: 0;
   }
 
   /* list stays in a row, but doesn't overflow */
@@ -246,5 +276,4 @@ export default {
     gap: 10px;
   }
 }
-
 </style>
