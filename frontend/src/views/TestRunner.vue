@@ -1,91 +1,80 @@
 <template>
-  <div>
-    <div class="container py-5 d-flex justify-content-center">
-      <div class="w-100" style="max-width: 700px;">
+  <div v-if="test" class="d-flex">
+    <div class="container w-75 d-flex flex-column" style="min-height: 90vh">
+      <div style="flex: 1">
 
-        <!-- Test-Titel -->
-        <h2 class="text-center mb-4" style="padding-top: 50px;">
-          {{ test.title }}
-        </h2>
-
-        <!-- Progress-Bar -->
-        <div class="d-flex justify-content-center gap-2 mb-4">
-          <button
-            v-for="(item, i) in testItems"
-            :key="item.guid"
-            class="btn rounded-circle"
-            :class="{
-              'btn-primary':         !isReviewMode && i === currentIndex,
-              'btn-outline-secondary': !isReviewMode && i !== currentIndex,
-              'btn-success':         isReviewMode && isCorrect(i),
-              'btn-danger':          isReviewMode && !isCorrect(i)
-            }"
-            style="width: 40px; height: 40px;"
-            @click="goTo(i)"
-          >
-            {{ i + 1 }}
-          </button>
-        </div>
-
-        <!-- Karte mit Player + Navigation / Review-Info -->
-        <div class="card mb-5 p-4 border rounded item-player-card">
-
-          <!-- Frage-Titel aus XML -->
-          <h2 class="text-center text-uppercase mb-3">
-            {{ getTitleFromXml(currentItem.xml) }}
-          </h2>
-
-          <!-- QTI3 Player -->
-          <div class="player-wrapper mb-4">
-            <Qti3Player
-              ref="qti3player"
-              @notifyQti3PlayerReady="onPlayerReady"
-              @notifyQti3SuspendAttemptCompleted="onItemSaved"
-              @notifyQti3EndAttemptCompleted="onItemSaved"
-              @notifyQti3ScoreAttemptCompleted="onItemSaved"
-            />
+        <!-- test information -->
+        <div class="d-flex justify-content-between">
+          <div>
+            <h2>{{ test.title }}</h2>
+            <p class="primary-text">
+              {{ getTitleFromXml(currentItem.xml) }}
+            </p>
           </div>
 
-          <!-- Im Review-Modus: Richtige Antwort anzeigen -->
-          <div v-if="isReviewMode" class="text-center mb-3">
-            <strong>Correct Answer:</strong>
-            <span :class="{'text-success': isCorrect(currentIndex), 'text-danger': !isCorrect(currentIndex)}">
+          <p v-if="!isReviewMode" class="secondary-text my-3">
+            {{ currentIndex }} von {{ testItems.length }} abgeschlossen
+          </p>
+          <p v-else class="secondary-text my-3">
+            {{ currentIndex + 1 }} / {{ testItems.length }}
+          </p>
+        </div>
+
+        <!-- QTI3 player -->
+        <div class="my-5 player-wrapper">
+          <Qti3Player ref="qti3player"
+                      @notifyQti3PlayerReady="onPlayerReady"
+                      @notifyQti3SuspendAttemptCompleted="onItemSaved"
+                      @notifyQti3EndAttemptCompleted="onItemSaved"
+                      @notifyQti3ScoreAttemptCompleted="onItemSaved" />
+        </div>
+
+        <!-- correct answer -->
+        <div v-if="isReviewMode && isTextEntry && !isCorrect(currentIndex)" class="my-4">
+          <label class="primary-text">
+            <span class="fw-normal">Richtige Antwort:</span>
+            <span class="text-danger">
               {{ getCorrectAnswer(currentItem.guid) }}
             </span>
+          </label>
+        </div>
+      </div>
+      <!-- navigation -->
+      <div class="nav-btn-container w-100">
+        <div class="d-flex gap-3 my-2 justify-content-between">
+          <div class="d-flex gap-2">
+            <button class="primary"
+                    @click="prev"
+                    :disabled="!qti3player || currentIndex === 0">
+              Zurück
+            </button>
+
+            <button v-if="currentIndex < testItems.length - 1"
+                    class="primary"
+                    @click="next"
+                    :disabled="!qti3player">
+              Weiter
+            </button>
+            <button v-else-if="!isReviewMode"
+                    class="primary"
+                    @click="submitTest"
+                    :disabled="!qti3player">
+              Überprüfen
+            </button>
+            <button v-else
+                    class="primary"
+                    @click="navigateToHome">
+              Zur Startseite
+            </button>
+
           </div>
 
-          <!-- Navigation nur im normalen Modus -->
-          <div v-if="!isReviewMode" class="d-flex justify-content-center gap-3 mt-2">
-            <button class="btn btn-secondary" @click="prev" :disabled="currentIndex === 0">
-              Previous
-            </button>
-            <button
-              v-if="currentIndex < testItems.length - 1"
-              class="btn btn-primary"
-              @click="next"
-              :disabled="!qti3player"
-            >
-              Next
-            </button>
-            <button
-              v-else
-              class="btn btn-danger"
-              @click="submitTest"
-              :disabled="!qti3player"
-            >
-              Submit
-            </button>
+          <div>
+	          <button class="secondary">
+		          Fortschritt speichern
+	          </button>
           </div>
-
         </div>
-
-        <!-- Zurück-Button im Review-Modus -->
-        <div v-if="isReviewMode" class="text-center">
-          <router-link :to="{ name: 'Home' }" class="btn btn-primary">
-            Zurück zur Startseite
-          </router-link>
-        </div>
-
       </div>
     </div>
   </div>
@@ -117,6 +106,9 @@ export default {
     },
     currentState() {
       return this.itemStates.get(this.currentItem.guid) || null;
+    },
+    isTextEntry() {
+      return this.getItemType() === 'textEntry';
     }
   },
   methods: {
@@ -128,7 +120,7 @@ export default {
     },
     onPlayerReady(player) {
       this.qti3player = player;
-      this.playerReady   = true;
+      this.playerReady = true;
       this.tryLoadItem();
     },
     tryLoadItem() {
@@ -146,6 +138,8 @@ export default {
       };
 
       this.qti3player.loadItemFromXml(item.xml, config);
+
+      this.colorizeAnswers();
       // KaTeX Rendern aufrufen
       this.renderMath();
     },
@@ -177,19 +171,11 @@ export default {
           this.loadCurrentItem();
           break;
         case 'end':
-          console.log('--- All Item States kurz vor Review-Modus: ---');
-          console.log(JSON.stringify(Object.fromEntries(this.itemStates), null, 2));
-          // Wechsel in den Review-Modus
           this.isReviewMode = true;
           this.currentIndex = 0;
           this.loadCurrentItem();
           break;
       }
-    },
-
-    goTo(i) {
-      this.currentIndex = i;
-      this.loadCurrentItem();
     },
 
     // Prüft, ob Antwort richtig war
@@ -215,8 +201,12 @@ export default {
       return correct.every(id => actual.includes(id));
     }
 
+    if (!actual) {
+      return false;
+    }
+
     // Single Choice: einfacher Vergleich
-    return actual === correct;
+    return actual.toLowerCase() === correct.toLowerCase();
   },
 
     getTitleFromXml(xmlString) {
@@ -284,6 +274,76 @@ renderMath() {
         }
       });
     },
+
+    getItemType() {
+      if (!this.currentItem?.xml) return null;
+
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(this.currentItem.xml, 'text/xml');
+
+      if (xmlDoc.querySelector('qti-text-entry-interaction')) return 'textEntry';
+      if (xmlDoc.querySelector('qti-choice-interaction')) return 'choice';
+
+      return 'unknown';
+    },
+
+    navigateToHome() {
+      this.$router.push({ name: 'Home' });
+    },
+
+    colorizeAnswers() {
+      if (!this.isReviewMode) return;
+
+      this.$nextTick(() => {
+        // text entry
+        if (this.isTextEntry) {
+          const input = this.$el.querySelector('.text-entry-default-label');
+          if (!input) return;
+
+          input.classList.remove('choice-correct', 'choice-wrong');
+          input.classList.add(
+            this.isCorrect(this.currentIndex)
+              ? 'choice-correct'
+              : 'choice-wrong'
+          );
+          return;
+        }
+
+        // single/multiple choice
+        const state = this.itemStates.get(this.currentItem.guid);
+        if (!state) return;
+
+        const rv = state.responseVariables.find(v => v.identifier === 'RESPONSE');
+        if (!rv) return;
+
+        const correct = Array.isArray(rv.correctResponse)
+          ? rv.correctResponse
+          : [rv.correctResponse];
+
+        const actual = Array.isArray(rv.value)
+          ? rv.value
+          : [rv.value];
+
+        const choices = this.$el.querySelectorAll('[data-identifier]');
+        choices.forEach(choice => {
+          const id = choice.getAttribute('data-identifier');
+
+          choice.classList.remove('choice-correct', 'choice-wrong', 'choice-missed');
+
+          if (correct.includes(id)) {
+            choice.classList.add('choice-correct');
+          }
+
+          if (actual.includes(id) && !correct.includes(id)) {
+            choice.classList.add('choice-wrong');
+          }
+
+          if (!actual.includes(id) && correct.includes(id)) {
+            choice.classList.add('choice-missed');
+          }
+        });
+      });
+    }
   },
   created() {
     //
@@ -295,9 +355,14 @@ renderMath() {
 </script>
 
 <style scoped>
-.item-player-card {
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+.container {
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+}
+
+@media (max-width: 550px) {
+  .nav-btn-container > div {
+    flex-direction: column;
+  }
 }
 </style>
