@@ -70,16 +70,17 @@ const routes = [
     }
   },
   {
-    path: '/test-overview',
+    path: '/test-overview/:subject_id',
     name: 'TestListe',
     component: Testlist,
     props: true,
     meta: {
       title: 'Test Liste',
       headerTitle: 'Testübersicht',
-      requiresAuth: false // später leicht änderbar
+      requiresAuth: false
     }
-  },
+  }
+  ,
   { path: '*', redirect: '/' }
 ]
 

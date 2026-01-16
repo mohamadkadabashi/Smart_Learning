@@ -1,24 +1,21 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-container">
-
       <button class="close-btn" @click="$emit('close')">
         <CloseIcon role="img" alt="Schließen"/>
       </button>
 
       <h2 class="heading">{{ heading }}</h2>
-
       <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
 
       <div class="button-row">
-        <button class="mt-5 primary">
+        <button class="mt-5 primary" :disabled="loading" @click="$emit('confirm')">
           Ja
         </button>
-        <button class="mt-5 secondary" @click="onCreate">
+        <button class="mt-5 secondary" :disabled="loading" @click="$emit('close')">
           Nein
         </button>
       </div>
-
     </div>
   </div>
 </template>
@@ -28,33 +25,15 @@ import CloseIcon from "../../public/assets/images/close-icon.svg";
 
 export default {
   name: "DeletePopup",
-  components: {
-    CloseIcon
-  },
+  components: { CloseIcon },
   props: {
-    userId: {type: Number, required: true},
-    heading: {type: String, default: "Wirklich löschen?"}
+    heading: { type: String, default: "Wirklich löschen?" },
+    errorMsg: { type: String, default: "" },
+    loading: { type: Boolean, default: false },
   },
-  data() {
-    return {
-      errorMsg: ""
-    };
-  },
-  methods: {
-    async onCreate(){
-      this.errorMsg = "";
-
-      try {
-        this.$emit("close")
-      } catch(e){
-        if (e?.status === 409) this.errorMsg = "Löschen nicht möglich.";
-        else if (e?.status === 422) this.errorMsg = "User existiert nicht oder Eingaben sind ungültig.";
-        else this.errorMsg = e?.detail || "Unbekannter Fehler";
-      }
-    }
-  }
 };
 </script>
+
 
 <style scoped>
 .modal-overlay {
