@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus, SubjectTestQuestionType
 from models.subject import Subject
 from db.database import SessionDep
@@ -18,11 +18,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/login")
 
 @router.post("/{questionTyp_select}", response_model=SubjectTestRead, status_code=202)
 async def create_subjectTest(
-    subjectTest_create: SubjectTestCreate,
     session: SessionDep,
     current_user: CurrentUser,
     questionTyp_select: SubjectTestQuestionType,
     token: Annotated[str, Depends(oauth2_scheme)],
+    file: UploadFile = File(...),
+    subjectTest_create: SubjectTestCreate = Depends(SubjectTestCreate.as_form),
 ):
     if subjectTest_create.question_count <= 0:
         raise HTTPException(status_code=400, detail="Number of questions needs to be larger then 0")
@@ -60,9 +61,6 @@ async def create_subjectTest(
         "callback_url": callback_url,
     }
 
-    scriptPath = Path(__file__).parent
-    filePath = scriptPath / "BDP_01_NoSQL_Einfuehrung.pdf"
-
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/json",
@@ -70,10 +68,10 @@ async def create_subjectTest(
 
     try:
         async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, connect=10.0)) as client:
-            with open(filePath, "rb") as f:
-                files = {"file": (filePath.name, f, "application/pdf")}
-                resp = await client.post(webhook_url, headers=headers, data=data, files=files)
-                resp.raise_for_status()
+            files = {"file": (file.filename, file.file, "application/pdf")}
+            resp = await client.post(webhook_url, headers=headers, data=data, files=files)
+            resp.raise_for_status()
+                
 
     except Exception as e:
         # if Trigger failed then:
