@@ -116,7 +116,7 @@ import ActionsSubject from "@/components/ActionsSubject";
 import DeletePopup from "@/components/DeletePopup";
 
 import { getSubjectById, updateSubject, deleteSubject } from "@/services/subject";
-import { greeting, updateTest, deleteTest } from "@/services/subject_tests";
+import { greeting, updateTest, deleteTest } from "@/services/subjectTest";
 
 export default {
   name: "TestList",
@@ -297,20 +297,16 @@ export default {
     async fetchTests() {
       this.testsError = "";
       this.testsLoading = true;
-      await greeting(Number(this.subject_id));
 
       try {
-
         const rows = await greeting(Number(this.subject_id));
-
-        console.log(rows);
 
         this.testdetails = rows.map(t => ({
           id: t.id,
           name: t.name ?? `Test ${t.id}`,
           completed: t.correct_answered ?? 0,
           total: t.total_questions ?? 0,
-          status: t.status ?? "in_progress",
+          status: t.status ?? "PENDING",
           isSubject: false,
           showButton: true,
           showProgressText: true,
@@ -321,12 +317,12 @@ export default {
         }
       } catch (e) {
         this.testsError =
-          e?.response?.data?.detail ||
-          "Tests konnten nicht geladen werden.";
+          e?.response?.data?.detail || "Tests konnten nicht geladen werden.";
       } finally {
         this.testsLoading = false;
       }
     }
+
   },
 };
 </script>

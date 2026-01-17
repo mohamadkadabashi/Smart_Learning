@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
-from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus, SubjectTestQuestionType
+from backend.models.attempt_tests import TestAttempt
+from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestProgressRead, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus, SubjectTestQuestionType
 from models.subject import Subject
 from db.database import SessionDep
 from typing import List, Annotated
-from sqlmodel import select
+from sqlmodel import func, select
 from config.logger_config import logger
 from datetime import datetime, timezone
 from dependencies.dependency import CurrentUser
@@ -148,20 +149,6 @@ def read_subjectTests(
     subjectTests = session.exec(select(SubjectTest)).all()
     return subjectTests
 
-@router.get("/bySubject/{subject_id}")
-def read_subjectTests_of_subject(
-    subject_id: int,
-    session: SessionDep,
-    current_user: CurrentUser
-):
-    subject = session.exec(select(Subject).where(Subject.id == subject_id)).first()
-    if not subject:
-        logger.warning(f"Subject {subject_id} does not exist, so no subjectTests found")
-        raise HTTPException(status_code=404, detail="Subject not found")
-    
-    subjectTests = session.exec(select(SubjectTest).where(SubjectTest.subject_id == subject_id)).all()
-    return subjectTests
-
 @router.get("/{subjectTest_id}", response_model=SubjectTestRead)
 def get_subjectTest(
     subjectTest_id: int,
@@ -223,3 +210,70 @@ def delete_subjectTest(
     session.commit()
     logger.info(f"SubjectTest {subjectTest_id} has been deleted")
     return None
+
+@router.get("/bySubjects/{subject_id}")
+def read_subjectTests_of_subject(
+    subject_id: int,
+    session: SessionDep,
+    current_user: CurrentUser
+):
+    subject = session.exec(select(Subject).where(Subject.id == subject_id)).first()
+    if not subject:
+        logger.warning(f"Subject {subject_id} does not exist, so no subjectTests found")
+        raise HTTPException(status_code=404, detail="Subject not found")
+    
+    subjectTests = session.exec(select(SubjectTest).where(SubjectTest.subject_id == subject_id)).all()
+    return subjectTests
+
+@router.get("/bySubject/{subject_id}", response_model=list[SubjectTestProgressRead])
+def read_tests_by_subject_with_progress(
+    subject_id: int,
+    session: SessionDep,
+    current_user: CurrentUser
+):
+    latest_attempt_subq = (
+        select(
+            TestAttempt.subject_test_id.label("st_id"),
+            func.max(TestAttempt.updated_at).label("max_updated_at")
+        )
+        .where(TestAttempt.user_id == current_user.id)
+        .group_by(TestAttempt.subject_test_id)
+        .subquery()
+    )
+
+    stmt = (
+        select(
+            SubjectTest.id.label("id"),
+            SubjectTest.subject_id.label("subject_id"),
+            SubjectTest.test_name.label("name"),  # <-- neu (oder SubjectTest.name)
+            TestAttempt.status.label("status"),
+            TestAttempt.correct_answered.label("correct_answered"),
+            func.coalesce(TestAttempt.total_questions, SubjectTest.question_count).label("total_questions"),
+            TestAttempt.score_ratio.label("score_ratio"),
+            TestAttempt.finished_at.label("finished_at"),
+        )
+        .where(SubjectTest.subject_id == subject_id)
+        .outerjoin(latest_attempt_subq, latest_attempt_subq.c.st_id == SubjectTest.id)
+        .outerjoin(
+            TestAttempt,
+            (TestAttempt.subject_test_id == SubjectTest.id)
+            & (TestAttempt.user_id == current_user.id)
+            & (TestAttempt.updated_at == latest_attempt_subq.c.max_updated_at)
+        )
+    )
+
+    rows = session.exec(stmt).all()
+
+    return [
+        SubjectTestProgressRead(
+            id=r.id,
+            subject_id=r.subject_id,
+            name=r.name,
+            status=r.status,
+            correct_answered=r.correct_answered,
+            total_questions=r.total_questions,
+            score_ratio=r.score_ratio,
+            finished_at=r.finished_at,
+        )
+        for r in rows
+    ]

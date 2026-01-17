@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
-from typing import Literal, Optional, Annotated
+from typing import TYPE_CHECKING, List, Literal, Optional, Annotated
 from pydantic import StringConstraints
-from sqlmodel import SQLModel, Field
+from sqlmodel import Relationship, SQLModel, Field
 from sqlalchemy import CheckConstraint
 from enum import Enum
 from fastapi import Form
+
+from models.attempt_tests import AttemptStatus
 
 class SubjectTestStatus(str, Enum):
     PENDING = "PENDING"
@@ -17,6 +19,10 @@ class SubjectTestQuestionType(str, Enum):
     MULTIPLE_CHOICE = "Multiple Choice"
     GAP_TEXT = "Gap Text"
 
+if TYPE_CHECKING:
+    from models.subject import Subject
+    from models.attempt_tests import TestAttempt
+
 class SubjectTestBase(SQLModel):
     name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)] = Field(nullable=False)
 
@@ -28,6 +34,8 @@ class SubjectTest(SubjectTestBase, table=True):
     # Request-metadata
     question_type: SubjectTestQuestionType = Field(default=SubjectTestQuestionType.SINGLE_CHOICE, nullable=False)
     question_count: int = Field(nullable=False)
+    test_name: str = Field(index=True, nullable=False)
+
     subject_id: int = Field(foreign_key="subject.id", nullable=False)
 
     # Async-Tracking
@@ -38,6 +46,12 @@ class SubjectTest(SubjectTestBase, table=True):
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+
+    subject: Optional["Subject"] = Relationship(back_populates="tests")
+
+    attempts: List["TestAttempt"] = Relationship(
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
     __table_args__ = (
         CheckConstraint("question_count>0", name="question_count_non_negative"),
@@ -81,3 +95,16 @@ class SubjectTestUpdate(SQLModel):
 class N8NCallbackPayload(SQLModel):
     xml: Optional[str] = None
     error: Optional[str] = None
+
+
+class SubjectTestProgressRead(SQLModel):
+    id: int
+    subject_id: int
+    test_name: str 
+
+    # Attempt-Infos (können None sein, wenn noch nie versucht)
+    status: Optional[AttemptStatus] = None
+    correct_answered: Optional[int] = None
+    total_questions: Optional[int] = None
+    score_ratio: Optional[float] = None
+    finished_at: Optional[datetime] = None
