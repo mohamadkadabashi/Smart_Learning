@@ -29,3 +29,17 @@ export async function createSubjectTest(file, name, subject_id, questionTyp_sele
 //   const { data } = await api.patch(`/users/${userId}`, payload);
 //   return data;
 // }
+
+export async function getTestsBySubject(subjectId) {
+  const { data } = await api.get(`/subjecttests/bySubject/${subjectId}`);
+  return data;
+}
+
+export async function updateTest(testId, payload) {
+  const { data } = await api.patch(`/tests/${testId}`, payload);
+  return data;
+}
+
+export async function deleteTest(testId) {
+  await api.delete(`/tests/${testId}`);
+}

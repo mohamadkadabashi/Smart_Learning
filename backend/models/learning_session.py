@@ -18,9 +18,6 @@ class LearningSession(SQLModel, table=True):
         default=None
     )
 
-    # optional (wenn du später Auswertungen pro Fach willst)
-    subject_id: Optional[int] = Field(default=None, foreign_key="subject.id", index=True)
-
 class LearningSessionStart(SQLModel):
     subject_id: Optional[int] = None
 
