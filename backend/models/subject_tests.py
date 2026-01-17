@@ -4,6 +4,7 @@ from pydantic import StringConstraints
 from sqlmodel import SQLModel, Field
 from sqlalchemy import CheckConstraint
 from enum import Enum
+from fastapi import Form
 
 class SubjectTestStatus(str, Enum):
     PENDING = "PENDING"
@@ -46,6 +47,19 @@ class SubjectTestCreate(SubjectTestBase):
     subject_id: int = Field(default=None, foreign_key="subject.id")
     #question_type: SubjectTestQuestionType = Field(default=SubjectTestQuestionType.SINGLE_CHOICE)
     question_count: int = Field(default=None)
+
+    @classmethod
+    def as_form(
+        cls,
+        name: Annotated[str, Form(...)],
+        subject_id: Annotated[int, Form(...)],
+        question_count: Annotated[int, Form(...)],
+    ):
+        return cls(
+            name=name,
+            subject_id=subject_id,
+            question_count=question_count,
+        )
 
 class SubjectTestRead(SubjectTestBase):
     id: int

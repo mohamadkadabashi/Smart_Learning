@@ -99,7 +99,6 @@
             const user_id = 1;
             const response = await getUserSubjects({user_id});
             this.user_subjects = response.data;
-            console.log("Gespeichert ->", this.user_subjects);
           } catch (e) {
             this.error = e?.response?.data?.detail || "Konnte User-Subjects nicht laden.";
           }
@@ -111,7 +110,7 @@
             this.error = "";
 
             try{
-                await createSubjectTest(this.testname, this.subject, this.question_typ, this.question_count);
+                await createSubjectTest(this.files[0], this.testname, this.subject, this.question_typ, this.question_count);
                 //this.$router.push("/")
             } catch(err){
                 this.error =

@@ -6,11 +6,23 @@ import { api } from "./api";
 //   await api.post("/subjecttests/{questionTyp_select}", payload);
 // }
 
-export async function createSubjectTest(name, subject_id, questionTyp_select, question_count) {
-  const payload = { name, subject_id, question_count };
-  console.log("createSubjectTest payload ->", payload);
-  console.log("questionTyp -> ", questionTyp_select);
-  await api.post(`/subjecttests/${questionTyp_select}`, payload);
+// export async function createSubjectTest(name, subject_id, questionTyp_select, question_count) {
+//   const payload = { name, subject_id, question_count };
+//   console.log("createSubjectTest payload ->", payload);
+//   console.log("questionTyp -> ", questionTyp_select);
+//   await api.post(`/subjecttests/${questionTyp_select}`, payload);
+// }
+
+export async function createSubjectTest(file, name, subject_id, questionTyp_select, question_count) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("name", name);
+  formData.append("subject_id", subject_id);
+  formData.append("question_count", question_count);
+
+  await api.post(`/subjecttests/${questionTyp_select}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
 }
 
 // export async function patchUser(userId, payload) {
