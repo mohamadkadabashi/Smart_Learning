@@ -57,14 +57,18 @@
             }
         },
 
+        emits: ['update-files'],
+
         methods: {
             showFileName(event) {
                 const selectedFiles = Array.from(event.target.files);
                 this.files.push(...selectedFiles);
+                this.$emit('update-files', this.files);
             },
 
             removeFile(index) {
                 this.files.splice(index, 1)
+                this.$emit('update-files', this.files);
 
                 if (this.files.length === 0) {
                     const input = document.getElementById('file-upload');

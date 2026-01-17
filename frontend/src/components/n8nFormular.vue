@@ -7,19 +7,22 @@
         <!-- module -->
         <div class="form-group">
           <label>Modul</label>
-          <select title="Modul wählen" id="module-input">
-            <option value="">Bitte auswählen</option>
-            <option>Medieninformatik</option>
-            <option>Beispiel</option>
-            <option>Beispiel</option>
+          <select title="Modul wählen" id="module-input" v-model="subject">
+            <option value="" disable hidden>Bitte auswählen</option>
+            <option
+              v-for="modul in user_subjects"
+              :key="modul.id"
+              :value="modul.id">
+              {{ modul.name }}
+            </option>
           </select>
         </div>
 
         <!-- task type -->
         <div class="form-group">
           <label for="task-type-input">Aufgabentyp</label>
-          <select title="Aufgabentyp wählen" id="task-type-input">
-            <option value="">Bitte auswählen</option>
+          <select title="Aufgabentyp wählen" id="task-type-input" v-model="question_typ">
+            <option value="" disable hidden>Bitte auswählen</option>
             <option>Single Choice</option>
             <option>Multiple Choice</option>
             <option>Freitext</option>
@@ -28,30 +31,30 @@
 
           
         <!-- upload file -->
-        <FileUpload />
+        <FileUpload @update-files="files = $event"/>
       </div>
 
       <div class="column">
         <!-- test name -->
         <div class="form-group">
           <label for="test-name-input">Name des Tests</label>
-          <input type="text" placeholder="Gib einen Testnamen ein" id="test-name-input" />
+          <input type="text" placeholder="Gib einen Testnamen ein" id="test-name-input" v-model="testname" />
         </div>
 
         <div class="form-group">
         <!-- count of tasks -->
           <label for="num-input">Anzahl der Fragen</label>
           <div class="number-wrapper">
-            <input id="num-input" type="number" min="1" max="10" placeholder="z. B. 10" v-model.number="value"/>
+            <input id="num-input" type="number" min="1" max="10" placeholder="z. B. 10" v-model.number="question_count"/>
             <button type="button" 
                     class="number-minus" 
-                    @click="value--" 
-                    :disabled="value <= 1"
+                    @click="question_count--" 
+                    :disabled="question_count <= 1"
                     aria-label="Minimiere die Anzahl der Fragen" />
             <button type="button" 
                     class="number-plus" 
-                    @click="value++" 
-                    :disabled="value >= 10"
+                    @click="question_count++" 
+                    :disabled="question_count >= 10"
                     aria-label="Erhöhe die Anzahl der Fragen" />
           </div>
         </div>
@@ -60,7 +63,9 @@
 
     </form>
 
-      <button type="button" class="primary">
+      <button type="button"
+              class="primary"
+              @click="onSubmit">
         Test erstellen
       </button>
 
@@ -69,6 +74,8 @@
 
 <script>
     import FileUpload from '@/components/FileUpload.vue'
+    import { createSubjectTest } from "@/services/subjectTest.js"
+    import { getUserSubjects } from '../services/subject.js';
 
     export default {
         components: {
@@ -77,8 +84,42 @@
 
         data() {
             return {
-                value: 1
+                question_count: 1,
+                files: [],
+                testname: "",
+                subject: "",
+                question_typ: "",
+                error: "",
+                user_subjects: [],
             }
+        },
+
+        async created() {
+          try {
+            const user_id = 1;
+            const response = await getUserSubjects({user_id});
+            this.user_subjects = response.data;
+            console.log("Gespeichert ->", this.user_subjects);
+          } catch (e) {
+            this.error = e?.response?.data?.detail || "Konnte User-Subjects nicht laden.";
+          }
+        },
+
+        methods: {
+          async onSubmit() {
+            console.log("TESTDATEN", this.testname, this.subject, this.question_typ, this.question_count, this.files[0]);
+            this.error = "";
+
+            try{
+                await createSubjectTest(this.testname, this.subject, this.question_typ, this.question_count);
+                //this.$router.push("/")
+            } catch(err){
+                this.error =
+                    err?.response?.data?.detail ||
+                    err?.message ||
+                    "n8n konnte nicht beginnen";
+            }
+          }
         }
     }
 </script>
