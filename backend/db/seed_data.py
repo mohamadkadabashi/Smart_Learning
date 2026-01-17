@@ -9,6 +9,162 @@ from models.learning_session import LearningSession
 from config.auth import hash_password
 
 
+subject_test1= """
+<?xml version="1.0" encoding="UTF-8"?>
+    <qti-assessment-item 
+        xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 https://www.imsglobal.org/xsd/qti/qtiv3p0/imsqti_asiv3p0_v1p0.xsd" 
+        identifier="id_52b9f6f1-66bc-441c-b85a-e92923cff567" 
+        title="Amortisierte Analyse von Hashing" 
+        adaptive="false" 
+        time-dependent="false">
+
+        <qti-response-declaration identifier="RESPONSE_1" cardinality="single" base-type="identifier">
+            <qti-correct-response>
+                <qti-value>ID_1</qti-value>
+            </qti-correct-response>
+        </qti-response-declaration>
+
+        <qti-outcome-declaration identifier="SCORE" cardinality="single" base-type="float">
+            <qti-default-value>
+                <qti-value>0.0</qti-value>
+            </qti-default-value>
+        </qti-outcome-declaration>
+
+        <qti-outcome-declaration identifier="MAXSCORE" cardinality="single" base-type="float">
+            <qti-default-value>
+                <qti-value>1.0</qti-value>
+            </qti-default-value>
+        </qti-outcome-declaration>
+
+        <qti-outcome-declaration identifier="FEEDBACKBASIC" cardinality="single" base-type="identifier">
+            <qti-default-value>
+                <qti-value>empty</qti-value>
+            </qti-default-value>
+        </qti-outcome-declaration>
+    
+        <qti-item-body>
+            <p>Bei der dynamischen Größenänderung einer Hashtabelle wird der Belegungsfaktor β kontrolliert, um eine konstante mittlere Suchzeit zu gewährleisten. Dabei wird die Hashtabelle verdoppelt, sobald β &gt; 1 erreicht wird, und halbiert, wenn β &lt; 1/2. Welche der folgenden Aussagen beschreibt korrekt die Grundidee der amortisierten Analyse im Kontext der Löschoperationen in einer Hashtabelle, wenn der Schwellwert für die Verkleinerung β = 1/2 beträgt? (Quelle: Seite 7 / Kapitel 2.3)</p>
+            <qti-choice-interaction response-identifier="RESPONSE_1" shuffle="true" max-choices="1">
+                
+                    <qti-simple-choice identifier="ID_1">
+                        <p>Die Kosten für das Umspeichern der Elemente bei einer Tabellenverkleinerung werden auf die vorhergehenden Löschoperationen verteilt, sodass jede Löschoperation im Durchschnitt amortisiert in O(1) liegt.</p>
+                    </qti-simple-choice>
+                    <qti-simple-choice identifier="ID_2">
+                        <p>Da die Tabellenverkleinerung nur bei einer sehr geringen Anzahl von Elementen erfolgt, ist die Worst-Case-Laufzeit einer Löschoperation immer O(1).</p>
+                    </qti-simple-choice>
+                    <qti-simple-choice identifier="ID_3">
+                        <p>Die amortisierten Kosten einer Löschoperation sind nur dann O(1), wenn die Hashtabelle vorher durch eine Vergrößerung stabilisiert wurde.</p>
+                    </qti-simple-choice>
+                    <qti-simple-choice identifier="ID_4">
+                        <p>Die amortisierten Kosten einer Löschoperation sind O(log n), da die Verkleinerung der Tabelle rekursiv durchgeführt wird.</p>
+                    </qti-simple-choice>
+            </qti-choice-interaction>
+        </qti-item-body>
+
+        <qti-response-processing>
+            <qti-response-condition>
+                <qti-response-if>
+                    <qti-is-null>
+                        <qti-variable identifier="RESPONSE_1"/>
+                    </qti-is-null>
+                </qti-response-if>
+                <qti-response-else-if>
+                    <qti-match>
+                        <qti-variable identifier="RESPONSE_1"/>
+                        <qti-correct identifier="RESPONSE_1"/>
+                    </qti-match>
+                    <qti-set-outcome-value identifier="SCORE">
+                        <qti-sum>
+                            <qti-variable identifier="SCORE"/>
+                            <qti-variable identifier="MAXSCORE"/>
+                        </qti-sum>
+                    </qti-set-outcome-value>
+                </qti-response-else-if>
+            </qti-response-condition>
+        </qti-response-processing>
+    </qti-assessment-item>
+"""
+
+subject_test2="""
+<?xml version="1.0" encoding="UTF-8"?>
+    <qti-assessment-item 
+        xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 https://www.imsglobal.org/xsd/qti/qtiv3p0/imsqti_asiv3p0_v1p0.xsd" 
+        identifier="id_d7083f5e-1c2d-4081-9108-8f0129725ea2" 
+        title="Amortisierte Analyse" 
+        adaptive="false" 
+        time-dependent="false">
+
+        <qti-response-declaration identifier="RESPONSE_1" cardinality="single" base-type="identifier">
+            <qti-correct-response>
+                <qti-value>ID_1</qti-value>
+            </qti-correct-response>
+        </qti-response-declaration>
+
+        <qti-outcome-declaration identifier="SCORE" cardinality="single" base-type="float">
+            <qti-default-value>
+                <qti-value>0.0</qti-value>
+            </qti-default-value>
+        </qti-outcome-declaration>
+
+        <qti-outcome-declaration identifier="MAXSCORE" cardinality="single" base-type="float">
+            <qti-default-value>
+                <qti-value>1.0</qti-value>
+            </qti-default-value>
+        </qti-outcome-declaration>
+
+        <qti-outcome-declaration identifier="FEEDBACKBASIC" cardinality="single" base-type="identifier">
+            <qti-default-value>
+                <qti-value>empty</qti-value>
+            </qti-default-value>
+        </qti-outcome-declaration>
+    
+        <qti-item-body>
+            <p>Welche Aussage trifft auf die amortisierte Analyse von Hash-Tabellen mit dynamischer Größenänderung zu, insbesondere im Kontext der Einfügeoperationen, wenn der Belegungsfaktor β = 1 als Schwellwert für die Verdopplung der Tabellengröße verwendet wird? (Quelle: Seite 7 / Kapitel 2.3)</p>
+            <qti-choice-interaction response-identifier="RESPONSE_1" shuffle="true" max-choices="1">
+                
+                    <qti-simple-choice identifier="ID_1">
+                        <p>Die amortisierten Kosten jeder Einfügeoperation liegen in O(1), da der Aufwand für die Tabellengrößeänderung auf alle vorherigen Einfügeoperationen verteilt wird.</p>
+                    </qti-simple-choice>
+                    <qti-simple-choice identifier="ID_2">
+                        <p>Die amortisierten Kosten jeder Einfügeoperation liegen in O(n), da die Tabellengröße bei jedem Einfügen neu berechnet werden muss.</p>
+                    </qti-simple-choice>
+                    <qti-simple-choice identifier="ID_3">
+                        <p>Die amortisierten Kosten liegen in O(log n), da die Hashfunktion mit steigender Tabellengröße komplexer wird.</p>
+                    </qti-simple-choice>
+                    <qti-simple-choice identifier="ID_4">
+                        <p>Die amortisierten Kosten sind unabhängig von der Tabellengröße und betragen stets O(1), unabhängig von der Anzahl der Einfügeoperationen.</p>
+                    </qti-simple-choice>
+            </qti-choice-interaction>
+        </qti-item-body>
+
+        <qti-response-processing>
+            <qti-response-condition>
+                <qti-response-if>
+                    <qti-is-null>
+                        <qti-variable identifier="RESPONSE_1"/>
+                    </qti-is-null>
+                </qti-response-if>
+                <qti-response-else-if>
+                    <qti-match>
+                        <qti-variable identifier="RESPONSE_1"/>
+                        <qti-correct identifier="RESPONSE_1"/>
+                    </qti-match>
+                    <qti-set-outcome-value identifier="SCORE">
+                        <qti-sum>
+                            <qti-variable identifier="SCORE"/>
+                            <qti-variable identifier="MAXSCORE"/>
+                        </qti-sum>
+                    </qti-set-outcome-value>
+                </qti-response-else-if>
+            </qti-response-condition>
+        </qti-response-processing>
+    </qti-assessment-item>
+"""
+
 def seed_database(session: Session) -> None:
     """
     Seeds demo data once (idempotent-ish):
@@ -73,7 +229,7 @@ def seed_database(session: Session) -> None:
     st1 = SubjectTest(
         subject_id=subj_math.id,
         name = "Mathe Test 1",
-        test="<xml>Mathe Test 1</xml>",
+        test=subject_test2,
         question_type=SubjectTestQuestionType.MULTIPLE_CHOICE,
         question_count = 3,
         created_at=now,
@@ -82,7 +238,7 @@ def seed_database(session: Session) -> None:
     st2 = SubjectTest(
         subject_id=subj_math.id,
         name = "Mathe Test 2",
-        test="<xml>Mathe Test 2</xml>",
+        test=subject_test1,
         question_type=SubjectTestQuestionType.MULTIPLE_CHOICE,
         question_count = 2,
         created_at=now,
@@ -91,7 +247,7 @@ def seed_database(session: Session) -> None:
     st3 = SubjectTest(
         subject_id=subj_physics.id,
         name = "Physik Test 1",
-        test="<xml>Physik Test 1</xml>",
+        test=subject_test1,
         question_type=SubjectTestQuestionType.SINGLE_CHOICE,
         question_count = 1,
         created_at=now,
