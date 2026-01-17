@@ -35,7 +35,7 @@ import HomeIcon from '@/../public/assets/images/home.svg'
 import UserIcon from '@/../public/assets/images/person-sharp.svg'
 import LoginIcon from '@/../public/assets/images/log-in.svg'
 import UserDropdown from '@/components/UserDropdown.vue'
-import { isAuthenticated } from '@/services/user.js'
+import { authState } from '@/services/user.js'
 
 const ROUTE_DASHBOARD = 'Dashboard'
 const ROUTE_LOGIN = 'Login'
@@ -52,7 +52,7 @@ export default {
       return this.$route.meta.headerTitle || 'SmartLearning'
     },
     isAuthenticated() {
-      return isAuthenticated()
+      return authState.loggedIn;
     },
     isDashboard() {
       return this.$route.name === ROUTE_DASHBOARD
@@ -64,7 +64,7 @@ export default {
       return !this.isDashboard && this.isAuthenticated
     },
     showUserIcon() {
-      return this.isAuthenticated && !this.isGuestOnlyRoute
+      return this.isAuthenticated
     },
     showLoginIcon() {
       return !this.isAuthenticated && this.isGuestOnlyRoute

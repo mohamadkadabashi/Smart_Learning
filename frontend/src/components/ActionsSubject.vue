@@ -38,7 +38,7 @@ export default {
     CloseIcon
   },
   props: {
-    userId: {type: Number, required: true},
+    userId: {type: Number},
     heading: {type: String, default: "Neues Modul erstellen"},
     label: {type: String, default: "Name des Moduls"},
     loadingText: {type: String, default: "Laden"},

@@ -43,7 +43,7 @@
 
                 try{
                     await login(this.identifier, this.password);
-                    this.$router.push("/")
+                    this.$router.push("/dashboard")
                 } catch(err){
                     this.error =
                         err?.response?.data?.detail ||
