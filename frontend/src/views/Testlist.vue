@@ -1,28 +1,59 @@
 <template>
   <div class="page">
-
     <div class="module-header">
-      <h2 class="module-info">
-        {{ moduleName }}
-      </h2>
+      <h2 class="module-info">{{ moduleName }}</h2>
       <div class="module-actions">
         <EditIcon class="EditIcon" alt="Modul bearbeiten" @click="showCreateModule = true" />
-        <TrashIcon class="TrashIcon-black" alt="Modul löschen" @click="showDeletePopup = true" />
+        <TrashIcon class="TrashIcon-black" alt="Modul löschen" @click="showDeleteSubjectPopup = true" />
       </div>
-      <ActionsSubject v-if="showCreateModule" :userId="user_id" heading="Modulname bearbeiten" label="Neuer Modulname"
-        submit-text="Speichern" :error="error" :loading="loading" @submit="updateModuleName"
-        @close="showCreateModule = false" />
-      <DeletePopup v-if="showDeletePopup" heading="Modul wirklich löschen?" :error-msg="deleteError"
-        :loading="deleteLoading" @close="showDeletePopup = false" @confirm="onDeleteSubject" />
+      
+      <ActionsSubject
+        v-if="showCreateModule"
+        heading="Modulname bearbeiten"
+        label="Neuer Modulname"
+        submit-text="Speichern"
+        :error="error"
+        :loading="loading"
+        @submit="updateModuleName"
+        @close="showCreateModule = false"
+      />
+
+      <DeletePopup
+        v-if="showDeleteSubjectPopup"
+        heading="Modul wirklich löschen?"
+        :error-msg="deleteError"
+        :loading="deleteLoading"
+        @close="closeDeleteSubject"
+        @confirm="onDeleteSubject"
+      />
     </div>
+
     <section class="tests-container">
       <div class="tests-section">
+        <p v-if="testsError"> {{ testsError }} </p>
         <h3>Aktive Tests</h3>
         <div class="scroll-area">
-          <div class="list-row" v-for="(test) in activeTests" :key="'active-' + test.name">
-            <ListElem :name="test.name" :completed="test.completed" :total="test.total" :isSubject="test.isSubject"
-              :showButton="test.showButton" :showProgressText="test.showProgressText" buttonText="Starten" />
-            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)" />
+          <div class="list-row" v-for="test in activeTests" :key="'active-' + test.id">
+            <ListElem
+              :name="test.name"
+              :completed="test.completed"
+              :total="test.total"
+              :isSubject="false"
+              :showButton="true"
+              :showProgressText="true"
+              buttonText="Starten"
+            />
+
+            <EditIcon
+              class="EditIcon-orange"
+              alt="Testsname bearbeiten"
+              @click="openEditTest(test)"
+            />
+            <TrashIcon
+              class="TrashIcon"
+              alt="Test löschen"
+              @click="openDeleteTest(test)"
+            />
           </div>
         </div>
       </div>
@@ -30,90 +61,141 @@
       <div class="tests-section">
         <h3>Abgeschlossene Tests</h3>
         <div class="scroll-area">
-          <div class="list-row" v-for="(test) in completedTests" :key="'done-' + test.name">
-            <ListElem :name="test.name" :completed="test.completed" :total="test.total" :isSubject="test.isSubject"
-              :showButton="test.showButton" :showProgressText="test.showProgressText" buttonText="Wiederholen" />
-            <TrashIcon class="TrashIcon" alt="Test löschen" @click="removeTest(test.name)" />
+          <div class="list-row" v-for="test in completedTests" :key="'done-' + test.id">
+            <ListElem
+              :name="test.name"
+              :completed="test.completed"
+              :total="test.total"
+              :isSubject="false"
+              :showButton="true"
+              :showProgressText="true"
+              buttonText="Wiederholen"
+            />
+            <EditIcon
+              class="EditIcon-orange"
+              alt="Testsname bearbeiten"
+              @click="openEditTest(test)"
+            />
+            <TrashIcon
+              class="TrashIcon"
+              alt="Test löschen"
+              @click="openDeleteTest(test)"
+            />
           </div>
         </div>
       </div>
 
     </section>
+
+    <ActionsSubject
+      v-if="editTestName"
+      :test-id="selectedTest ? selectedTest.id : null"
+      :initial-name="selectedTest ? selectedTest.name : ''"
+      heading="Testname bearbeiten"
+      submit-text="Speichern"
+      @submit="updateTestName"
+      @close="closeEdit"
+    />
+
+    <DeletePopup
+      v-if="showDeleteTestPopup"
+      heading="Test wirklich löschen?"
+      :error-msg="deleteError"
+      :loading="deleteLoading"
+      @close="closeDeleteTest"
+      @confirm="onDeleteTest"
+    />
   </div>
 </template>
 
 <script>
-import ListElem from '@/components/ListElement';
+import ListElem from "@/components/ListElement";
 import TrashIcon from "../../public/assets/images/trash-icon.svg";
 import EditIcon from "../../public/assets/images/edit-icon.svg";
 import ActionsSubject from "@/components/ActionsSubject";
 import DeletePopup from "@/components/DeletePopup";
-import { getSubjectById, updateSubject, deleteSubject } from "@/services/subject";
 
+import { getSubjectById, updateSubject, deleteSubject } from "@/services/subject";
+import { greeting, updateTest, deleteTest } from "@/services/subject_tests";
 
 export default {
-  components: { ListElem, TrashIcon, EditIcon, ActionsSubject, DeletePopup },
-  props: {
-    subject_id: {
-      type: [Number, String],
-      required: true
-    }
+  name: "TestList",
+  components: {
+    ListElem,
+    TrashIcon,
+    EditIcon,
+    ActionsSubject,
+    DeletePopup,
   },
+
+  props: {
+    subject_id: { type: [Number, String], required: true },
+  },
+
   data() {
     return {
+      // subject
       moduleName: "",
       loading: false,
       error: "",
       success: "",
       showCreateModule: false,
-      showDeletePopup: false,
+
+      // delete popups
+      showDeleteSubjectPopup: false,
+      showDeleteTestPopup: false,
       deleteLoading: false,
       deleteError: "",
-      testdetails: [
-        { name: "Test1", completed: 2, total: 4, isSubject: false },
-        { name: "Test2", completed: 2, total: 4, isSubject: false },
-        { name: "Test3", completed: 2, total: 4, isSubject: false },
-        { name: "Test4", completed: 4, total: 4, isSubject: false },
-        { name: "Test5", completed: 4, total: 4, isSubject: false },
-        { name: "Test6", completed: 4, total: 4, isSubject: false },
-      ],
-    }
+
+
+      // tests
+      editTestName: false,
+      selectedTest: null,
+      testdetails: [],
+      testsLoading: false,
+      testsError: ""
+
+      // Demo Daten: wichtig -> id muss existieren!
+      // testdetails: [
+      //   { id: 1, name: "Test1", completed: 2, total: 4 },
+      //   { id: 2, name: "Test2", completed: 2, total: 4 },
+      //   { id: 3, name: "Test3", completed: 2, total: 4 },
+      //   { id: 4, name: "Test4", completed: 4, total: 4 },
+      //   { id: 5, name: "Test5", completed: 4, total: 4 },
+      //   { id: 6, name: "Test6", completed: 4, total: 4 },
+      // ],
+    };
   },
   async mounted() {
-    const subject = await getSubjectById(this.subject_id);
-    this.moduleName = subject.name;
+    try {
+      const subject = await getSubjectById(Number(this.subject_id));
+      this.moduleName = subject?.name || "";
+
+      await fetchTests();
+    
+    } catch (e) {
+      this.error = e?.response?.data?.detail || "Modul konnte nicht geladen werden.";
+    }
   },
-  methods: {
-    async onDeleteSubject() {
-      this.deleteError = "";
-      this.deleteLoading = true;
 
-      try {
-        await deleteSubject(Number(this.subject_id)); // subject_id aus props/route
-        this.showDeletePopup = false;
-
-        // redirect dashboard/home
-        this.$router.push({ name: "Dashboard" }); // <- Route name anpassen!
-      } catch (e) {
-        const status = e?.response?.status;
-        const detail = e?.response?.data?.detail;
-
-        if (status === 403) this.deleteError = detail || "Keine Berechtigung.";
-        else if (status === 404) this.deleteError = detail || "Modul nicht gefunden.";
-        else this.deleteError = detail || "Löschen fehlgeschlagen.";
-      } finally {
-        this.deleteLoading = false;
-      }
+  computed: {
+    activeTests() {
+      return this.testdetails.filter(t => t.status !== "passed");
     },
+    completedTests() {
+      return this.testdetails.filter(t => t.status === "passed");
+    }
+  },
+
+  methods: {
+    // ---------- SUBJECT ----------
     async updateModuleName(newName) {
       this.error = "";
       this.success = "";
       this.loading = true;
 
       try {
-        const updated = await updateSubject(this.subject_id, { name: newName });
-
-        // update UI immediately
+        const updated = await updateSubject(Number(this.subject_id), { name: newName });
         this.moduleName = updated.name;
         this.success = "Modulname wurde gespeichert.";
         this.showCreateModule = false;
@@ -128,21 +210,125 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    closeDeleteSubject() {
+      this.showDeleteSubjectPopup = false;
+      this.deleteError = "";
+    },
+
+    async onDeleteSubject() {
+      this.deleteError = "";
+      this.deleteLoading = true;
+
+      try {
+        await deleteSubject(Number(this.subject_id));
+        this.showDeleteSubjectPopup = false;
+
+        // redirect
+        this.$router.push({ name: "Dashboard" }).catch(() => {});
+      } catch (e) {
+        const status = e?.response?.status;
+        const detail = e?.response?.data?.detail;
+
+        if (status === 403) this.deleteError = detail || "Keine Berechtigung.";
+        else if (status === 404) this.deleteError = detail || "Modul nicht gefunden.";
+        else this.deleteError = detail || "Löschen fehlgeschlagen.";
+      } finally {
+        this.deleteLoading = false;
+      }
+    },
+
+    openEditTest(test) {
+      this.selectedTest = test;
+      this.editTestName = true;
+    },
+
+    closeEdit() {
+      this.editTestName = false;
+      this.selectedTest = null;
+    },
+
+    async updateTestName(newName) {
+      if (!this.selectedTest) return;
+
+      try {
+        const updated = await updateTest(this.selectedTest.id, { name: newName });
+
+        this.selectedTest.name = updated.name;
+
+        this.closeEdit();
+      } catch (e) {
+        console.error("Update test failed:", e);
+      }
+    },
+
+    openDeleteTest(test) {
+      this.selectedTest = test;
+      this.deleteError = "";
+      this.showDeleteTestPopup = true;
+    },
+
+    closeDeleteTest() {
+      this.showDeleteTestPopup = false;
+      this.selectedTest = null;
+      this.deleteError = "";
+    },
+
+    async onDeleteTest() {
+      if (!this.selectedTest) return;
+
+      this.deleteError = "";
+      this.deleteLoading = true;
+
+      try {
+        await deleteTest(this.selectedTest.id);
+
+        this.testdetails = this.testdetails.filter((t) => t.id !== this.selectedTest.id);
+
+        this.closeDeleteTest();
+      } catch (e) {
+        const detail = e?.response?.data?.detail;
+        this.deleteError = detail || "Test konnte nicht gelöscht werden.";
+      } finally {
+        this.deleteLoading = false;
+      }
+    },
+    async fetchTests() {
+      this.testsError = "";
+      this.testsLoading = true;
+      await greeting(Number(this.subject_id));
+
+      try {
+
+        const rows = await greeting(Number(this.subject_id));
+
+        console.log(rows);
+
+        this.testdetails = rows.map(t => ({
+          id: t.id,
+          name: t.name ?? `Test ${t.id}`,
+          completed: t.correct_answered ?? 0,
+          total: t.total_questions ?? 0,
+          status: t.status ?? "in_progress",
+          isSubject: false,
+          showButton: true,
+          showProgressText: true,
+        }));
+
+        if (this.testdetails.length === 0) {
+          this.testsError = "Keine Tests vorhanden.";
+        }
+      } catch (e) {
+        this.testsError =
+          e?.response?.data?.detail ||
+          "Tests konnten nicht geladen werden.";
+      } finally {
+        this.testsLoading = false;
+      }
     }
   },
-  computed: {
-    activeTests() {
-      return this.testdetails.filter(
-        test => test.completed < test.total
-      )
-    },
-    completedTests() {
-      return this.testdetails.filter(
-        test => test.completed === test.total
-      )
-    }
-  }
-}
+};
 </script>
 
 <style scoped>
@@ -198,6 +384,23 @@ export default {
 
 .TrashIcon:hover {
   opacity: 0.7;
+}
+
+.EditIcon-orange path {
+  fill: var(--primary-color);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.EditIcon-orange:hover {
+  opacity: 0.7;
+  ;
+}
+
+
+.EditIconpath {
+  fill: black;
+  cursor: pointer;
 }
 
 .TrashIcon-black path {
