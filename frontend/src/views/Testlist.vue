@@ -28,9 +28,10 @@
       />
     </div>
 
-    <section class="tests-container">
+    <p v-if="testsError" class="text-danger"> {{ testsError }} </p>
+
+    <section v-else class="tests-container">
       <div class="tests-section">
-        <p v-if="testsError"> {{ testsError }} </p>
         <h3>Aktive Tests</h3>
         <div class="scroll-area">
           <div class="list-row" v-for="test in activeTests" :key="'active-' + test.id">
@@ -39,10 +40,12 @@
               :completed="test.completed"
               :total="test.total"
               :isSubject="false"
-              :showButton="true"
+              :showButton="test.test_status === 'DONE'"
               :showProgressText="true"
-              buttonText="Starten"
-            />
+              :buttonText="test.attempt_status === 'in_progress' ? 'Fortsetzen' : 'Starten'"
+              :payload="{ id: test.id }"
+              @open="openTest"
+              />
 
             <EditIcon
               class="EditIcon-orange"
@@ -67,9 +70,11 @@
               :completed="test.completed"
               :total="test.total"
               :isSubject="false"
-              :showButton="true"
+              :showButton="test.test_status === 'DONE'"
               :showProgressText="true"
               buttonText="Wiederholen"
+              :payload="{ id: test.id }"
+              @open="openTest"
             />
             <EditIcon
               class="EditIcon-orange"
@@ -91,7 +96,8 @@
       v-if="editTestName"
       :test-id="selectedTest ? selectedTest.id : null"
       :initial-name="selectedTest ? selectedTest.name : ''"
-      heading="Testname bearbeiten"
+      heading="Testsname bearbeiten"
+      label="Neuer Testsname"
       submit-text="Speichern"
       @submit="updateTestName"
       @close="closeEdit"
@@ -116,7 +122,7 @@ import ActionsSubject from "@/components/ActionsSubject";
 import DeletePopup from "@/components/DeletePopup";
 
 import { getSubjectById, updateSubject, deleteSubject } from "@/services/subject";
-import { greeting, updateTest, deleteTest } from "@/services/subjectTest";
+import { getTestsBySubject, updateTest, deleteTest } from "@/services/subjectTest";
 
 export default {
   name: "TestList",
@@ -153,17 +159,8 @@ export default {
       selectedTest: null,
       testdetails: [],
       testsLoading: false,
-      testsError: ""
-
-      // Demo Daten: wichtig -> id muss existieren!
-      // testdetails: [
-      //   { id: 1, name: "Test1", completed: 2, total: 4 },
-      //   { id: 2, name: "Test2", completed: 2, total: 4 },
-      //   { id: 3, name: "Test3", completed: 2, total: 4 },
-      //   { id: 4, name: "Test4", completed: 4, total: 4 },
-      //   { id: 5, name: "Test5", completed: 4, total: 4 },
-      //   { id: 6, name: "Test6", completed: 4, total: 4 },
-      // ],
+      testsError: "",
+      
     };
   },
   async mounted() {
@@ -171,7 +168,7 @@ export default {
       const subject = await getSubjectById(Number(this.subject_id));
       this.moduleName = subject?.name || "";
 
-      await fetchTests();
+      await this.fetchTests();
     
     } catch (e) {
       this.error = e?.response?.data?.detail || "Modul konnte nicht geladen werden.";
@@ -180,11 +177,15 @@ export default {
 
   computed: {
     activeTests() {
-      return this.testdetails.filter(t => t.status !== "passed");
+      return this.testdetails.filter(t =>
+        !["passed", "failed"].includes(t.attempt_status)  // null oder in_progress
+      );
     },
     completedTests() {
-      return this.testdetails.filter(t => t.status === "passed");
-    }
+      return this.testdetails.filter(t =>
+        ["passed", "failed"].includes(t.attempt_status)
+      );
+    },
   },
 
   methods: {
@@ -238,6 +239,9 @@ export default {
         this.deleteLoading = false;
       }
     },
+    openTest(payload) {
+      this.$router.push({ name: "Test", params: { id: payload.id }});
+    },
 
     openEditTest(test) {
       this.selectedTest = test;
@@ -249,19 +253,37 @@ export default {
       this.selectedTest = null;
     },
 
-    async updateTestName(newName) {
-      if (!this.selectedTest) return;
+   async updateTestName(newName) {
+      // sofort sichern (bevor irgendwas selectedTest verändern kann)
+      const selected = this.selectedTest;
+      if (!selected) return;
+
+      const id = selected.id;
 
       try {
-        const updated = await updateTest(this.selectedTest.id, { name: newName });
+        const updated = await updateTest(id, { name: newName });
 
-        this.selectedTest.name = updated.name;
+        // 1) Liste aktualisieren (entscheidend für sofortiges UI-Update)
+        const idx = this.testdetails.findIndex(t => t.id === id);
+        if (idx !== -1) {
+          // Vue 2:
+          this.$set(this.testdetails, idx, { ...this.testdetails[idx], name: updated.name });
 
+        }
+
+        // 2) selectedTest nur updaten, wenn es noch existiert
+        if (this.selectedTest && this.selectedTest.id === id) {
+          this.selectedTest.name = updated.name;
+        }
+
+        // 3) erst ganz am Ende schließen (setzt selectedTest evtl. auf null)
         this.closeEdit();
       } catch (e) {
         console.error("Update test failed:", e);
       }
     },
+
+
 
     openDeleteTest(test) {
       this.selectedTest = test;
@@ -294,22 +316,27 @@ export default {
         this.deleteLoading = false;
       }
     },
+    resultLabel(test) {
+      if (test.attempt_status === "passed") return "passed";
+      if (test.attempt_status === "failed") return "failed";
+      return "";
+    },
     async fetchTests() {
       this.testsError = "";
       this.testsLoading = true;
 
       try {
-        const rows = await greeting(Number(this.subject_id));
+        const rows = await getTestsBySubject(Number(this.subject_id));
 
         this.testdetails = rows.map(t => ({
           id: t.id,
           name: t.name ?? `Test ${t.id}`,
           completed: t.correct_answered ?? 0,
           total: t.total_questions ?? 0,
-          status: t.status ?? "PENDING",
-          isSubject: false,
-          showButton: true,
-          showProgressText: true,
+
+          test_status: t.test_status,          // PENDING/RUNNING/DONE/FAILED
+          attempt_status: t.attempt_status,    // in_progress/passed/failed/null
+          score_ratio: t.score_ratio ?? null,
         }));
 
         if (this.testdetails.length === 0) {

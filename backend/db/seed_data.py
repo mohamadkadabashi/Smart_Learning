@@ -165,28 +165,31 @@ subject_test2="""
     </qti-assessment-item>
 """
 
-def seed_database(session: Session) -> None:
-    """
-    Seeds demo data once (idempotent-ish):
-    - creates demo user if not exists
-    - creates subjects/tests/attempts/sessions if user has no subjects yet
-    """
+from datetime import datetime, timezone, timedelta
+from sqlmodel import Session, select
 
+from models.user import User
+from models.subject import Subject
+from models.subject_tests import SubjectTest, SubjectTestQuestionType, SubjectTestStatus
+from models.attempt_tests import TestAttempt, AttemptStatus
+from models.learning_session import LearningSession
+from config.auth import hash_password
+
+
+PASS_THRESHOLD = 0.6
+
+
+def seed_database(session: Session) -> None:
     now = datetime.now(timezone.utc)
 
-   # Seed when user.id = 1 doesn't exist
+    # Seed when user.id = 1 doesn't exist
     if session.get(User, 1) is not None:
         return
 
-    # --------------------
-    # 1) USER (id = 1)
-    # --------------------
     demo_username = "demo_user"
     demo_email = "demo@example.com"
     demo_password_plain = "demo12345"
 
-    # if user with username/email exists but not with id = 1 
-    # then don't seed
     existing_by_name = session.exec(select(User).where(User.username == demo_username)).first()
     if existing_by_name is not None:
         return
@@ -206,7 +209,7 @@ def seed_database(session: Session) -> None:
     session.refresh(user)
 
     # --------------------
-    # 3) SUBJECTS
+    # SUBJECTS
     # --------------------
     subj_math = Subject(
         name="Mathematik",
@@ -220,54 +223,73 @@ def seed_database(session: Session) -> None:
         created_at=now,
         updated_at=now,
     )
-
     session.add_all([subj_math, subj_physics])
     session.commit()
     session.refresh(subj_math)
     session.refresh(subj_physics)
 
+    # --------------------
+    # SUBJECT TESTS
+    # - DONE: generiert, startbar
+    # - PENDING/RUNNING: noch in Generierung (kein Starten)
+    # --------------------
     st1 = SubjectTest(
         subject_id=subj_math.id,
-        name = "Mathe Test 1",
+        name="Mathe Test 1",
         test=subject_test2,
         question_type=SubjectTestQuestionType.MULTIPLE_CHOICE,
-        question_count = 3,
+        question_count=3,
+        status=SubjectTestStatus.DONE,
         created_at=now,
         updated_at=now,
     )
     st2 = SubjectTest(
         subject_id=subj_math.id,
-        name = "Mathe Test 2",
+        name="Mathe Test 2",
         test=subject_test1,
         question_type=SubjectTestQuestionType.MULTIPLE_CHOICE,
-        question_count = 2,
+        question_count=2,
+        status=SubjectTestStatus.DONE,
         created_at=now,
         updated_at=now,
     )
     st3 = SubjectTest(
         subject_id=subj_physics.id,
-        name = "Physik Test 1",
+        name="Physik Test 1",
         test=subject_test1,
         question_type=SubjectTestQuestionType.SINGLE_CHOICE,
-        question_count = 1,
+        question_count=1,
+        status=SubjectTestStatus.DONE,
         created_at=now,
         updated_at=now,
     )
 
-    session.add_all([st1, st2, st3])
+    # Optional: ein Test, der noch generiert wird (für UI)
+    st4_pending = SubjectTest(
+        subject_id=subj_physics.id,
+        name="Physik Test 2 (wird generiert)",
+        test=None,  # noch kein XML
+        question_type=SubjectTestQuestionType.SINGLE_CHOICE,
+        question_count=3,
+        status=SubjectTestStatus.PENDING,
+        created_at=now,
+        updated_at=now,
+    )
+
+    session.add_all([st1, st2, st3, st4_pending])
     session.commit()
     session.refresh(st1)
     session.refresh(st2)
     session.refresh(st3)
+    session.refresh(st4_pending)
 
     # --------------------
-    # 5) TEST ATTEMPTS
-    # today: 2 passed, 1 failed
-    # this week: +2
-    # last week: +1
-    # plus: one in_progress with progress_json
+    # TEST ATTEMPTS
+    # - total_questions passend zu question_count
+    # - status konsistent zu score_ratio (>= 0.6 => passed)
     # --------------------
     attempts = [
+        # st1: 2/3 = 0.666 => passed
         TestAttempt(
             user_id=user.id,
             subject_test_id=st1.id,
@@ -275,80 +297,89 @@ def seed_database(session: Session) -> None:
             started_at=now - timedelta(minutes=40),
             finished_at=now - timedelta(minutes=35),
             updated_at=now - timedelta(minutes=35),
-            correct_answered=8,
-            total_questions=10,
-            score_ratio=0.8,
+            correct_answered=2,
+            total_questions=3,
+            score_ratio=2/3,
             resumed_from_attempt_id=None,
             progress_json=None,
         ),
+
+        # st2: 1/2 = 0.5 => failed
         TestAttempt(
             user_id=user.id,
             subject_test_id=st2.id,
-            status=AttemptStatus.passed,
+            status=AttemptStatus.failed,
             started_at=now - timedelta(minutes=30),
             finished_at=now - timedelta(minutes=25),
             updated_at=now - timedelta(minutes=25),
-            correct_answered=9,
-            total_questions=10,
-            score_ratio=0.9,
+            correct_answered=1,
+            total_questions=2,
+            score_ratio=0.5,
             resumed_from_attempt_id=None,
             progress_json=None,
         ),
+
+        # st3: 1/1 = 1.0 => passed
         TestAttempt(
             user_id=user.id,
             subject_test_id=st3.id,
-            status=AttemptStatus.failed,
+            status=AttemptStatus.passed,
             started_at=now - timedelta(minutes=20),
             finished_at=now - timedelta(minutes=15),
             updated_at=now - timedelta(minutes=15),
-            correct_answered=4,
-            total_questions=10,
-            score_ratio=0.4,
+            correct_answered=1,
+            total_questions=1,
+            score_ratio=1.0,
             resumed_from_attempt_id=None,
             progress_json=None,
         ),
-        # earlier this week
+
+        # earlier this week: st1 2/3 => passed
         TestAttempt(
             user_id=user.id,
             subject_test_id=st1.id,
             status=AttemptStatus.passed,
             started_at=now - timedelta(days=2, minutes=30),
-            finished_at=now - timedelta(days=2),
-            updated_at=now - timedelta(days=2),
-            correct_answered=7,
-            total_questions=10,
-            score_ratio=0.7,
+            finished_at=now - timedelta(days=2, minutes=20),
+            updated_at=now - timedelta(days=2, minutes=20),
+            correct_answered=2,
+            total_questions=3,
+            score_ratio=2/3,
             resumed_from_attempt_id=None,
             progress_json=None,
         ),
+
+        # earlier this week: st2 2/2 => passed
         TestAttempt(
             user_id=user.id,
             subject_test_id=st2.id,
-            status=AttemptStatus.failed,
+            status=AttemptStatus.passed,
             started_at=now - timedelta(days=3, minutes=20),
-            finished_at=now - timedelta(days=3),
-            updated_at=now - timedelta(days=3),
-            correct_answered=5,
-            total_questions=10,
-            score_ratio=0.5,
+            finished_at=now - timedelta(days=3, minutes=10),
+            updated_at=now - timedelta(days=3, minutes=10),
+            correct_answered=2,
+            total_questions=2,
+            score_ratio=1.0,
             resumed_from_attempt_id=None,
             progress_json=None,
         ),
-        # last week
+
+        # last week: st1 1/3 => failed
         TestAttempt(
             user_id=user.id,
             subject_test_id=st1.id,
-            status=AttemptStatus.passed,
+            status=AttemptStatus.failed,
             started_at=now - timedelta(days=8, minutes=25),
-            finished_at=now - timedelta(days=8),
-            updated_at=now - timedelta(days=8),
-            correct_answered=6,
-            total_questions=10,
-            score_ratio=0.6,
+            finished_at=now - timedelta(days=8, minutes=15),
+            updated_at=now - timedelta(days=8, minutes=15),
+            correct_answered=1,
+            total_questions=3,
+            score_ratio=1/3,
             resumed_from_attempt_id=None,
             progress_json=None,
         ),
-        # in_progress to test resume
+
+        # in_progress zum Resume testen (st3)
         TestAttempt(
             user_id=user.id,
             subject_test_id=st3.id,
@@ -360,19 +391,17 @@ def seed_database(session: Session) -> None:
             total_questions=None,
             score_ratio=None,
             resumed_from_attempt_id=None,
-            progress_json='{"currentIndex": 5, "answers": {"1":"A","2":"C"}}',
+            progress_json='{"currentIndex": 0, "answers": {"0":"ID_1"}}',
         ),
     ]
+
     session.add_all(attempts)
     session.commit()
 
     # --------------------
-    # 6) LEARNING SESSIONS
-    # this week: ~1h + 30min
-    # last week: ~2h + 2h
+    # LEARNING SESSIONS (wie gehabt)
     # --------------------
     learning_sessions = [
-        # this week
         LearningSession(
             user_id=user.id,
             subject_id=subj_math.id,
@@ -385,7 +414,6 @@ def seed_database(session: Session) -> None:
             started_at=now - timedelta(hours=2),
             ended_at=now - timedelta(hours=1, minutes=30),
         ),
-        # last week
         LearningSession(
             user_id=user.id,
             subject_id=subj_math.id,
