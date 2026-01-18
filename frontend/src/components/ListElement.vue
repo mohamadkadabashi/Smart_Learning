@@ -4,25 +4,19 @@
       <button
         v-if="isSubject"
         class="module-name"
-        @click="$emit('open', name)"
+        @click="emitOpen"
       >
         {{ name }}
       </button>
 
-      <label
-        v-else
-        class="module-name module-name--static"
-      >
+      <label v-else class="module-name module-name--static">
         {{ name }}
-    </label>
+      </label>
     </div>
 
     <div class="progress-wrapper">
       <div class="progress-bar">
-        <div
-          class="progress-fill"
-          :style="{ width: progressPercent + '%' }"
-        ></div>
+        <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
       </div>
 
       <span class="progress-text">
@@ -31,41 +25,30 @@
     </div>
 
     <button
+      v-if="showButton"
       class="primary"
-      @click="$emit('open', name)"
+      @click="emitOpen"
     >
       {{ buttonText }}
     </button>
   </div>
 </template>
 
-
-
 <script>
 export default {
   name: "ListElement",
-
   props: {
-    name: {
-      type: String,
-      required: true
-    },
-    buttonText: {
-      type: String,
-      default: "Starten"
-    },
-    completed: {
-      type: Number,
-      default: 0
-    },
-    total: {
-      type: Number,
-      default: 1
-    },
-    isSubject: {
-      type: Boolean,
-      default: false
-    }
+    name: { type: String, required: true },
+    buttonText: { type: String, default: "Starten" },
+    completed: { type: Number, default: 0 },
+    total: { type: Number, default: 1 },
+    isSubject: { type: Boolean, default: false },
+
+    // ✅ neu: optional payload (z.B. { id: test.id })
+    payload: { type: [Object, String, Number], default: null },
+
+    // ✅ neu: Button optional (du verwendest das ja schon im Parent)
+    showButton: { type: Boolean, default: true },
   },
 
   computed: {
@@ -74,17 +57,19 @@ export default {
       return Math.min(100, Math.round((this.completed / this.total) * 100));
     },
     progressLabel() {
-      if (this.isSubject) {
-        return "Tests"
-      }
-      if (!this.isSubject) {
-        return "Fragen"
-      }
-      return ""
+      return this.isSubject ? "Tests" : "Fragen";
+    }
+  },
+
+  methods: {
+    emitOpen() {
+      // ✅ abwärtskompatibel: wenn payload nicht gesetzt ist -> name wie bisher
+      this.$emit("open", this.payload ?? this.name);
     }
   }
-}
+};
 </script>
+
 
 <style scoped>
 .text-block {

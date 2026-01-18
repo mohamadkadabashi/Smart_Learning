@@ -34,7 +34,6 @@ class SubjectTest(SubjectTestBase, table=True):
     # Request-metadata
     question_type: SubjectTestQuestionType = Field(default=SubjectTestQuestionType.SINGLE_CHOICE, nullable=False)
     question_count: int = Field(nullable=False)
-    test_name: str = Field(index=True, nullable=False)
 
     subject_id: int = Field(foreign_key="subject.id", nullable=False)
 
@@ -100,11 +99,13 @@ class N8NCallbackPayload(SQLModel):
 class SubjectTestProgressRead(SQLModel):
     id: int
     subject_id: int
-    test_name: str 
+    name: str
 
-    # Attempt-Infos (können None sein, wenn noch nie versucht)
-    status: Optional[AttemptStatus] = None
+    test_status: SubjectTestStatus  # PENDING/RUNNING/DONE/FAILED (n8n)
+
+    attempt_status: Optional[AttemptStatus] = None  # in_progress/passed/failed/...
     correct_answered: Optional[int] = None
     total_questions: Optional[int] = None
     score_ratio: Optional[float] = None
     finished_at: Optional[datetime] = None
+

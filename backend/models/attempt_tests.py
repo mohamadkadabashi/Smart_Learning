@@ -52,9 +52,8 @@ class AttemptProgressUpdate(SQLModel):
     progress_json: str
 
 class AttemptFinish(SQLModel):
-    status: Literal["passed", "failed", "abandoned"]
-    correct_answered: Optional[int] = None
-    total_questions: Optional[int] = None
+    correct_answered: int
+    total_questions: int
     finished_at: Optional[datetime] = None
 
 class AttemptRead(SQLModel):

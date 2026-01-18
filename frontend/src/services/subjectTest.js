@@ -36,10 +36,15 @@ export async function getTestsBySubject(subjectId) {
 }
 
 export async function updateTest(testId, payload) {
-  const { data } = await api.patch(`/tests/${testId}`, payload);
+  const { data } = await api.patch(`/subjecttests/${testId}`, payload);
   return data;
 }
 
 export async function deleteTest(testId) {
-  await api.delete(`/tests/${testId}`);
+  await api.delete(`/subjecttests/${testId}`);
+}
+
+export async function getTestById(testId) {
+  const { data } = await api.get(`/subjecttests/${testId}`);
+  return data;
 }

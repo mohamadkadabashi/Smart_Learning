@@ -132,7 +132,6 @@ export default {
     async loadStats() {
       try {
 
-
         const ov = await getStatsOverview();
         console.log("OVERVIEW", ov);
 
@@ -179,7 +178,7 @@ export default {
         console.error("getStatsOverview failed:", e);
         console.error("status:", e?.response?.status);
         console.error("data:", e?.response?.data);
-        throw e; // wichtig, damit mounted catch es auch sieht
+        throw e;
       }
     },
     async fetchSubjects() {

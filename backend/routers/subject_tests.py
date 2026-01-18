@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
-from backend.models.attempt_tests import TestAttempt
+from models.attempt_tests import AttemptStatus, TestAttempt
 from models.subject_tests import N8NCallbackPayload, SubjectTest, SubjectTestCreate, SubjectTestProgressRead, SubjectTestRead, SubjectTestUpdate, SubjectTestStatus, SubjectTestQuestionType
 from models.subject import Subject
 from db.database import SessionDep
 from typing import List, Annotated
-from sqlmodel import func, select
+from sqlmodel import case, func, select
 from config.logger_config import logger
 from datetime import datetime, timezone
 from dependencies.dependency import CurrentUser
@@ -225,12 +225,11 @@ def read_subjectTests_of_subject(
     subjectTests = session.exec(select(SubjectTest).where(SubjectTest.subject_id == subject_id)).all()
     return subjectTests
 
+PASS_THRESHOLD = 0.6
+
 @router.get("/bySubject/{subject_id}", response_model=list[SubjectTestProgressRead])
-def read_tests_by_subject_with_progress(
-    subject_id: int,
-    session: SessionDep,
-    current_user: CurrentUser
-):
+def read_tests_by_subject_with_progress(subject_id: int, session: SessionDep, current_user: CurrentUser):
+
     latest_attempt_subq = (
         select(
             TestAttempt.subject_test_id.label("st_id"),
@@ -241,13 +240,26 @@ def read_tests_by_subject_with_progress(
         .subquery()
     )
 
+    # computed attempt status:
+    # - wenn kein Attempt: NULL
+    # - wenn Attempt noch nicht finished: in_progress
+    # - wenn finished: passed/failed anhand score_ratio (>=0.6)
+    computed_attempt_status = case(
+        (TestAttempt.id.is_(None), None),
+        (TestAttempt.finished_at.is_(None), AttemptStatus.in_progress),
+        (TestAttempt.score_ratio >= PASS_THRESHOLD, AttemptStatus.passed),
+        else_=AttemptStatus.failed,
+    )
+
     stmt = (
         select(
             SubjectTest.id.label("id"),
             SubjectTest.subject_id.label("subject_id"),
-            SubjectTest.test_name.label("name"),  # <-- neu (oder SubjectTest.name)
-            TestAttempt.status.label("status"),
-            TestAttempt.correct_answered.label("correct_answered"),
+            SubjectTest.name.label("name"),
+            SubjectTest.status.label("test_status"),
+
+            computed_attempt_status.label("attempt_status"),
+            func.coalesce(TestAttempt.correct_answered, 0).label("correct_answered"),
             func.coalesce(TestAttempt.total_questions, SubjectTest.question_count).label("total_questions"),
             TestAttempt.score_ratio.label("score_ratio"),
             TestAttempt.finished_at.label("finished_at"),
@@ -269,7 +281,8 @@ def read_tests_by_subject_with_progress(
             id=r.id,
             subject_id=r.subject_id,
             name=r.name,
-            status=r.status,
+            test_status=r.test_status,
+            attempt_status=r.attempt_status,
             correct_answered=r.correct_answered,
             total_questions=r.total_questions,
             score_ratio=r.score_ratio,
