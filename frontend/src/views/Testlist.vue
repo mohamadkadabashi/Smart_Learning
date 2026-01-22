@@ -30,7 +30,7 @@
 
     <section v-else class="tests-container">
       <div class="tests-section">
-        <h3 class="go-to-form" @click="goToForm()">Willst du einen Test erstellen?</h3>
+        <h3 class="go-to-form" @click="goToForm()">Willst du einen Test erstellen? Klicke hier!</h3>
         <h3>Aktive Tests</h3>
         <div class="scroll-area">
           <div class="list-row" v-for="test in activeTests" :key="'active-' + test.id">
