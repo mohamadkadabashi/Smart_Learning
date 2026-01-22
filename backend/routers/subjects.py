@@ -50,30 +50,38 @@ def read_subjects(
     return subjects
 
 @router.get("/mySubjects", response_model=list[SubjectProgressRead])
-def read_my_subject(
-    session: SessionDep,
-    current_user: CurrentUser
-):
-    stmt = (
+def read_my_subject(session: SessionDep, current_user: CurrentUser):
+
+    passed_per_subject_test = (
         select(
-            Subject.id,
-            Subject.name,
-            func.count(func.distinct(SubjectTest.id)).label("total_tests"),
-            func.sum(
+            SubjectTest.id.label("st_id"),
+            SubjectTest.subject_id.label("subject_id"),
+            func.max(
                 case(
-                    (AttemptStatus.passed == True, 1),
+                    (TestAttempt.status == AttemptStatus.passed, 1),
                     else_=0
                 )
-            ).label("passed_tests")
+            ).label("passed_flag"),
         )
-        .join(SubjectTest, SubjectTest.subject_id == Subject.id)
         .outerjoin(
             TestAttempt,
             (TestAttempt.subject_test_id == SubjectTest.id)
             & (TestAttempt.user_id == current_user.id)
         )
+        .group_by(SubjectTest.id, SubjectTest.subject_id)
+    ).subquery()
+
+    stmt = (
+        select(
+            Subject.id,
+            Subject.name,
+            func.coalesce(func.count(func.distinct(passed_per_subject_test.c.st_id)), 0).label("total_tests"),
+            func.coalesce(func.sum(passed_per_subject_test.c.passed_flag), 0).label("passed_tests"),
+        )
+        .outerjoin(passed_per_subject_test, passed_per_subject_test.c.subject_id == Subject.id)
         .where(Subject.user_id == current_user.id)
-        .group_by(Subject.id)
+        .group_by(Subject.id, Subject.name)
+        .order_by(Subject.id)
     )
 
     rows = session.exec(stmt).all()
@@ -82,8 +90,8 @@ def read_my_subject(
         SubjectProgressRead(
             id=row.id,
             name=row.name,
-            total_tests=row.total_tests,
-            passed_tests=row.passed_tests,
+            total_tests=int(row.total_tests or 0),
+            passed_tests=int(row.passed_tests or 0),
         )
         for row in rows
     ]
