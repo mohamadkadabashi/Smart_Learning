@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid py-4 px-4">
 
-    <createModule v-if="showCreateModule" @close="showCreateModule = false" />
+    <ActionsSubject v-if="showActionsSubject" @close="showActionsSubject = false" />
 
     <div class="row align-items-center mb-5">
       <div class="col-md-9">
@@ -36,7 +36,7 @@
           <h2 class="fst-italic mb-0">Deine Module</h2>
           <button class="primary d-flex align-items-center justify-content-center"
             style="width: 30px; height: 30px; padding: 0; min-width: auto; min-height: auto;"
-            @click="showCreateModule = true">
+            @click="showActionsSubject = true">
             <img src="/assets/images/plus-icon.svg" alt="+" style="width: 15px; filter: brightness(0);" />
           </button>
         </div>
@@ -83,8 +83,8 @@
         </table>
       </div>
     </div>
-    <!-- Tests Table -->
-  </div>
+    </div>
+    </div>
 </template>
 
 <script>
@@ -245,6 +245,15 @@ export default {
 .module-scroll-container {
   max-height: 130px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 10px;
+}
+:deep(.list-item) {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  margin-top: 5px !important;
+  margin-bottom: 15px !important;
+  box-sizing: border-box; 
 }
 </style>
