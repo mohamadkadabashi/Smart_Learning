@@ -4,7 +4,12 @@
     <button class="primary create-btn" @click="showCreateModule = true">
       <PlusIcon class="plus-icon" alt="Modul erstellen" />
     </button>
-    <ActionsSubject v-if="showCreateModule" :userId="user_id" @close="showCreateModule = false" />
+    <ActionsSubject
+      v-if="showCreateModule"
+      :userId="user_id"
+      @close="showCreateModule = false"
+      @created="handleModuleCreated"
+    />
 
     <div class="main-content container-fluid py-5 d-flex flex-column align-items-center gap-4">
       <div class="d-flex gap-3">
@@ -74,7 +79,7 @@ import ListElem from '@/components/ListElement.vue'
 
 import { getMe } from "/src/services/user";
 import { getStatsOverview } from "/src/services/stats";
-import { getSubjects } from "@/services/subject";
+import { getSubjects, getUserSubjects } from "@/services/subject";
 
 import {
   formatSecondsToHM,
@@ -129,6 +134,11 @@ export default {
     }
   },
   methods: {
+    async handleModuleCreated() {
+      this.showCreateModule = false;
+      await this.fetchSubjects();
+      await this.loadStats(); // optional
+    },
     async loadStats() {
       try {
 
