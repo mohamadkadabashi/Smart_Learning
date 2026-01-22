@@ -407,3 +407,8 @@ p > .qti-text-entry-interaction input,
 .qti-hidden {
   display: none !important
 }
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

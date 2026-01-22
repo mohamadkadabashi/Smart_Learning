@@ -71,7 +71,7 @@ import ListElem from '@/components/ListElement';
 import TrashIcon from "../../public/assets/images/trash-icon.svg";
 import EditIcon from "../../public/assets/images/edit-icon.svg";
 import ActionsSubject from "@/components/ActionsSubject";
-import DeletePopup from "@/components/deletePopup";
+import DeletePopup from "@/components/DeletePopup";
 
 export default {
   components: { ListElem, TrashIcon, EditIcon, ActionsSubject, DeletePopup },

@@ -3,12 +3,15 @@
         <label :for="inputId" class="password-label">{{ label }}</label>
 
         <div class="input-wrapper">
-            <input 
+            <input
                 :id="inputId"
                 :type="inputType"
                 :value="value"
                 @input="$emit('input', $event.target.value)"
-                class="w-100" />
+                class="w-100"
+                autocomplete="current-password"
+                />
+
 
             <button type="button"
                     class="toggle-button"

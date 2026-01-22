@@ -27,7 +27,7 @@
 import CloseIcon from "../../public/assets/images/close-icon.svg";
 
 export default {
-  name: "deletePopup",
+  name: "DeletePopup",
   components: {
     CloseIcon
   },
