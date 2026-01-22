@@ -79,7 +79,7 @@ import ListElem from '@/components/ListElement.vue'
 
 import { getMe } from "/src/services/user";
 import { getStatsOverview } from "/src/services/stats";
-import { getSubjects, getUserSubjects } from "@/services/subject";
+import { getSubjects } from "@/services/subject";
 
 import {
   formatSecondsToHM,

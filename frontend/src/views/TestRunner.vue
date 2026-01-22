@@ -28,7 +28,7 @@
         </div>
 
         <!-- correct answer -->
-        <div v-if="isReviewMode && !isCorrect(currentIndex)" class="my-4">
+        <div v-if="isReviewMode && isTextEntry && !isCorrect(currentIndex)" class="my-4">
           <label class="primary-text">
             <span class="fw-normal">Richtige Antwort:</span>
             <span class="text-danger">
@@ -36,7 +36,6 @@
             </span>
           </label>
         </div>
-
       </div>
       <!-- navigation -->
       <div class="nav-btn-container w-100">
@@ -73,14 +72,10 @@
 import Qti3Player from 'qti3-item-player'
 import 'qti3-item-player/dist/qti3Player.css'
 import '@/../public/assets/css/styles.css'
-import { getTestById } from "@/services/subjectTest";
-import { startAttempt, finishAttempt } from "@/services/attempts";
-
 
 export default {
   name: 'Test',
   components: { Qti3Player },
-
   data() {
     return {
       qti3player: null,
@@ -90,11 +85,9 @@ export default {
       currentIndex: 0,
       isReviewMode: false,
       itemsLoaded: false,
-      playerReady: false,
-      attemptId: null,
+      playerReady: false
     }
   },
-
   computed: {
     currentItem() {
       return this.testItems[this.currentIndex] || {};
@@ -106,55 +99,22 @@ export default {
       return this.getItemType() === 'textEntry';
     }
   },
-
-  async mounted() {
-    await this.loadTest(this.$route.params.id);
-  },
-
   methods: {
     async loadTest(id) {
-      const testId = Number(id);
-
-      // 1) Test laden
-      const st = await getTestById(testId);
-
-      // ✅ wichtig, sonst v-if="test" bleibt false
-      this.test = {
-        title: st.test_name ?? st.name ?? `Test ${st.id}`,
-      };
-
-      // 2) Attempt starten oder resume (wenn du Backend auf start-or-resume geändert hast)
-      const attempt = await startAttempt({ subject_test_id: testId });
-      this.attemptId = attempt.id;
-
-      // 3) Falls Test noch generiert wird
-      if (!st.test) {
-        this.testItems = [];
-        this.itemsLoaded = true;
-        return;
-      }
-
-      // Minimal: ein Item aus XML
-      this.testItems = [{
-        guid: `st-${st.id}`,
-        xml: st.test
-      }];
-
+      this.test = this.$testService.getTestById(id)
+      this.testItems = await this.$testService.loadQuestionItems(this.test.items);
       this.itemsLoaded = true;
       this.tryLoadItem();
     },
-
     onPlayerReady(player) {
       this.qti3player = player;
       this.playerReady = true;
       this.tryLoadItem();
     },
-
     tryLoadItem() {
       if (!this.playerReady || !this.itemsLoaded) return;
       this.loadCurrentItem();
     },
-
     loadCurrentItem() {
       const item = this.currentItem;
       if (!item.guid || !this.qti3player) return;
@@ -168,6 +128,7 @@ export default {
       this.qti3player.loadItemFromXml(item.xml, config);
 
       this.colorizeAnswers();
+      // KaTeX Rendern aufrufen
       this.renderMath();
     },
 
@@ -185,104 +146,56 @@ export default {
       this.qti3player.suspendAttempt('end');
     },
 
-async onItemSaved(data) {
-    this.itemStates.set(data.state.guid, data.state);
+    onItemSaved(data) {
+      this.itemStates.set(data.state.guid, data.state);
 
-    switch (data.target) {
-      case 'next':
-        this.currentIndex++;
-        this.loadCurrentItem();
-        break;
-
-      case 'prev':
-        this.currentIndex--;
-        this.loadCurrentItem();
-        break;
-
-      case 'end':
-        this.isReviewMode = true;
-        this.currentIndex = 0;
-        this.loadCurrentItem();
-
-        // ✅ Hier finish callen
-        if (this.attemptId) {
-          const { correct, total } = this.computeScoreFromStates();
-
-          try {
-            await finishAttempt(this.attemptId, {
-              correct_answered: correct,
-              total_questions: total
-              // finished_at optional
-            });
-          } catch (e) {
-            console.error("finishAttempt failed:", e);
-          }
-        }
-        break;
-    }
-  },
-  computeScoreFromStates() {
-    let total = this.testItems.length;
-    let correct = 0;
-
-    for (const item of this.testItems) {
-      const state = this.itemStates.get(item.guid);
-      if (!state) continue;
-
-      const responseId = this.getResponseIdentifier(item.xml);
-      const rv = state.responseVariables?.find(v => v.identifier === responseId);
-      if (!rv) continue;
-
-      const actual = rv.value;
-      const expected = rv.correctResponse;
-
-      if (Array.isArray(expected)) {
-        if (Array.isArray(actual) &&
-            expected.length === actual.length &&
-            expected.every(id => actual.includes(id))) {
-          correct++;
-        }
-      } else {
-        if (actual && expected &&
-            String(actual).toLowerCase() === String(expected).toLowerCase()) {
-          correct++;
-        }
+      switch (data.target) {
+        case 'next':
+          this.currentIndex++;
+          this.loadCurrentItem();
+          break;
+        case 'prev':
+          this.currentIndex--;
+          this.loadCurrentItem();
+          break;
+        case 'end':
+          this.isReviewMode = true;
+          this.currentIndex = 0;
+          this.loadCurrentItem();
+          break;
       }
-    }
+    },
 
-    return { correct, total };
-  },
+    // Prüft, ob Antwort richtig war
+    isCorrect(idx) {
+      const item = this.testItems[idx];
+      const state = this.itemStates.get(item.guid);
+      if (!state) return false;
 
-  getResponseIdentifier(xmlString) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(xmlString, 'text/xml');
+      // responseVariable zur RESPONSE
+      const rv = state.responseVariables.find(v => v.identifier === 'RESPONSE');
+      if (!rv) return false;
 
-      // meistens ist es RESPONSE_1, RESPONSE_2, ...
-      const decl = doc.querySelector('qti-response-declaration');
-      return decl?.getAttribute('identifier') || 'RESPONSE_1';
-  },
-  isCorrect(idx) {
-    const item = this.testItems[idx];
-    const state = this.itemStates.get(item.guid);
-    if (!state) return false;
+      const actual = rv.value;           // kann String oder Array sein
+      const correct = rv.correctResponse; // kann String oder Array sein
 
-    const responseId = this.getResponseIdentifier(item.xml);
-    const rv = state.responseVariables.find(v => v.identifier === responseId);
-    if (!rv) return false;
+      // Multiple Choice?
+      if (Array.isArray(correct)) {
+        // actual muss auch Array sein
+        if (!Array.isArray(actual)) return false;
+        // Längen gleich?
+        if (correct.length !== actual.length) return false;
+        // jede korrekte ID muss im actual-Array vorkommen
+        return correct.every(id => actual.includes(id));
+      }
 
-    const actual = rv.value;
-    const correct = rv.correctResponse;
+      if (!actual) {
+        return false;
+      }
 
-    if (Array.isArray(correct)) {
-      if (!Array.isArray(actual)) return false;
-      if (correct.length !== actual.length) return false;
-      return correct.every(id => actual.includes(id));
-    }
-
-    if (!actual) return false;
-    return String(actual).toLowerCase() === String(correct).toLowerCase();
-  },
-
+      // Single Choice: einfacher Vergleich
+      return actual.toLowerCase() === correct.toLowerCase();
+    },
 
     getTitleFromXml(xmlString) {
       const parser = new DOMParser();
@@ -293,30 +206,45 @@ async onItemSaved(data) {
       return state.responseVariables.find(v => v.identifier === 'RESPONSE')?.value;
     },
     getCorrectAnswer(guid) {
-      const item = this.testItems.find(i => i.guid === guid);
-      if (!item?.xml) return null;
-
+      // 1) correctResponse aus dem State
       const state = this.itemStates.get(guid);
-      if (!state) return null;
+      const respVar = state
+        ?.responseVariables
+        .find(v => v.identifier === 'RESPONSE');
+      if (!respVar || respVar.correctResponse == null) {
+        return null;
+      }
 
-      const responseId = this.getResponseIdentifier(item.xml);
-      const respVar = state.responseVariables.find(v => v.identifier === responseId);
-      if (!respVar || respVar.correctResponse == null) return null;
-
+      // sorgen, dass wir immer mit einem Array weiterarbeiten
       const ids = Array.isArray(respVar.correctResponse)
         ? respVar.correctResponse
         : [respVar.correctResponse];
 
+      // 2) XML parsen
+      const item = this.testItems.find(i => i.guid === guid);
+      if (!item?.xml) {
+        // kein XML? dann gib die rohen IDs zurück
+        return Array.isArray(respVar.correctResponse)
+          ? [...ids]
+          : ids[0];
+      }
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(item.xml, 'text/xml');
 
+      // 3) für jede ID den Text ermitteln
       const texts = ids.map(id => {
         const choice = xmlDoc.querySelector(`qti-simple-choice[identifier="${id}"]`);
-        return choice ? choice.textContent.trim() : id;
+        return choice
+          ? choice.textContent.trim()
+          : id;  // Fallback auf die ID
       });
 
-      return Array.isArray(respVar.correctResponse) ? texts : texts[0];
+      // Single vs. Multiple
+      return Array.isArray(respVar.correctResponse)
+        ? texts
+        : texts[0];
     },
+
     // KaTeX Rendern
     renderMath() {
       this.$nextTick(() => {
@@ -408,6 +336,9 @@ async onItemSaved(data) {
   created() {
     //
   },
+  mounted() {
+    this.loadTest(this.$route.params.id);
+  }
 }
 </script>
 

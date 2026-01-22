@@ -6,7 +6,6 @@
         <EditIcon class="EditIcon" alt="Modul bearbeiten" @click="showCreateModule = true" />
         <TrashIcon class="TrashIcon-black" alt="Modul löschen" @click="showDeleteSubjectPopup = true" />
       </div>
-      
       <ActionsSubject
         v-if="showCreateModule"
         heading="Modulname bearbeiten"
@@ -27,11 +26,11 @@
         @confirm="onDeleteSubject"
       />
     </div>
-
     <p v-if="testsError" class="text-danger"> {{ testsError }} </p>
 
     <section v-else class="tests-container">
       <div class="tests-section">
+        <h3 class="go-to-form" @click="goToForm()">Willst du einen Test erstellen?</h3>
         <h3>Aktive Tests</h3>
         <div class="scroll-area">
           <div class="list-row" v-for="test in activeTests" :key="'active-' + test.id">
@@ -283,8 +282,6 @@ export default {
       }
     },
 
-
-
     openDeleteTest(test) {
       this.selectedTest = test;
       this.deleteError = "";
@@ -348,13 +345,23 @@ export default {
       } finally {
         this.testsLoading = false;
       }
-    }
+    },
+    goToForm() {
+      this.$router.push({ name: "TestErstellen", params: { subject_id: this.subject_id } });
+    },
 
   },
 };
 </script>
 
 <style scoped>
+
+.go-to-form:hover{
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
 .list-row {
   display: flex;
   align-items: center;
