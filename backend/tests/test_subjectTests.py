@@ -131,11 +131,11 @@ def test_read_subjectTests_bySubject(client):
     # read subject
     subject = r2.json()
     subject_id = subject["id"]
-    response = client.get(f"/subjecttests/bySubject/{subject_id}", headers=headers)
+    response = client.get(f"/subjecttests/bySubjects/{subject_id}", headers=headers)
     assert response.status_code == 200
 
     data = response.json()
-
+    print(data)
     assert isinstance(data, list)
     assert len(data) == 2
 
@@ -181,8 +181,9 @@ def test_read_subjectTests_bySubject_noexistent_subject_id(client):
     headers = {"Authorization": f"Bearer {token}"}
 
     subject_id = 42
-    response = client.get(f"/subjecttests/bySubject/{subject_id}", headers=headers)
-    assert response.status_code == 404
+    response = client.get(f"/subjecttests/bySubjects/{subject_id}", headers=headers)
+    assert response.status_code == 404, response.text
+
 
 def test_read_subject(client):
     # create user for subject
