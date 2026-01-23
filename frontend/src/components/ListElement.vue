@@ -44,10 +44,8 @@ export default {
     total: { type: Number, default: 1 },
     isSubject: { type: Boolean, default: false },
 
-    // ✅ neu: optional payload (z.B. { id: test.id })
     payload: { type: [Object, String, Number], default: null },
 
-    // ✅ neu: Button optional (du verwendest das ja schon im Parent)
     showButton: { type: Boolean, default: true },
   },
 
@@ -63,7 +61,6 @@ export default {
 
   methods: {
     emitOpen() {
-      // ✅ abwärtskompatibel: wenn payload nicht gesetzt ist -> name wie bisher
       this.$emit("open", this.payload ?? this.name);
     }
   }
