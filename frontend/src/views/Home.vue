@@ -11,7 +11,7 @@
     <!-- Header -->
     <div class="row align-items-center mb-5">
       <div class="col-md-9">
-        <h1>Hallo {{ me.name }}, 🔥 {{ me.streak }}</h1>
+        <h1>Hallo {{ me.username }}, 🔥 {{ me.streak }}</h1>
         <p v-if="isLoggedIn" class="secondary-text mt-2">
           Du hast heute {{ me.openExercises }} Übungen offen.
         </p>
@@ -65,16 +65,9 @@
         </div>
 
         <div class="module-scroll-container">
-          <ListElement
-            v-for="subject in subjects"
-            :key="'module-' + subject.id"
-            :name="subject.name"
-            :completed="subject.completed"
-            :total="subject.total"
-            :isSubject="true"
-            :showButton="subject.showButton"
-            :showProgressText="subject.showProgressText"
-            buttonText="Übersicht"
+          <ListElement v-for="subject in subjects" :key="'module-' + subject.id" :name="subject.name"
+            :completed="subject.completed" :total="subject.total" :isSubject="subject.isSubject"
+            :showButton="subject.showButton" :showProgressText="subject.showProgressText" buttonText="Übersicht" 
             @click.native="goToSubject(subject.id)"
           />
         </div>
@@ -149,31 +142,26 @@ export default {
   },
   data() {
     return {
-      // Auth/User
       user_id: null,
       me: {
-        name: "",
+        username: "",
         streak: 0,
         openExercises: 0,
         dailyGoalPercent: 0,
       },
       isLoggedIn: false,
-
-      // UI/Data
       subjects: [],
-      tests: [],
-      lastTest: { title: "Noch kein Test gestartet", progress: 0 },
-
       showCreateModule: false,
       statsCards: [],
       loading: false,
       error: "",
 
       hidden: false,
+    
     };
   },
   created() {
-    this.tests = this.$testService ? this.$testService.getTests() : [];
+    this.tests = this.$testService.getTests();
   },
   async mounted() {
     this.loading = true;
@@ -181,12 +169,13 @@ export default {
 
     try {
       const me = await getMe();
-      console.log("me", me)
+      console.log("ME", me);
+
       this.me = {
-        name: me?.username || "",
+        username: me?.username || "",
         streak: me?.streak || 4,
         openExercises: me?.openExercises || 2,
-        dailyGoalPercent: me?.daily_goal || 0,
+        dailyGoalPercent: me?.dailyGoalPercent || 43,
       };
 
       this.user_id = me?.id ?? null;
@@ -195,108 +184,100 @@ export default {
       if (this.user_id) {
         await this.loadStats();
         await this.fetchSubjects();
+        console.log("user_id: " + this.user_id)
       } else {
         this.error = "User nicht authentifiziert.";
       }
     } catch (e) {
       this.error =
-        (e && e.response && e.response.data && e.response.data.detail) ||
+        e?.response?.data?.detail ||
         "User oder Statistiken konnten nicht geladen werden.";
     } finally {
       this.loading = false;
     }
   },
   methods: {
-    // ContinueElement handler (war bei dir undefined)
-    startLearning() {
-      // Beispiel: zum letzten Test navigieren, falls du eine Route hast
-      // Passe das an dein Projekt an.
-      // Wenn du keinen "letzten Test" hast, kannst du auch einfach returnen.
-      const first = this.tests && this.tests[0];
-      if (!first) return;
-
-      this.$router.push({ name: "Test", params: { id: first.id } });
-    },
-
-    // Popup close/created
     async handleModuleCreated() {
       this.showCreateModule = false;
       await this.fetchSubjects();
-      await this.loadStats();
+      await this.loadStats(); // optional
     },
-    async handleCloseCreateModule() {
-      this.showCreateModule = false;
-      // optional: wenn du auch bei Abbruch refreshen willst:
-      // await this.fetchSubjects();
-    },
-
     async loadStats() {
-      const ov = await getStatsOverview();
+      try {
 
-      const change = calcPercentChange(
-        ov.study_time_week_seconds,
-        ov.study_time_prev_week_seconds
-      );
+        const ov = await getStatsOverview();
+        console.log("OVERVIEW", ov);
 
-      const studySubtitle =
-        change === null
-          ? "Keine Daten zur Vorwoche"
-          : `${change >= 0 ? "+" : ""}${change}% zur Vorwoche`;
+        const change = calcPercentChange(
+          ov.study_time_week_seconds,
+          ov.study_time_prev_week_seconds
+        );
 
-      const studySubtitleClass =
-        change === null
-          ? ""
-          : change >= 0
-          ? "subtitle-positive"
-          : "subtitle-negative";
+        const studySubtitle =
+          change === null
+            ? "Keine Daten zur Vorwoche"
+            : `${change >= 0 ? "+" : ""}${change}% zur Vorwoche`;
 
-      const successRateValue = formatPercentFromRatio(ov.pass_rate_week);
-      const testsValue = `${ov.tests_passed_week}/${ov.tests_total_week} Tests`;
+        const studySubtitleClass =
+          change === null ? "" : (change >= 0 ? "subtitle-positive" : "subtitle-negative");
 
-      this.statsCards = [
-        {
-          title: "Lernzeit diese Woche",
-          value: formatSecondsToHM(ov.study_time_week_seconds),
-          subtitle: studySubtitle,
-          subtitleClass: studySubtitleClass,
-          iconSrc: "/assets/images/clock.svg",
-        },
-        {
-          title: "Erfolgsquote",
-          value: successRateValue,
-          subtitle: "Durchschnittliche Erfolgsquote",
-          subtitleClass: "",
-          iconSrc: "/assets/images/checked-circle.svg",
-        },
-        {
-          title: "Tests bestanden",
-          value: testsValue,
-          subtitle: "Diese Woche",
-          subtitleClass: "",
-          iconSrc: "/assets/images/document-text-sharp.svg",
-        },
-      ];
+        const successRateValue = formatPercentFromRatio(ov.pass_rate_week);
+        const testsValue = `${ov.tests_passed_week}/${ov.tests_total_week} Tests`;
+
+        this.statsCards = [
+          {
+            title: "Lernzeit diese Woche",
+            value: formatSecondsToHM(ov.study_time_week_seconds),
+            subtitle: studySubtitle,
+            subtitleClass: studySubtitleClass,
+            iconSrc: "/assets/images/clock.svg",
+          },
+          {
+            title: "Erfolgsquote",
+            value: successRateValue,
+            subtitle: "Durchschnittliche Erfolgsquote",
+            subtitleClass: "",
+            iconSrc: "/assets/images/checked-circle.svg",
+          },
+          {
+            title: "Tests bestanden",
+            value: testsValue,
+            subtitle: "Diese Woche",
+            subtitleClass: "",
+            iconSrc: "/assets/images/document-text-sharp.svg",
+          },
+        ];
+      } catch (e) {
+        console.error("getStatsOverview failed:", e);
+        console.error("status:", e?.response?.status);
+        console.error("data:", e?.response?.data);
+        throw e;
+      }
     },
-
     async fetchSubjects() {
-      const subjects = await getSubjects();
-      this.subjects = (subjects || []).map((s) => ({
-        id: s.id,
-        name: s.name,
-        completed: s.passed_tests ?? 0,
-        total: s.total_tests ?? 0,
-        isSubject: true,
-        showButton: true,
-        showProgressText: true,
-      }));
-    },
+      try {
+        const subjects = await getSubjects();
+        console.log("SUBJECTS", subjects);
 
+        this.subjects = subjects.map(s => ({
+          id: s.id,
+          name: s.name,
+          completed: s.passed_tests ?? 0,
+          total: s.total_tests ?? 0,
+          isSubject: true,
+          showButton: true,
+          showProgressText: true,
+        }));
+      } catch (e) {
+        console.error("getSubjects failed:", e);
+      }
+    },
     goToSubject(subjectId) {
       this.$router.push({
         name: "TestListe",
-        params: { subject_id: subjectId },
+        params: { subject_id: subjectId }
       });
-    },
+    }
   },
 };
 </script>
