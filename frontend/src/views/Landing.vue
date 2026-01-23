@@ -108,11 +108,11 @@ export default {
         },
         {
           question: "Dashboard",
-          answer: "Dein Dashboard zeigt dir auf einen Blick, wie effektiv du lernst: <br><br><b>Lernzeit:</b> Die investierte Zeit in der aktuellen Woche im Vergleich zur Vorwoche. <br><b>Erfolgsquote:</b> Dein prozentualer Anteil an richtig beantworteten Fragen. <br><b>Streak:</b> Die 🔥 zeigt dir, wie viele Tage in Folge du bereits aktiv gelernt hast. <br><b>Tests bestanden:</b> Die Anzahl der Tests, die du mit mindestens 60% bestanden hast. <br><b>Tagesziel:</b> Der Fortschrittsbalken visualisiert, wie nah du an deinem selbst festgelegten Tagesziel bist."
+          answer: "Dein Dashboard zeigt dir auf einen Blick, wie effektiv du lernst: <br><br><b>- Lernzeit:</b> Die investierte Zeit in der aktuellen Woche im Vergleich zur Vorwoche. <br><b>- Erfolgsquote:</b> Dein prozentualer Anteil an richtig beantworteten Fragen. <br><b>- Streak:</b> Die 🔥 zeigt dir, wie viele Tage in Folge du bereits aktiv gelernt hast. <br><b>- Tests bestanden:</b> Die Anzahl der Tests, die du mit mindestens 60% bestanden hast. <br><b>- Tagesziel:</b> Der Fortschrittsbalken visualisiert, wie nah du an deinem selbst festgelegten Tagesziel bist."
         },
         {
           question: "Einstellungen & Profil",
-          answer: "In den Einstellungen kannst du dein Lernerlebnis personalisieren: <br><br><b>Passwort & Persönliche Daten:</b> Hier kannst du deine Anmeldedaten und persönliche Informationen aktualisieren.<br><b>Tagesziel anpassen:</b> Passe die Anzahl der täglichen Tests an, die du erreichen möchtest. <br><b>Streak:</b> Aktiviere oder deaktiviere deine Streak-Anzeige im Dashboard. <br><br><b>Tagesziel anpassen:</b> Passe die Anzahl der täglichen Tests an, die du erreichen möchtest.<br><b>Streak:</b> Aktiviere oder deaktiviere deine Streak-Anzeige im Dashboard."
+          answer: "In den Einstellungen kannst du dein Lernerlebnis personalisieren: <br><br><b>- Passwort & Persönliche Daten:</b> Hier kannst du deine Anmeldedaten und persönliche Informationen aktualisieren.<br><b>- Tagesziel anpassen:</b> Passe die Anzahl der täglichen Tests an, die du erreichen möchtest. <br><b>- Streak:</b> Aktiviere oder deaktiviere deine Streak-Anzeige im Dashboard."
         }
       ]
     };
