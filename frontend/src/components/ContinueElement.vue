@@ -1,43 +1,129 @@
 <template>
-  <div class="list-item">
+  <div class="list-item" v-if="!loading && randomTest">
     <div class="text-block">
-        <h2 class="title">Weiterlernen</h2>
-        <p class="subtitle">{{ subtitle }}</p>
+      <h2 class="title">Weiterlernen</h2>
+      <p class="subtitle">{{ randomTest.name }}</p>
     </div>
 
     <div class="progress-wrapper">
       <div class="progress-bar">
         <div
           class="progress-fill"
-          :style="{ width: progress + '%' }"
+          :style="{ width: progressPercent + '%' }"
         ></div>
       </div>
+
+      <span class="progress-text">
+        {{ randomTest.completed }}/{{ randomTest.total }}
+      </span>
     </div>
 
-    <button
-      class="primary"
-      @click="$emit('continue')"
-    >
+    <button class="primary" @click="openTest">
       Starten
     </button>
   </div>
+
+  <!-- Optional: wenn du nichts anzeigen willst, einfach weglassen -->
+  <p v-else-if="!loading && !randomTest">
+    Keine Tests zum Weiterlernen verfügbar.
+  </p>
 </template>
 
 <script>
+import { getSubjects } from "@/services/subject";
+import { getTestsBySubject } from "@/services/subjectTest";
+
 export default {
   name: "ContinueElement",
-  props: {
-    subtitle: {
-      type: String,
-      default: ""
+
+  data() {
+    return {
+      loading: false,
+      randomTest: null,
+    };
+  },
+
+  mounted() {
+    this.fetchRandomTest();
+  },
+
+  computed: {
+    progressPercent() {
+      if (!this.randomTest || this.randomTest.total === 0) return 0;
+      return Math.min(
+        100,
+        Math.round((this.randomTest.completed / this.randomTest.total) * 100)
+      );
+    }
+  },
+
+  methods: {
+    async fetchRandomTest() {
+      this.loading = true;
+
+      try {
+        // 1) subjects laden
+        const subjects = await getSubjects();
+        if (!subjects || subjects.length === 0) {
+          this.randomTest = null;
+          return;
+        }
+
+        // 2) ein paar Versuche, falls ein Subject keine Tests hat
+        const MAX_TRIES = Math.min(5, subjects.length);
+
+        for (let i = 0; i < MAX_TRIES; i++) {
+          const subject = subjects[Math.floor(Math.random() * subjects.length)];
+          const subjectId = Number(subject.id);
+
+          // 3) tests pro subject laden
+          const rows = await getTestsBySubject(subjectId);
+
+          const tests = (rows || []).map(t => ({
+            id: t.id,
+            name: t.name ?? `Test ${t.id}`,
+            completed: t.correct_answered ?? 0,
+            total: t.total_questions ?? 0,
+            attempt_status: t.attempt_status, // in_progress/passed/failed/null
+            subject_id: subjectId,
+          }));
+
+          if (!tests.length) continue;
+
+          // 4) prefer active
+          const active = tests.filter(
+            t => !["passed", "failed"].includes(t.attempt_status)
+          );
+          const pool = active.length ? active : tests;
+
+          // 5) genau EINEN wählen
+          this.randomTest = pool[Math.floor(Math.random() * pool.length)];
+          return;
+        }
+
+        // kein passendes subject mit tests gefunden
+        this.randomTest = null;
+
+      } catch (e) {
+        console.error("fetchRandomTest failed:", e);
+        this.randomTest = null;
+      } finally {
+        this.loading = false;
+      }
     },
-    progress: {
-      type: Number,
-      default: 0
+
+    openTest() {
+      if (!this.randomTest) return;
+      this.$router.push({
+        name: "Test",
+        params: { id: this.randomTest.id }
+      });
     }
   }
-}
+};
 </script>
+
+
 
 <style scoped>
 .list-item {
@@ -79,6 +165,7 @@ export default {
   display: flex;
   align-items: center;
   width: 100%;
+  gap: 20px;
 }
 
 .progress-bar {
