@@ -59,11 +59,6 @@ export async function patchUser(userId, payload) {
   return data;
 }
 
-export async function patchUser(userId, payload) {
-  const { data } = await api.patch(`/users/${userId}`, payload);
-  return data;
-}
-
 export function isAuthenticated() {
   const token = localStorage.getItem("access_token");
   const expiresAt = localStorage.getItem("access_token_expires_at");

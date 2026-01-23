@@ -56,7 +56,7 @@
     <section class="bg-light py-5">
       <div class="container">
         <div class="text-center mb-5">
-          <h2 class="fw-bold">Hilfe</h2>
+          <h2 class="fw-bold" id="help">Hilfe</h2>
         </div>
         <div class="row g-4 justify-content-center">
           <div class="col-12" v-for="(faq, f) in faqs" :key="'faq-' + f">
