@@ -1,6 +1,6 @@
 ﻿<template>
     <div class="dropdown">
-        <button class="dropdown-btn" aria-label="Zu den Nutzereinstellungen" @click="goToSettings">
+        <button class="dropdown-btn" aria-label="Zu den Nutzereinstellungen" @click="goToSettings()">
             <SettingsIcon /> 
             <span>Einstellungen</span>
         </button>
@@ -13,7 +13,7 @@
             <span style="opacity: 0.5;">Darkmode</span>
         </div>
 
-        <button class="dropdown-btn" aria-label="Zur Hilfeseite der Anwendung" disabled>
+        <button class="dropdown-btn" aria-label="Zur Hilfeseite der Anwendung" @click="goToHelp()">
             <HelpIcon /> 
             <span>Hilfe</span>
         </button>
@@ -49,6 +49,9 @@
             },
             goToSettings(){
                 this.$router.push({ path: "/settings"})
+            },
+            goToHelp(){
+                this.$router.push({ path: "/", hash: "#help" })
             }
         },
         components: {

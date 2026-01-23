@@ -6,7 +6,6 @@ import Test from '../views/test.vue'
 import Login from '../views/LoginRegistrationView.vue'
 import Settings from '../views/Settings.vue'
 import Testlist from "@/views/Testlist";
-import Test from '../views/test'
 
 Vue.use(VueRouter)
 
@@ -123,6 +122,8 @@ router.beforeEach((to, from, next) => {
   }
 
   const isAuthenticated = !!localStorage.getItem('access_token')
+
+  if (to.path === "/" && to.hash === "#help") return next()
 
   if (to.matched.some(r => r.meta.requiresAuth) && !isAuthenticated) {
     return next({
