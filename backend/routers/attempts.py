@@ -25,9 +25,7 @@ def start_attempt(payload: AttemptStart, session: SessionDep, current_user: Curr
         .order_by(TestAttempt.updated_at.desc())
     ).first()
 
-    # ✅ RESUME statt 409
     if existing:
-        # optional: progress_json updaten, wenn du beim Start was mitschickst
         if payload.progress_json is not None:
             existing.progress_json = payload.progress_json
             existing.updated_at = datetime.now(timezone.utc)
@@ -104,7 +102,7 @@ def finish_attempt(attempt_id: int, payload: AttemptFinish, session: SessionDep,
     attempt.total_questions = payload.total_questions
     attempt.score_ratio = score_ratio
 
-    # IMPORTANT: status computed here
+    # status computed here
     attempt.status = AttemptStatus.passed if score_ratio >= PASS_THRESHOLD else AttemptStatus.failed
 
     attempt.finished_at = finished_at
