@@ -19,7 +19,7 @@
       </div>
 
       <div class="col-md-3 d-flex justify-content-end">
-        <CircularProgress :value="me.dailyGoalPercent" />
+        <CircularProgress :value="65" />
       </div>
     </div>
 
@@ -147,7 +147,6 @@ export default {
         username: "",
         streak: 0,
         openExercises: 0,
-        dailyGoalPercent: 0,
       },
       isLoggedIn: false,
       subjects: [],
@@ -175,7 +174,6 @@ export default {
         username: me?.username || "",
         streak: me?.streak || 4,
         openExercises: me?.openExercises || 2,
-        dailyGoalPercent: me?.dailyGoalPercent || 43,
       };
 
       this.user_id = me?.id ?? null;
