@@ -307,6 +307,25 @@ select option {
     background-color: #FFFFFF;
 }
 
+/* Links */
+a {
+    color: var(--primary-color);
+    text-decoration: underline;
+    width: fit-content;
+    border-radius: var(--text-entry-border-radius);
+    outline-offset: 4px;
+    margin: 6px 0;
+}
+
+a:focus,
+a:focus-visible {
+    outline: var(--text-entry-border-width) solid black;
+} 
+
+a:hover {
+    color: black;
+}
+
 /* Labels & Headings */
 label {
     font-style: italic;
