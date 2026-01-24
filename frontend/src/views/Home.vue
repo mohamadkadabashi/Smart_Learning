@@ -168,6 +168,8 @@ export default {
   created() {
     this.tests = this.$testService.getTests();
   },
+
+  
   async mounted() {
     this.loading = true;
     this.error = "";
@@ -200,6 +202,8 @@ export default {
       this.loading = false;
     }
   },
+
+
   methods: {
     async handleModuleCreated() {
       this.showCreateModule = false;
@@ -273,7 +277,7 @@ export default {
           showButton: true,
           showProgressText: true,
         }));
-        
+
       } catch (e) {
         console.error("getSubjects failed:", e);
       }
