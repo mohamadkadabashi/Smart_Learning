@@ -65,9 +65,15 @@
         </div>
 
         <div class="module-scroll-container">
-          <ListElement v-for="subject in subjects" :key="'module-' + subject.id" :name="subject.name"
-            :completed="subject.completed" :total="subject.total" :isSubject="subject.isSubject"
-            :showButton="subject.showButton" :showProgressText="subject.showProgressText" buttonText="Übersicht" 
+          <ListElement v-for="subject in subjects" 
+            :key="'module-' + subject.id" 
+            :name="subject.name"
+            :completed="subject.completed" 
+            :total="subject.total" 
+            :isSubject="subject.isSubject"
+            :showButton="subject.showButton" 
+            :showProgressText="subject.showProgressText" 
+            buttonText="Übersicht" 
             @click.native="goToSubject(subject.id)"
           />
         </div>
