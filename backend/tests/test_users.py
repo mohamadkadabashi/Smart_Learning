@@ -28,7 +28,6 @@ def test_create_user_no_username(client):
     assert response_create.status_code == 422, response_create.text
 
 def test_create_user_without_password(client):
-    # create two users first
     user = {
         "username": "alice",
         "email": "alice@example.de"

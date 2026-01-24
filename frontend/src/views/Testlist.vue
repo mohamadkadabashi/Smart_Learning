@@ -30,7 +30,7 @@
 
     <section v-else class="tests-container">
       <div class="tests-section">
-        <h3 class="go-to-form" @click="goToForm()">Willst du einen Test erstellen? Klicke hier!</h3>
+        <a class="go-to-form" @click="goToForm()">Willst du einen Test erstellen? Klicke hier!</a>
         <h3>Aktive Tests</h3>
         <div class="scroll-area">
           <div class="list-row" v-for="test in activeTests" :key="'active-' + test.id">
@@ -356,11 +356,21 @@ export default {
 
 <style scoped>
 
-.go-to-form:hover{
-  cursor: pointer;
-  text-decoration: underline;
+.go-to-form{
   color: var(--primary-color);
+  text-decoration: underline;
 }
+.go-to-form:hover{
+  color: black;
+  cursor: pointer;
+}
+
+a.go-to-form:focus,
+a.go-to-form:focus-visible {
+  outline: none;
+  /* background-color: var(--text-entry-focus-bg); */
+  border: var(--primary-color) solid black;
+} 
 
 .list-row {
   display: flex;
