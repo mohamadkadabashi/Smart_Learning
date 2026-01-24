@@ -6,48 +6,61 @@ from models.subject_tests import SubjectTest
 from dependencies.dependency import CurrentUser
 from db.database import SessionDep
 from config.logger_config import logger
-from models.subject import Subject, SubjectCreate, SubjectProgressRead, SubjectRead, SubjectUpdate
+from models.subject import (
+    Subject,
+    SubjectCreate,
+    SubjectProgressRead,
+    SubjectRead,
+    SubjectUpdate,
+)
 from models.user import User
 from dependencies.dependency import CurrentUser
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
 
+
 @router.post("/", response_model=SubjectRead, status_code=201)
 def create_subject(
-    subject_create: SubjectCreate,
-    session: SessionDep,
-    current_user: CurrentUser
+    subject_create: SubjectCreate, session: SessionDep, current_user: CurrentUser
 ):
-    user_id_exists = session.exec(select(User).where(User.id == subject_create.user_id)).first()
+    user_id_exists = session.exec(
+        select(User).where(User.id == subject_create.user_id)
+    ).first()
     if not user_id_exists:
-        logger.warning(f"User {subject_create.user_id} does not exist, no subject created")
+        logger.warning(
+            f"User {subject_create.user_id} does not exist, no subject created"
+        )
         raise HTTPException(status_code=422, detail="User does not exist")
-    
-    subject_user_id_comb_exist = session.exec(select(Subject)
-                                              .where(Subject.name == subject_create.name)
-                                              .where(Subject.user_id == subject_create.user_id)).first()
+
+    subject_user_id_comb_exist = session.exec(
+        select(Subject)
+        .where(Subject.name == subject_create.name)
+        .where(Subject.user_id == subject_create.user_id)
+    ).first()
     if subject_user_id_comb_exist:
-        logger.warning(f"User {subject_create.user_id} already has subject with name {subject_create.name}")
-        raise HTTPException(status_code=409, detail="User already has subject with this name")
-    
-    db_subject = Subject(
-        name=subject_create.name,
-        user_id=subject_create.user_id
-    )
+        logger.warning(
+            f"User {subject_create.user_id} already has subject with name {subject_create.name}"
+        )
+        raise HTTPException(
+            status_code=409, detail="User already has subject with this name"
+        )
+
+    db_subject = Subject(name=subject_create.name, user_id=subject_create.user_id)
 
     session.add(db_subject)
     session.commit()
     session.refresh(db_subject)
-    logger.info(f"Subject {db_subject.name} (ID: {db_subject.id}) for user-id {db_subject.user_id} has been created")
+    logger.info(
+        f"Subject {db_subject.name} (ID: {db_subject.id}) for user-id {db_subject.user_id} has been created"
+    )
     return db_subject
 
+
 @router.get("/", response_model=List[SubjectRead])
-def read_subjects(
-    session: SessionDep,
-    current_user: CurrentUser
-):
+def read_subjects(session: SessionDep, current_user: CurrentUser):
     subjects = session.exec(select(Subject)).all()
     return subjects
+
 
 @router.get("/mySubjects", response_model=list[SubjectProgressRead])
 def read_my_subject(session: SessionDep, current_user: CurrentUser):
@@ -57,16 +70,13 @@ def read_my_subject(session: SessionDep, current_user: CurrentUser):
             SubjectTest.id.label("st_id"),
             SubjectTest.subject_id.label("subject_id"),
             func.max(
-                case(
-                    (TestAttempt.status == AttemptStatus.passed, 1),
-                    else_=0
-                )
+                case((TestAttempt.status == AttemptStatus.passed, 1), else_=0)
             ).label("passed_flag"),
         )
         .outerjoin(
             TestAttempt,
             (TestAttempt.subject_test_id == SubjectTest.id)
-            & (TestAttempt.user_id == current_user.id)
+            & (TestAttempt.user_id == current_user.id),
         )
         .group_by(SubjectTest.id, SubjectTest.subject_id)
     ).subquery()
@@ -75,10 +85,16 @@ def read_my_subject(session: SessionDep, current_user: CurrentUser):
         select(
             Subject.id,
             Subject.name,
-            func.coalesce(func.count(func.distinct(passed_per_subject_test.c.st_id)), 0).label("total_tests"),
-            func.coalesce(func.sum(passed_per_subject_test.c.passed_flag), 0).label("passed_tests"),
+            func.coalesce(
+                func.count(func.distinct(passed_per_subject_test.c.st_id)), 0
+            ).label("total_tests"),
+            func.coalesce(func.sum(passed_per_subject_test.c.passed_flag), 0).label(
+                "passed_tests"
+            ),
         )
-        .outerjoin(passed_per_subject_test, passed_per_subject_test.c.subject_id == Subject.id)
+        .outerjoin(
+            passed_per_subject_test, passed_per_subject_test.c.subject_id == Subject.id
+        )
         .where(Subject.user_id == current_user.id)
         .group_by(Subject.id, Subject.name)
         .order_by(Subject.id)
@@ -98,62 +114,59 @@ def read_my_subject(session: SessionDep, current_user: CurrentUser):
 
 
 @router.get("/byUser/{user_id}", response_model=List[SubjectRead])
-def read_subjects_of_user(
-    user_id: int,
-    session: SessionDep,
-    current_user: CurrentUser
-):
+def read_subjects_of_user(user_id: int, session: SessionDep, current_user: CurrentUser):
     subjects = session.exec(select(Subject).where(Subject.user_id == user_id)).all()
     if not subjects:
         logger.warning(f"User {user_id} does not exist, so no subjects found")
         raise HTTPException(status_code=404, detail="User not found")
     return subjects
 
+
 @router.get("/{subject_id}", response_model=SubjectRead)
-def get_subject(
-    subject_id: int,
-    session: SessionDep,
-    current_user: CurrentUser
-):
+def get_subject(subject_id: int, session: SessionDep, current_user: CurrentUser):
     subject = session.get(Subject, subject_id)
     if not subject:
         logger.warning(f"Subject with ID {subject_id} does not exist")
         raise HTTPException(status_code=404, detail="Subject not found")
     return subject
 
+
 @router.patch("/{subject_id}", response_model=SubjectUpdate)
 def update_subject(
     subject_id: int,
     subject_update: SubjectUpdate,
     session: SessionDep,
-    current_user: CurrentUser
+    current_user: CurrentUser,
 ):
     subject = session.get(Subject, subject_id)
     if not subject:
         logger.warning(f"Subject {subject_id} does not exist, so no update")
         raise HTTPException(status_code=404, detail="Subject not found")
-    
-    subject_name_user_id_combo_exists = session.exec(select(Subject)
-                                                     .where(Subject.name == subject_update.name)
-                                                     .where(Subject.user_id == subject.user_id)).first()
+
+    subject_name_user_id_combo_exists = session.exec(
+        select(Subject)
+        .where(Subject.name == subject_update.name)
+        .where(Subject.user_id == subject.user_id)
+    ).first()
     if subject_name_user_id_combo_exists:
-        logger.warning(f"User {subject.user_id} already has subject with name {subject_update.name}")
-        raise HTTPException(status_code=409, detail="User already has subject with this name")
-    
+        logger.warning(
+            f"User {subject.user_id} already has subject with name {subject_update.name}"
+        )
+        raise HTTPException(
+            status_code=409, detail="User already has subject with this name"
+        )
+
     subject.name = subject_update.name
-    
+
     session.add(subject)
     session.commit()
     session.refresh(subject)
     logger.info(f"Subject {subject_id} has been updated")
     return subject
 
+
 @router.delete("/{subject_id}", status_code=204)
-def delete_subject(
-    subject_id: int,
-    session: SessionDep,
-    current_user: CurrentUser
-):
+def delete_subject(subject_id: int, session: SessionDep, current_user: CurrentUser):
     subject = session.get(Subject, subject_id)
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
