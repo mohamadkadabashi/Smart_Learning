@@ -88,12 +88,12 @@ def read_my_subject(session: SessionDep, current_user: CurrentUser):
             func.coalesce(
                 func.count(func.distinct(passed_per_subject_test.c.st_id)), 0
             ).label("total_tests"),
-            func.coalesce(func.sum(passed_per_subject_test.c.passed_flag), 0).label(
-                "passed_tests"
-            ),
+            func.coalesce(func.sum(passed_per_subject_test.c.passed_flag), 0)
+            .label("passed_tests"),
         )
         .outerjoin(
-            passed_per_subject_test, passed_per_subject_test.c.subject_id == Subject.id
+            passed_per_subject_test, passed_per_subject_test.c.subject_id
+              == Subject.id
         )
         .where(Subject.user_id == current_user.id)
         .group_by(Subject.id, Subject.name)
