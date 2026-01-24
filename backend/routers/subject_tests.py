@@ -6,6 +6,7 @@ from db.database import SessionDep
 from typing import List, Annotated
 from sqlmodel import case, func, select
 from config.logger_config import logger
+from config.setting import settings
 from datetime import datetime, timezone
 from dependencies.dependency import CurrentUser
 from fastapi.security import OAuth2PasswordBearer
@@ -49,7 +50,7 @@ async def create_subjectTest(
     session.refresh(db_subjectTest)
 
     # 2) trigger n8n
-    webhook_url = "https://n8n.rattenserver.duckdns.org/webhook-test/d0575add-b533-4d10-9069-250f79d935c0"
+    webhook_url = settings.n8n_webhook_url
 
     # Callback URL:
     callback_url = f"https://localhost:8000/subjecttest-callback/{job_id}"

@@ -219,8 +219,4 @@ def logout(current_user: CurrentUser):
     :return: RedirectResponse to home
     """
     response = RedirectResponse(url="/", status_code=302)
-    # In a real application, you might want to implement token blacklisting here.
-    # but for stateless JWT, logout is typically handled on the client side by deleting the token.
-    # so in client applications, simply remove the token from storage.
-    # so for this project, we keep it simple.
     return response

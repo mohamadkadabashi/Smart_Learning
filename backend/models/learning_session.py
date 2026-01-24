@@ -22,7 +22,7 @@ class LearningSessionStart(SQLModel):
     subject_id: Optional[int] = None
 
 class LearningSessionStop(SQLModel):
-    ended_at: Optional[datetime] = None  # wenn None -> Server setzt now
+    ended_at: Optional[datetime] = None
 
 class LearningSessionRead(SQLModel):
     id: int
