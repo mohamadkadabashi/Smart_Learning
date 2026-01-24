@@ -16,7 +16,8 @@
 
     <div class="progress-wrapper">
       <div class="progress-bar">
-        <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+        <div class="progress-fill" :style="{ width: progressPercent + '%' }">
+        </div>
       </div>
 
       <span class="progress-text">
