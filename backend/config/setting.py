@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    n8n_webhook_url: str
+    N8N_WEBHOOK_URL: str
 
     model_config = ConfigDict(
         env_file=str(BASE_DIR / ".env"),

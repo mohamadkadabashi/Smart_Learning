@@ -50,7 +50,8 @@ async def create_subjectTest(
     session.refresh(db_subjectTest)
 
     # 2) trigger n8n
-    webhook_url = settings.n8n_webhook_url
+    webhook_url = settings.N8N_WEBHOOK_URL
+
 
     # Callback URL:
     callback_url = f"https://localhost:8000/subjecttest-callback/{job_id}"
