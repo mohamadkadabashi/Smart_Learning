@@ -261,6 +261,7 @@ export default {
     async fetchSubjects() {
       try {
         const subjects = await getSubjects();
+
         console.log("SUBJECTS", subjects);
 
         this.subjects = subjects.map(s => ({
@@ -272,6 +273,7 @@ export default {
           showButton: true,
           showProgressText: true,
         }));
+        
       } catch (e) {
         console.error("getSubjects failed:", e);
       }
